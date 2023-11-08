@@ -1,0 +1,63 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# C extensions
+*.so
+
+# Distribution / packaging
+env/
+build/
+dist/
+*.egg-info/
+*.egg
+MANIFEST
+
+# Django stuff:
+*.log
+local_settings.py
+db.sqlite3
+db.sqlite3-journal
+media/
+
+# Virtualenv
+venv/
+ENV/
+
+# Environment variables
+.env
+
+# Database
+*.sql
+*.db
+
+# Cache files
+*.pyc
+
+# OS generated files
+.DS_Store
+
+# IDE specific files
+.vscode/
+.idea/
+*.swp
+
+# Node modules
+node_modules/
+
+# Static files
+/static/
+
+# Media files
+/media/
+
+# Ignore secret keys
+secrets.json
+
+# Ignore migrations
+*/migrations/*.py
+!*/migrations/__init__.py
+
+# Ignore your specific settings file if you have one
+/my_custom_settings_module.py
