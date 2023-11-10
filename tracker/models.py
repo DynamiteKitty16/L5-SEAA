@@ -25,19 +25,6 @@ class AttendanceRecord(models.Model):
 
 class LeaveRequest(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    start_date = models.DateField()
-    end_date = models.DateField()
-    status = models.CharField(
-    max_length=2,
-    choices=(
-        ('P', 'Pending'),
-        ('A', 'Approved'),
-        ('R', 'Rejected'),
-            )
-)
-    
-class LeaveRequest(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
     date = models.DateField()
     status = models.CharField(
         max_length=2,
