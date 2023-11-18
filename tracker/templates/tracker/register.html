@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <h2>Account Register</h2>
+  <form method="post">
+    {% csrf_token %}
+    {% for field in form %}
+        <div>
+            {{ field.label_tag }} {{ field }}
+            {% if field.help_text %}
+                <small style="color: rgb(56, 56, 56);">{{ field.help_text }}</small>
+            {% endif %}
+            {% for error in field.errors %}
+                <p style="color: red;">{{ error }}</p>
+            {% endfor %}
+        </div>
+    {% endfor %}
+    <p class="password-help">Your password should be at least 8 characters long, include a number, a special character, and an uppercase letter.</p>
+    <button type="submit">Register</button>
+  </form>
+{% endblock %}
