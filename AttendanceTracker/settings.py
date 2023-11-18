@@ -51,6 +51,13 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
+# This is to point at my custom authentication
+
+AUTHENTICATION_BACKENDS = [
+    'path.to.your.EmailOrUsernameModelBackend',
+    'django.contrib.auth.backends.ModelBackend',
+]
+
 ROOT_URLCONF = 'AttendanceTracker.urls'
 
 # Corrected templates pointing as base is not working
