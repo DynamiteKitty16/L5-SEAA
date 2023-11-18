@@ -1,13 +1,39 @@
 from django import forms
 from .models import UserProfile, AttendanceRecord, LeaveRequest
 from django.contrib.auth.models import User
+from django.contrib.auth.forms import UserCreationForm
 from .models import UserProfile
-from django import forms
+from django.core.validators import RegexValidator
+
+# Define any regex validators for Django
+name_regex = RegexValidator(r'^[a-zA-Z\s]+$', 'Only letters and spaces are allowed.')
+
+# Putting CustomUserCreationForm ahead as UserProfileForm below is a dependency
+class CustomUserCreationForm(UserCreationForm):
+    email = forms.EmailField(required=True)  # Adding an email field
+
+    class Meta:
+        model = User
+        fields = ("username", "email", "password1", "password2")
+        # password1 and password2 are confirmation of the password not seperate ones
+
+    def save(self, commit=True):
+        user = super(CustomUserCreationForm, self).save(commit=False)
+        user.email = self.cleaned_data["email"]
+        if commit:
+            user.save()
+        return user
 
 class UserProfileForm(forms.ModelForm):
-    first_name = forms.CharField(max_length=30)
-    last_name = forms.CharField(max_length=30)
+    first_name = forms.CharField(max_length=30, validators=[name_regex])
+    last_name = forms.CharField(max_length=30, validators=[name_regex])
     email = forms.EmailField()
+
+    def clean_email(self):
+        email = self.cleaned_data['email']
+        if User.objects.filter(email=email).exists():
+            raise forms.ValidationError("This email address is already in use.")
+        return email
 
     class Meta:
         model = UserProfile

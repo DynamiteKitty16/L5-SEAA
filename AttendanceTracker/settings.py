@@ -107,12 +107,31 @@ AUTH_PASSWORD_VALIDATORS = [
     },
     {
         'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
+        'OPTIONS': {
+            'min_length': 8,
+        }
+    },
+    {
+        'NAME': 'django.contrib.auth.password_validation.MaxLengthValidator',
+        'OPTIONS': {
+            'max_length': 128,
+        }
     },
     {
         'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
     },
     {
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
+    },
+    # From below adding custom validators that are in the tracker app folder
+    {
+        'NAME': 'tracker.custom_validators.UppercaseValidator',
+    },
+      {
+        'NAME': 'tracker.custom_validators.SpecialCharacterValidator',
+    },
+    {
+        'NAME': 'tracker.custom_validators.NumberValidator',
     },
 ]
 
