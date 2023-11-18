@@ -15,7 +15,12 @@ class CustomUserCreationForm(UserCreationForm):
     class Meta:
         model = User
         fields = ("username", "email", "password1", "password2")
-        # password1 and password2 are confirmation of the password not seperate ones
+
+    def __init__(self, *args, **kwargs):
+        super(CustomUserCreationForm, self).__init__(*args, **kwargs)
+        # This help texture should display as descriptive text below the field
+        self.fields['password1'].help_text = 'Your password must be at least 8 characters long, contain at least one number, one uppercase letter, and one special character.'
+        self.fields['password2'].help_text = 'Enter the same password as before, for verification.'
 
     def save(self, commit=True):
         user = super(CustomUserCreationForm, self).save(commit=False)
