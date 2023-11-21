@@ -20,8 +20,8 @@ from tracker import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', views.home, name='home'),
-    path('login/', views.login, name='login'),
+    path('', views.login, name='login'), # Set up as the first page
+    path('home/', views.home, name='home'),
     path('register/', views.register, name='register'),
     path('registration_success/', views.registration_success, name='registration_success'),
 ]
