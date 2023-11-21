@@ -10,11 +10,13 @@ name_regex = RegexValidator(r'^[a-zA-Z\s]+$', 'Only letters and spaces are allow
 
 # Putting CustomUserCreationForm ahead as UserProfileForm below is a dependency
 class CustomUserCreationForm(UserCreationForm):
-    email = forms.EmailField(required=True)  # Adding an email field
+    first_name = forms.CharField(max_length=30, validators=[name_regex])
+    last_name = forms.CharField(max_length=30, validators=[name_regex])
+    email = forms.EmailField(required=True)
 
     class Meta:
         model = User
-        fields = ("username", "email", "password1", "password2")
+        fields = ("first_name", "last_name", "email", "password1", "password2")
 
     def __init__(self, *args, **kwargs):
         super(CustomUserCreationForm, self).__init__(*args, **kwargs)
@@ -24,10 +26,28 @@ class CustomUserCreationForm(UserCreationForm):
 
     def save(self, commit=True):
         user = super(CustomUserCreationForm, self).save(commit=False)
-        user.email = self.cleaned_data["email"]
+        first_name = self.cleaned_data['first_name']
+        last_name = self.cleaned_data['last_name']
+        email = self.cleaned_data['email']
+
+        # Generate username
+        # Using the counter to add an incrimental number if the username is the same as one that already exsists
+        base_username = f"{first_name}.{last_name}".lower()
+        username = base_username
+        counter = 1
+        while User.objects.filter(username=username).exists():
+            username = f"{base_username}{counter}"
+            counter += 1
+
+        user.username = username
+        user.first_name = first_name
+        user.last_name = last_name
+        user.email = email
+
         if commit:
             user.save()
         return user
+
 
 class UserProfileForm(forms.ModelForm):
     first_name = forms.CharField(max_length=30, validators=[name_regex])

@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <h2>Registration Successful!</h2>
+  <p>Welcome to the Availability Tracker! Your account has been successfully created.</p>
+  <p>You will be redirected to the home page shortly.</p>
+
+  <script type="text/javascript">
+    setTimeout(function() {
+        window.location.href = "{% url 'home' %}";
+    }, 15000); // Redirect after 15 seconds
+  </script>
+{% endblock %}
