@@ -18,7 +18,7 @@ def register(request):
     else:
         form = CustomUserCreationForm()
 
-    return render(request, 'register.html', {'form': form})
+    return render(request, 'tracker/register.html', {'form': form})
 
 def registration_success(request):
     return render(request, 'registration_success.html')
@@ -36,4 +36,4 @@ def login_view(request):
             return redirect('home')
         else:
             messages.error(request, "Invalid username or password.")
-    return render(request, 'login.html')
+    return render(request, 'tracker/login.html')
