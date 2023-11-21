@@ -12,12 +12,13 @@
     <header>
         <h1>Availability Tracker</h1>
     </header>
-    <nav>
-        <a href="#">Home</a>
-        <a href="#">My Calendar</a>
-        <a href="#">Leave Requests</a>
-        <!-- Can add further links here -->
-    </nav>
+    {% if user.is_authenticated %}
+        <nav>
+            <a href="{% url 'home' %}">Home</a>
+            <a href="{% url 'my_calendar' %}">My Calendar</a>
+            <a href="{% url 'leave_requests' %}">Leave Requests</a>
+        </nav>
+    {% endif %}
     <main>
         {% block content %}
         <!-- Content specific to each page will go here -->
