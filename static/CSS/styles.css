@@ -91,3 +91,21 @@ button:hover,
     text-align: center;
     padding: 20px;
 }
+
+.form-group {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 15px; /* Space between each form group */
+}
+
+.form-group label,
+.form-group input {
+    margin: 0 5px; /* Spacing between label and input */
+    flex: 1; /* Makes label and input take equal space */
+}
+
+/* Adjust the width of the input fields to align them */
+.form-group input {
+    width: 70%;
+}
