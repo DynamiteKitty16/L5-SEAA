@@ -54,7 +54,7 @@ MIDDLEWARE = [
 # This is to point at my custom authentication
 
 AUTHENTICATION_BACKENDS = [
-    'path.to.your.EmailOrUsernameModelBackend',
+    'AttendanceTracker.authentication.EmailOrUsernameModelBackend',
     'django.contrib.auth.backends.ModelBackend',
 ]
 
