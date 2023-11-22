@@ -84,7 +84,8 @@ button:hover,
     text-align: left; /* Align the text to the left */
 }
 
-.form-container {
+/* Setting ID as having issues with enforcement */
+#login-form-container {
     margin: 0 auto;
     width: 50%;
     text-align: center;
