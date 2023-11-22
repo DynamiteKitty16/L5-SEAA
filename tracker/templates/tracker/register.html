@@ -1,15 +1,17 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<div id="login-form-container" class="form-container">
+<div id="register-form-container" class="form-container">
     <h2>Account Register</h2>
     <form method="post">
       {% csrf_token %}
       {% for field in form %}
-        <div>
+      <div class="form-group">
           {{ field.label_tag }} {{ field }}
           {% if field.help_text %}
+          <div class="help-text">
             <small style="color: rgb(56, 56, 56);">{{ field.help_text }}</small>
+          </div>
           {% endif %}
           {% for error in field.errors %}
             <p style="color: red;">{{ error }}</p>

@@ -108,3 +108,27 @@ button:hover,
     width: 200px;
     margin-left: 10px;
 }
+
+/* Setting ID for register page too to adjust layout of help text, labels and inputs */
+#register-form-container .form-group label {
+    width: 150px;
+    text-align: right;
+    margin-right: 10px;
+    display: inline-block;
+}
+
+#register-form-container .form-group input {
+    width: 200px;
+    margin-left: 10px;
+}
+
+#register-form-container .help-text {
+    margin-top: 5px;
+    display: block;
+}
+
+#register-form-container {
+    text-align: center;
+    margin: 0 auto;
+    width: fit-content;
+}
