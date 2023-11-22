@@ -96,16 +96,15 @@ button:hover,
     display: flex;
     justify-content: center;
     align-items: center;
-    margin-bottom: 15px; /* Space between each form group */
+    margin-bottom: 15px;
 }
 
-.form-group label,
-.form-group input {
-    margin: 0 2px; /* Spacing between label and input */
-    flex: 1; /* Makes label and input take equal space */
+.form-group label {
+    flex: 0 0 auto;
+    margin-right: 5px;
 }
 
-/* Adjust the width of the input fields to align them */
 .form-group input {
-    width: 70%;
+    flex: 1;
+    margin-left: 5px;
 }
