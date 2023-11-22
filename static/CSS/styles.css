@@ -101,7 +101,7 @@ button:hover,
 
 .form-group label,
 .form-group input {
-    margin: 0 5px; /* Spacing between label and input */
+    margin: 0 2px; /* Spacing between label and input */
     flex: 1; /* Makes label and input take equal space */
 }
 
