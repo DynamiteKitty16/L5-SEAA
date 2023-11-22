@@ -86,10 +86,9 @@ button:hover,
 
 /* Setting ID as having issues with enforcement */
 #login-form-container {
-    margin: 0 auto;
-    width: 50%;
     text-align: center;
-    padding: 20px;
+    margin: 0 auto;
+    width: fit-content;
 }
 
 .form-group {
@@ -100,11 +99,12 @@ button:hover,
 }
 
 .form-group label {
-    flex: 0 0 auto;
-    margin-right: 10px; /* Control space between label and input */
+    width: 150px;
+    text-align: right;
+    margin-right: 10px;
 }
 
 .form-group input {
-    flex: 0 0 200px;
-    margin-left: 10px; /* Control space between label and input */
+    width: 200px;
+    margin-left: 10px;
 }
