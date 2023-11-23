@@ -117,12 +117,16 @@ button:hover,
     display: inline-block;
 }
 
-#register-form-container .form-group input {
-    width: 200px;
-    margin-left: 10px;
+#register-form-container .form-group .input-container {
+    display: inline-block;
+    vertical-align: top;
 }
 
-#register-form-container .help-text {
+#register-form-container .form-group .input-container input {
+    width: 200px;
+}
+
+#register-form-container .form-group .input-container .help-text {
     margin-top: 5px;
     display: block;
 }
