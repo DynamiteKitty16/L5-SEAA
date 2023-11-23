@@ -115,6 +115,7 @@ button:hover,
     text-align: right;
     margin-right: 10px;
     display: inline-block;
+    vertical-align: top;
 }
 
 #register-form-container .form-group .input-container {
@@ -129,6 +130,14 @@ button:hover,
 #register-form-container .form-group .input-container .help-text {
     margin-top: 5px;
     display: block;
+    color: #383838;
+}
+
+#register-form-container .form-group {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    margin-bottom: 15px;
 }
 
 #register-form-container {
