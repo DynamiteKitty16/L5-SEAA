@@ -111,7 +111,7 @@ button:hover,
 
 /* Setting ID for register page too to adjust layout of help text, labels and inputs */
 #register-form-container .form-group label {
-    width: 150px;
+    width: 200px;
     text-align: right;
     margin-right: 10px;
     display: inline-block;
@@ -124,7 +124,7 @@ button:hover,
 }
 
 #register-form-container .form-group .input-container input {
-    width: 200px;
+    width: 250px;
 }
 
 #register-form-container .form-group .input-container .help-text {
