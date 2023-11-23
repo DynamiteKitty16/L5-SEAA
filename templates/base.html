@@ -15,7 +15,7 @@
     <header>
         <h1>Availability Tracker</h1>
     </header>
-    {% if not request.path == '/login/' and not request.path == '/register/' %}
+    {% if request.path != '/' and request.path != '/register/' %}
         <nav>
             <a href="{% url 'home' %}">Home</a>
         </nav>
