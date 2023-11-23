@@ -47,7 +47,7 @@ ENV/
 node_modules/
 
 # Static files
-/static/
+#/static/
 
 # Media files
 /media/
