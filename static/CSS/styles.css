@@ -127,7 +127,7 @@ button:hover,
     width: 300px;
 }
 
-#register-form-container .form-group .input-container .help-text {
+#register-form-container .form-group .help-text {
     margin-top: 5px;
     display: block;
     color: #383838;
