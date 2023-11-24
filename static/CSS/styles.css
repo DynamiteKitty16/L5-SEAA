@@ -39,109 +39,24 @@ footer {
     width: 100%;
 }
 
-/* Below is to handle the example admin email address style in the footer */
 footer a {
     color: #add8e6;
-    /* Light blue color */
     text-decoration: none;
-    /* Removes the underline from links */
 }
 
 footer a:hover {
     color: #87ceeb;
-    /* Slightly darker blue for hover effect */
 }
 
-button,
-.btn {
-    background-color: #6f00ff;
-    border: none;
-    color: white;
-    padding: 10px 20px;
-    text-align: center;
-    text-decoration: none;
-    display: inline-block;
-    font-size: 16px;
-    margin: 4px 2px;
-    transition-duration: 0.4s;
-    cursor: pointer;
-}
-
-button:hover,
-.btn:hover {
-    background-color: white;
-    /* White background on hover */
-    color: black;
-    border: 2px solid #6f00ff;
-}
-
-/* Below links to password of register.html and forms.py */
-.password-help {
-    color: #6c757d; /* gray color for the text */
-    font-size: 0.9em; /* Smaller font size */
-    margin-top: 5px; /* Space above the text */
-    margin-bottom: 15px; /* Space below the text */
-    text-align: left; /* Align the text to the left */
-}
-
-/* Setting ID as having issues with enforcement */
-#login-form-container {
-    text-align: center;
-    margin: 0 auto;
-    width: fit-content;
-}
-
-.form-group {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin-bottom: 15px;
-}
-
-.form-group label {
-    width: 150px;
-    text-align: right;
-    margin-right: 10px;
-}
-
-.form-group input {
-    width: 200px;
-    margin-left: 10px;
-}
-
-/* Setting ID for register page too to adjust layout of help text, labels and inputs */
-#register-form-container .form-group label {
-    width: 250px;
-    text-align: right;
-    margin-right: 10px;
-    display: inline-block;
-    vertical-align: top;
-}
-
-#register-form-container .form-group .input-container {
-    display: inline-block;
-    vertical-align: top;
-}
-
-#register-form-container .form-group .input-container input {
-    width: 300px;
-}
-
-#register-form-container .form-group .help-text {
-    margin-top: 5px;
-    display: block;
-    color: #383838;
-}
-
-#register-form-container .form-group {
-    display: flex;
-    justify-content: center;
-    align-items: flex-start;
-    margin-bottom: 15px;
-}
-
+/* New styles for register page as content is too long and adjusting to look like login page */
 #register-form-container {
-    text-align: center;
-    margin: 0 auto;
-    width: fit-content;
+    max-width: 400px;
+    margin: 20px auto;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #f9f9f9;
 }
+
+/* Removed the following styles as they shouldn't be required in bootstrap impo */
+/* button, .btn, .form-group, #login-form-container, #register-form-container .form-group */
