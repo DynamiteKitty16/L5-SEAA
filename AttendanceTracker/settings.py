@@ -121,12 +121,6 @@ AUTH_PASSWORD_VALIDATORS = [
         }
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.MaxLengthValidator',
-        'OPTIONS': {
-            'max_length': 128,
-        }
-    },
-    {
         'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
     },
     {
@@ -141,8 +135,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
     {
         'NAME': 'tracker.custom_validators.NumberValidator',
-    },
-    {   'NAME': 'tracker.custom_validators.MaxLengthValidator',
     },
 ]
 
