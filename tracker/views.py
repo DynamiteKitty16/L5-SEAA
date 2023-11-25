@@ -13,8 +13,12 @@ def register(request):
         if form.is_valid():
             user = form.save()
             login(request, user)
-            # Redirect to a success page.
-            return redirect('tracker/home.html')
+            # Redirect to the registration success page
+            return redirect('tracker/registration_success')
+        else:
+            # If the form is not valid, render the same page with the form
+            # This will include the form errors
+            return render(request, 'tracker/register.html', {'form': form})
     else:
         form = CustomUserCreationForm()
 
