@@ -7,8 +7,15 @@
         <div class="col-md-6">
             <div id="register-form-container" class="form-container">
                 <h2>Account Register</h2>
-                <form method="post" class="needs-validation" novalidate>
+                <form id="register-form" method="post" class="needs-validation" novalidate>
                     {% csrf_token %}
+                    {% if form.non_field_errors %}
+                        <div class="alert alert-danger">
+                            {% for error in form.non_field_errors %}
+                                {{ error }}
+                            {% endfor %}
+                        </div>
+                    {% endif %}
                     {% for field in form %}
                         <div class="mb-3">
                             <label for="{{ field.id_for_label }}" class="form-label text-start">{{ field.label }}</label>
@@ -16,11 +23,16 @@
                             {% if field.help_text %}
                                 <small class="form-text text-muted">{{ field.help_text }}</small>
                             {% endif %}
-                            {% for error in field.errors %}
-                                <div class="invalid-feedback">
-                                    {{ error }}
+                            {% if field.errors %}
+                                <div class="alert alert-danger">
+                                    {% for error in field.errors %}
+                                        {{ error }}
+                                    {% endfor %}
                                 </div>
-                            {% endfor %}
+                            {% endif %}
+                            {% if field.name == 'password1' %}
+                                <div id="passwordError" class="invalid-feedback"></div>
+                            {% endif %}
                         </div>
                     {% endfor %}
                     <button type="submit" class="btn btn-primary">Register</button>
@@ -30,3 +42,69 @@
     </div>
 </div>
 {% endblock %}
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const form = document.querySelector('#register-form');
+        const passwordInput = document.querySelector('#id_password1');
+
+        passwordInput.addEventListener('input', function() {
+            const password = passwordInput.value;
+            let errorMessage = '';
+
+            if (password.length < 8) {
+                errorMessage = 'Password must be at least 8 characters long.';
+            } else if (!/[A-Z]/.test(password)) {
+                errorMessage = 'Password must contain at least one uppercase letter.';
+            } else if (!/[0-9]/.test(password)) {
+                errorMessage = 'Password must contain at least one number.';
+            } else if (!/[!@#$%^&*]/.test(password)) {
+                errorMessage = 'Password must contain at least one special character.';
+            }
+
+            if (errorMessage) {
+                document.querySelector('#passwordError').innerText = errorMessage;
+            } else {
+                // Clear any error message
+                document.querySelector('#passwordError').innerText = '';
+            }
+        });
+        
+        function validatePassword() {
+            const password = passwordInput.value;
+            let errorMessage = '';
+
+            // Check for minimum length
+            if (password.length < 8) {
+                errorMessage = 'Password must be at least 8 characters long.';
+            } else if (!/[A-Z]/.test(password)) {
+                errorMessage = 'Password must contain at least one uppercase letter.';
+            } else if (!/[0-9]/.test(password)) {
+                errorMessage = 'Password must contain at least one number.';
+            } else if (!/[!@#$%^&*]/.test(password)) {
+                errorMessage = 'Password must contain at least one special character.';
+            }
+            
+            // Update UI
+            const feedbackElement = passwordInput.nextElementSibling;
+            if (errorMessage) {
+                feedbackElement.textContent = errorMessage;
+                feedbackElement.classList.add('visible');
+                passwordInput.classList.add('is-invalid');
+            } else {
+                feedbackElement.classList.remove('visible');
+                passwordInput.classList.remove('is-invalid');
+            }
+        }
+
+        passwordInput.addEventListener('keyup', validatePassword);
+        passwordInput.addEventListener('blur', validatePassword);
+
+        form.addEventListener('submit', function (event) {
+            validatePassword();
+            if (form.querySelectorAll('.is-invalid').length > 0) {
+                event.preventDefault(); // Prevent form submission if there are errors
+            }
+        });
+    });
+</script>

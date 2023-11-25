@@ -58,5 +58,14 @@ footer a:hover {
     background-color: #f9f9f9;
 }
 
+/* Visibility for error message for registration */
+.invalid-feedback {
+    display: none; /* Hide by default */
+}
+.is-invalid + .invalid-feedback {
+    display: block; /* Show when adjacent to an invalid input */
+}
+
+
 /* Removed the following styles as they shouldn't be required in bootstrap impo */
 /* button, .btn, .form-group, #login-form-container, #register-form-container .form-group */
