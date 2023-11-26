@@ -84,3 +84,4 @@ class LeaveRequestForm(forms.ModelForm):
     class Meta:
         model = LeaveRequest
         fields = '__all__'
+        
