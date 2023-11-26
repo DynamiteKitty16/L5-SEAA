@@ -27,7 +27,7 @@ def register(request):
     return render(request, 'tracker/register.html', {'form': form})
 
 def registration_success(request):
-    return render(request, 'registration_success.html')
+    return render(request, 'tracker/registration_success.html')
 
 # Set this up as a custom one instead of using Django's inbuilt form function for this as
 # Want users to land on the login page but have the option to register.
