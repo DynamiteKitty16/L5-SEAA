@@ -16,7 +16,7 @@ def register(request):
             user.backend = settings.AUTHENTICATION_BACKENDS[0] # Using the Attendance Tracker authentication
             login(request, user)
             # Redirect to the registration success page
-            return redirect('tracker/registration_success')
+            return redirect('tracker/registration_success/')
         else:
             # If the form is not valid, render the same page with the form
             # This will include the form errors
