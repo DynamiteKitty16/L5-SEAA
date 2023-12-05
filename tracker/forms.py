@@ -12,7 +12,7 @@ name_regex = RegexValidator(r'^[a-zA-Z\s]+$', 'Only letters and spaces are allow
 class CustomUserCreationForm(UserCreationForm):
     first_name = forms.CharField(max_length=30, validators=[name_regex])
     last_name = forms.CharField(max_length=30, validators=[name_regex])
-    email = forms.EmailField(required=True)
+    email = forms.EmailField(required=True, unique=True)
 
     class Meta:
         model = User
