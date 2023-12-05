@@ -3,14 +3,14 @@ from django.contrib.auth import authenticate, login
 from django.contrib import messages
 from django.contrib.auth.forms import AuthenticationForm
 from django.conf import settings
-from .forms import UserProfileForm
+from .forms import CustomUserCreationForm
 
 def home(request):
     return render(request, 'tracker/home.html')
 
 def register(request):
     if request.method == 'POST':
-        form = UserProfileForm(request.POST)
+        form = CustomUserCreationForm(request.POST)
         if form.is_valid():
             user = form.save()
             user.backend = settings.AUTHENTICATION_BACKENDS[0] # Using the Attendance Tracker authentication
@@ -22,7 +22,7 @@ def register(request):
             # This will include the form errors
             return render(request, 'tracker/register.html', {'form': form})
     else:
-        form = UserProfileForm()
+        form = CustomUserCreationForm()
 
     return render(request, 'tracker/register.html', {'form': form})
 

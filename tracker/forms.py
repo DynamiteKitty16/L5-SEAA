@@ -62,7 +62,7 @@ class UserProfileForm(forms.ModelForm):
 
     class Meta:
         model = UserProfile
-        fields = ['user', 'manager', 'first_name', 'last_name', 'email']
+        fields = ['first_name', 'last_name', 'email']
 
     def save(self, commit=True):
         user_profile = super(UserProfileForm, self).save(commit=False)
