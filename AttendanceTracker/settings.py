@@ -53,6 +53,8 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
+LOGIN_URL = 'login'
+
 # This is to point at my custom authentication
 
 AUTHENTICATION_BACKENDS = [

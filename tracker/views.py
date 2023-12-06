@@ -4,7 +4,9 @@ from django.contrib import messages
 from django.contrib.auth.forms import AuthenticationForm
 from django.conf import settings
 from .forms import CustomUserCreationForm
+from django.contrib.auth.decorators import login_required
 
+@login_required
 def home(request):
     return render(request, 'tracker/home.html')
 
