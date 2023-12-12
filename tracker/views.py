@@ -1,10 +1,12 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
 from django.contrib import messages
 from django.contrib.auth.forms import AuthenticationForm
 from django.conf import settings
 from .forms import CustomUserCreationForm
-from django.contrib.auth.decorators import login_required
+from django.shortcuts import render, redirect
 
 @login_required
 def home(request):
@@ -44,4 +46,21 @@ def login_view(request):
             return redirect('home')
         else:
             messages.error(request, "Invalid username or password.")
+    return render(request, 'tracker/login.html')
+
+def login_view(request):
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+        user = authenticate(request, username=username, password=password)
+
+        if user is not None:
+            login(request, user)
+            return redirect('home')
+        else:
+            if User.objects.filter(username=username).exists() or User.objects.filter(email=username).exists():
+                messages.error(request, "Incorrect password.")
+            else:
+                messages.error(request, "Account not found with the provided username/email.")
+
     return render(request, 'tracker/login.html')
