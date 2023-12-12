@@ -7,6 +7,13 @@
             <div class="card">
                 <div class="card-body">
                     <h2 class="card-title text-center">Login</h2>
+                    {% if messages %}
+                    <div class="alert alert-warning" role="alert">
+                        {% for message in messages %}
+                        <p>{{ message }}</p>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
                     <form method="post" class="mt-4">
                         {% csrf_token %}
                         <div class="mb-3">
