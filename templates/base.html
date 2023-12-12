@@ -33,3 +33,17 @@
     <script src="{% static 'bootstrap/bootstrap-5.1.3-dist/js/bootstrap.bundle.min.js' %}"></script>
 </body>
 </html>
+
+<script>
+    function checkSessionTimeout() {
+        fetch('/tracker/views/session_timeout_warning/')
+            .then(response => response.json())
+            .then(data => {
+                if (data.time_left <= 300) {  // 5 minutes warning
+                    alert("You have been inactive for 25 minutes. After 30 minutes, you will be logged out.");
+                }
+            });
+    }
+
+    setInterval(checkSessionTimeout, 60000);  // Check every minute
+</script>

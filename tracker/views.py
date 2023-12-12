@@ -7,6 +7,8 @@ from django.contrib.auth.forms import AuthenticationForm
 from django.conf import settings
 from .forms import CustomUserCreationForm
 from django.shortcuts import render, redirect
+from django.http import JsonResponse
+from django.utils import timezone
 
 @login_required
 def home(request):
@@ -52,3 +54,11 @@ def login_view(request):
                 messages.error(request, "Account not found with the provided username/email.")
 
     return render(request, 'tracker/login.html')
+
+# Handle session time out warnings
+
+def session_timeout_warning(request):
+    last_activity = request.session.get('last_activity', timezone.now())
+    time_elapsed = (timezone.now() - last_activity).total_seconds()
+    time_left = max(settings.SESSION_COOKIE_AGE - time_elapsed, 0)
+    return JsonResponse({'time_left': time_left})

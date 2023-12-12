@@ -51,7 +51,17 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    # Custom middleware below
+    'AttendanceTracker.middleware.InactivityTimeoutMiddleware',
 ]
+
+# Adding in session to handle timeout and sign in
+
+# Set time out to 30 mins
+SESSION_COOKIE_AGE = 1800
+
+# Update session expiration with every request
+SESSION_SAVE_EVERY_REQUEST = True
 
 LOGIN_URL = 'login'
 
