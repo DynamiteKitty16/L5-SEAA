@@ -35,18 +35,6 @@ def registration_success(request):
 
 # Set this up as a custom one instead of using Django's inbuilt form function for this as
 # Want users to land on the login page but have the option to register.
-def login_view(request):
-    if request.method == 'POST':
-        username = request.POST.get('username')
-        password = request.POST.get('password')
-        user = authenticate(request, username=username, password=password)
-        if user is not None:
-            login(request, user)
-            # Redirect to home page.
-            return redirect('home')
-        else:
-            messages.error(request, "Invalid username or password.")
-    return render(request, 'tracker/login.html')
 
 def login_view(request):
     if request.method == 'POST':
