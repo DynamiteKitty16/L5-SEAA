@@ -7,12 +7,16 @@ class InactivityTimeoutMiddleware:
         self.get_response = get_response
 
     def __call__(self, request):
+
+        # Define current time outside of the branch to avoid UnboundLocalErrror
+        # # added in a UNIX conversion due to JSON string issue    
+        current_time = timezone.now().timestamp()
+
         # Check if the user is authenticated
         if request.user.is_authenticated:
             # Get the last activity time from the session
             last_activity = request.session.get('last_activity')
-            current_time = timezone.now().timestamp() # added in a UNIX conversion due to JSON string issue
-
+            
             # If last_activity is not set, or the user has been inactive for SESSION_COOKIE_AGE seconds
             if not last_activity or (current_time - last_activity) > settings.SESSION_COOKIE_AGE:
                 logout(request)  # Log out the user
