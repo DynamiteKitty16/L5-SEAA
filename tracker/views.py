@@ -62,3 +62,10 @@ def session_timeout_warning(request):
     time_elapsed = (timezone.now() - last_activity).total_seconds()
     time_left = max(settings.SESSION_COOKIE_AGE - time_elapsed, 0)
     return JsonResponse({'time_left': time_left})
+
+# Add a login button on the timeout response 
+
+@login_required
+def extend_session(request):
+    request.session.modified = True
+    return JsonResponse({'status': 'success'})

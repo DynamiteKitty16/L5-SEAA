@@ -21,6 +21,7 @@ from tracker import views
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('session_timeout_warning/', views.session_timeout_warning, name='session_timeout_warning'),
+    path('extend_session/', views.extend_session, name='extend_session'),
     path('', views.login_view, name='login'), # Set up as the first page
     path('home/', views.home, name='home'),
     path('register/', views.register, name='register'),
