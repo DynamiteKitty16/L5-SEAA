@@ -54,7 +54,7 @@
     <!-- Session Timeout Check -->
     <script>
         function checkSessionTimeout() {
-            fetch('/tracker/views/session_timeout_warning/')
+            fetch('/session_timeout_warning/')
             .then(response => response.json())
             .then(data => {
                 // if(data.time_left <= 300) { // this is a 5 minute warning
@@ -70,17 +70,3 @@
     </script>
 </body>
 </html>
-
-<script>
-    function checkSessionTimeout() {
-        fetch('/tracker/views/session_timeout_warning/')
-            .then(response => response.json())
-            .then(data => {
-                if (data.time_left <= 300) {  // 5 minutes warning
-                    alert("You have been inactive for 25 minutes. After 30 minutes, you will be logged out.");
-                }
-            });
-    }
-
-    setInterval(checkSessionTimeout, 60000);  // Check every minute
-</script>
