@@ -21,9 +21,12 @@ class InactivityTimeoutMiddleware:
             if not last_activity or (current_time - last_activity) > settings.SESSION_COOKIE_AGE:
                 logout(request)  # Log out the user
 
+        # Check if the request is AJAX
+        is_ajax = request.headers.get('X-Requested-With') == 'XMLHttpRequest'
+
         # Update last activity time in the session only for non-AJAX requests and exclude
         # the session timeout warning URL
-        if not request.is_ajax() and request.path != '/session_timeout_warning/':
+        if not is_ajax and request.path != '/session_timeout_warning/':
             request.session['last_activity'] = current_time
 
         response = self.get_response(request)
