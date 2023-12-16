@@ -69,6 +69,23 @@
 
         // setInterval(checkSessionTimeout, 60000); // check every minute
         setInterval(checkSessionTimeout, 10000); // testing check every 10 seconds
+
+        // Event listener for the "Stay Logged In" button
+        document.addEventListener('DOMContentLoaded', function() {
+        var stayLoggedInBtn = document.getElementById('stayLoggedInBtn');
+        stayLoggedInBtn.addEventListener('click', function() {
+            fetch('/extend_session/', { method: 'POST' })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    // Hide the modal
+                    var timeoutModal = bootstrap.Modal.getInstance(document.getElementById('sessionTimeoutModal'));
+                    timeoutModal.hide();
+                }
+            })
+            .catch(error => console.error('Error:', error));
+        });
+    });
     </script>
 </body>
 </html>
