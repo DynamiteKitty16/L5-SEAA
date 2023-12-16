@@ -53,6 +53,18 @@
 
     <!-- Session Timeout Check -->
     <script>
+        // Function to get the CSRF token from cookies
+        function getCSRFToken() {
+            let cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                let cookie = cookies[i].trim();
+                if (cookie.startsWith('csrftoken=')) {
+                    return cookie.substring('csrftoken='.length, cookie.length);
+                }
+            }
+            return '';
+        }
+
         function checkSessionTimeout() {
             fetch('/session_timeout_warning/')
             .then(response => response.json())
@@ -72,19 +84,24 @@
 
         // Event listener for the "Stay Logged In" button
         document.addEventListener('DOMContentLoaded', function() {
-        var stayLoggedInBtn = document.getElementById('stayLoggedInBtn');
-        stayLoggedInBtn.addEventListener('click', function() {
-            fetch('/extend_session/', { method: 'POST' })
-            .then(response => response.json())
-            .then(data => {
-                if (data.status === 'success') {
-                    // Hide the modal
-                    var timeoutModal = bootstrap.Modal.getInstance(document.getElementById('sessionTimeoutModal'));
-                    timeoutModal.hide();
-                }
-            })
-            .catch(error => console.error('Error:', error));
-        });
+            var stayLoggedInBtn = document.getElementById('stayLoggedInBtn');
+            stayLoggedInBtn.addEventListener('click', function() {
+                fetch('/extend_session/', {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': getCSRFToken()
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                 if (data.status === 'success') {
+                        // Hide the modal
+                        var timeoutModal = bootstrap.Modal.getInstance(document.getElementById('sessionTimeoutModal'));
+                        timeoutModal.hide();
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+            });
     });
     </script>
 </body>
