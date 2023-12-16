@@ -59,7 +59,7 @@
             .then(data => {
                 // if(data.time_left <= 300) { // this is a 5 minute warning
                 if(data.time_left <= 30) { // testing this is a 30 second warning
-                    var timeoutModal = new bootstrap.Modal(document.getEelementById('sessionTimeoutModal'));
+                    var timeoutModal = new bootstrap.Modal(document.getElementById('sessionTimeoutModal'));
                     timeoutModal.show();
                 }
             });
