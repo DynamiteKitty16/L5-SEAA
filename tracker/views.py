@@ -58,8 +58,9 @@ def login_view(request):
 # Handle session time out warnings
 
 def session_timeout_warning(request):
-    last_activity = request.session.get('last_activity', timezone.now())
-    time_elapsed = (timezone.now() - last_activity).total_seconds()
+    last_activity = request.session.get('last_activity', timezone.now().timestamp())
+    current_time = timezone.now().timestamp()
+    time_elapsed = current_time - last_activity
     time_left = max(settings.SESSION_COOKIE_AGE - time_elapsed, 0)
     return JsonResponse({'time_left': time_left})
 
