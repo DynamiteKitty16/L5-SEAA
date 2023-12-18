@@ -18,7 +18,7 @@
                 <a class="navbar-brand" href="{% url 'home' %}">Availability Tracker</a>
                 {% if request.user.is_authenticated %}
                     <div class="ms-auto">
-                        <a href="{% url 'logout' %}" class="btn btn-danger">Logout</a>
+                        <a href="{% url 'logout' %}" class="btn custom-logout-btn">Logout</a>
                     </div>
                 {% endif %}
             </div>

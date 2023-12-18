@@ -88,3 +88,14 @@ a {
 a:hover, a:focus, a:active {
     color: #005f6b; /* Slightly darker blue for hover state */
 }
+
+/* Override style for Logout Button */
+
+.custom-logout-btn {
+    background-color: #00728f; /* Match the blue of the header */
+    color: white;
+}
+
+.custom-logout-btn:hover {
+    background-color: #005f6a;
+}
