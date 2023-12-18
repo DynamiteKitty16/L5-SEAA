@@ -6,10 +6,19 @@ body {
     background-color: #f4f4f4;
 }
 
+.navbar {
+    background-color: #00728f;
+}
+
 .navbar-brand h1 {
     font-family: 'Open Sans', sans-serif;
     font-weight: 800;
+    color: white;
     margin-bottom: 0;
+}
+
+.navbar a {
+    color: white;
 }
 
 header {
