@@ -66,6 +66,25 @@ footer a:hover {
     display: block; /* Show when adjacent to an invalid input */
 }
 
+/* Override Boostrap Button Styles to match DWP style */
 
-/* Removed the following styles as they shouldn't be required in bootstrap impo */
-/* button, .btn, .form-group, #login-form-container, #register-form-container .form-group */
+.btn-primary {
+    background-color: #00728f; /* Match the blue of the header */
+    border-color: #00728f;
+}
+
+.btn-primary:hover,
+.btn-primary:focus,
+.btn-primary:active {
+    background-color: #005f6b; /* Slightly darker blue for hover state */
+    border-color: #005f6b;
+}
+
+/* Override Link Styles */
+a {
+    color: #00728f; /* Match the blue of the header */
+}
+
+a:hover, a:focus, a:active {
+    color: #005f6b; /* Slightly darker blue for hover state */
+}
