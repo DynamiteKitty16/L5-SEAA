@@ -70,3 +70,8 @@ def session_timeout_warning(request):
 def extend_session(request):
     request.session.modified = True
     return JsonResponse({'status': 'success'})
+
+@login_required
+def employee_dashboard(request):
+    # Create a view for the employee dashboard for calender and analytics
+    return render(request, 'tracker/employee_dashboard.html')

@@ -1,4 +1,3 @@
-add a log out button
 create custom error pages?
 how to prevent sql injection
-make it so that someone can't just use website.com/home for example and bypass logging injection
+review security

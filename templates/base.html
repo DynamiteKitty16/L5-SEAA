@@ -16,29 +16,43 @@
         <link rel="stylesheet" type="text/css" href="{% static 'CSS/styles.css' %}">
     </head>
 <body>
-    <header>
-        <nav class="navbar navbar-expand-lg">
-            <div class="container-fluid">
-                <a class="navbar-brand" href="{% url 'home' %}">
-                    <h1>Availability Tracker</h1>
-                </a>
-                {% if request.user.is_authenticated %}
-                    <div class="ms-auto">
-                        <a href="{% url 'logout' %}" class="btn custom-logout-btn">Logout</a>
-                    </div>
-                {% endif %}
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Left Navigation Bar -->
+            <div class="col-md-3">
+                <div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical">
+                    <a class="nav-link" id="v-pills-profile-tab" data-bs-toggle="pill" href="#v-pills-profile" role="tab" aria-controls="v-pills-profile" aria-selected="false">{{ request.user.first_name }}</a>
+                    <a class="nav-link" id="v-pills-calendar-tab" data-bs-toggle="pill" href="#v-pills-calendar" role="tab" aria-controls="v-pills-calendar" aria-selected="false">Calendar</a>
+                    <a class="nav-link" id="v-pills-requests-tab" data-bs-toggle="pill" href="#v-pills-requests" role="tab" aria-controls="v-pills-requests" aria-selected="false">Requests</a>
+                </div>
+                <div class="mt-auto"> <!-- Pushes the content to the bottom -->
+                    <p class="text-center mb-3">Contact for help: <a href="mailto:admin@example.com">admin@example.com</a></p>
+                </div>
             </div>
-        </nav>
-    </header>    
-    <main class="mb-5">
-        {% block content %}
-        <!-- not sure if the div form-container needs to go here -->
-        {% endblock %}
-    </main>
-    <footer>
-        <p>Contact for help: <a href="mailto:admin@example.com">admin@example.com</a></p>
-        <!-- Created footer a in styles.css to handle style of this email address -->
-    </footer>
+            <!-- Main Content -->
+            <div class="col-md-9">
+                <header>
+                    <nav class="navbar navbar-expand-lg">
+                        <div class="container-fluid">
+                            <a class="navbar-brand" href="{% url 'home' %}">
+                                <h1>Availability Tracker</h1>
+                            </a>
+                            {% if request.user.is_authenticated %}
+                                <div class="ms-auto">
+                                    <a href="{% url 'logout' %}" class="btn custom-logout-btn">Logout</a>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </nav>
+                </header>    
+                <main class="mb-5">
+                    {% block content %}
+                    <!-- not sure if the div form-container needs to go here -->
+                    {% endblock %}
+                </main>
+            </div>
+        </div>
+    </div>
 
     <!-- Bootstrap Modal for Session Timeout Warning -->
     <div class="modal fade" id="sessionTimeoutModal" tabindex="-1" aria-label="sessionTimeoutModalLabel" aria-hidden="true">
