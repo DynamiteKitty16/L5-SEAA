@@ -2,3 +2,9 @@ create custom error pages?
 how to prevent sql injection
 review security
 fix logout button to redirect to login page not admin page
+
+need to add in some sort of help page with the email etc maybe set up some guides in there or faqs
+<footer>
+        <p>Contact for help: <a href="mailto:admin@example.com">admin@example.com</a></p>
+        <!-- Created footer a in styles.css to handle style of this email address -->
+    </footer>
