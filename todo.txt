@@ -8,3 +8,7 @@ need to add in some sort of help page with the email etc maybe set up some guide
         <p>Contact for help: <a href="mailto:admin@example.com">admin@example.com</a></p>
         <!-- Created footer a in styles.css to handle style of this email address -->
     </footer>
+
+
+check validation of names on registration
+put in a validation for the email address

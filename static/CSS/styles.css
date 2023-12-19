@@ -8,6 +8,8 @@ body {
 
 .navbar {
     background-color: #00728f;
+    padding-top: 0.25rem;
+    padding-bottom: 0.25rem;
 }
 
 .navbar-brand h1 {
