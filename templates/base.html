@@ -16,64 +16,29 @@
         <link rel="stylesheet" type="text/css" href="{% static 'CSS/styles.css' %}">
     </head>
 <body>
-    <!-- Collapsible Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-        <div class="container-fluid">
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#sidebarMenu" aria-controls="sidebarMenu" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <a class="navbar-brand" href="{% url 'home' %}">Availability Tracker</a>
-
-            <div class="collapse navbar-collapse" id="sidebarMenu">
-                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">{{ request.user.first_name }}</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">Calendar</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">Requests</a>
-                    </li>
-                </ul>
-                <p class="mb-0 text-white">
-                    Contact for help:<br>
-                    <a href="mailto:admin@example.com" class="text-reset">admin@example.com</a>
-                </p>
+    <header>
+        <nav class="navbar navbar-expand-lg">
+            <div class="container-fluid">
+                <a class="navbar-brand" href="{% url 'home' %}">
+                    <h1>Availability Tracker</h1>
+                </a>
+                {% if request.user.is_authenticated %}
+                    <div class="ms-auto">
+                        <a href="{% url 'logout' %}" class="btn custom-logout-btn">Logout</a>
+                    </div>
+                {% endif %}
             </div>
-
-            {% if request.user.is_authenticated %}
-                <a href="{% url 'logout' %}" class="btn btn-outline-light">Logout</a>
-            {% endif %}
-        </div>
-    </nav>
-    
-    <div class="container-fluid">
-        <div class="row">
-            <!-- Main Content -->
-            <div class="col-md-9 offset-md-3">
-                <header>
-                    <nav class="navbar navbar-expand-lg">
-                        <div class="container-fluid">
-                            <a class="navbar-brand" href="{% url 'home' %}">
-                                <h1>Availability Tracker</h1>
-                            </a>
-                            {% if request.user.is_authenticated %}
-                                <div class="ms-auto">
-                                    <a href="{% url 'logout' %}" class="btn custom-logout-btn">Logout</a>
-                                </div>
-                            {% endif %}
-                        </div>
-                    </nav>
-                </header>    
-                <main class="mb-5">
-                    {% block content %}
-                    <!-- not sure if the div form-container needs to go here -->
-                    {% endblock %}
-                </main>
-            </div>
-        </div>
-    </div>
+        </nav>
+    </header>    
+    <main class="mb-5">
+        {% block content %}
+        <!-- not sure if the div form-container needs to go here -->
+        {% endblock %}
+    </main>
+    <footer>
+        <p>Contact for help: <a href="mailto:admin@example.com">admin@example.com</a></p>
+        <!-- Created footer a in styles.css to handle style of this email address -->
+    </footer>
 
     <!-- Bootstrap Modal for Session Timeout Warning -->
     <div class="modal fade" id="sessionTimeoutModal" tabindex="-1" aria-label="sessionTimeoutModalLabel" aria-hidden="true">
@@ -147,17 +112,7 @@
                 })
                 .catch(error => console.error('Error:', error));
             });
-        });
-        
-        // Script to handle navbar collapse
-        document.addEventListener('DOMContentLoaded', function() {
-            var navbarToggler = document.querySelector('.navbar-toggler');
-            var sidebarMenu = document.getElementById('sidebarMenu');
-
-            navbarToggler.addEventListener('click', function() {
-                sidebarMenu.classList.toggle('show');
-            });
-        });    
+    });
     </script>
 </body>
 </html>

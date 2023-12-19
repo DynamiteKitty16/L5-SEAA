@@ -115,18 +115,3 @@ a:hover, a:focus, a:active {
 .custom-logout-btn:hover {
     background-color: #005f6a;
 }
-
-/* Override styles for left collapse nav bar */
-@media (min-width: 768px) {
-    .navbar-collapse.collapsing,
-    .navbar-collapse.show {
-        margin-left: 200px;
-    }
-}
-
-/* Sticky footer inside of navbar */
-.navbar-collapse .mt-auto {
-    position: absolute;
-    bottom: 0;
-    width: 100%
-}
