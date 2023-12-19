@@ -19,6 +19,11 @@ body {
     margin-bottom: 0;
 }
 
+/* Text in the black navbar is pure white */
+.navbar-dark .navbar-nav .nav-link {
+    color: #fff;
+}
+
 .navbar a {
     color: white;
 }
