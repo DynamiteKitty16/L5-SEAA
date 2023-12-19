@@ -1,3 +1,4 @@
 create custom error pages?
 how to prevent sql injection
 review security
+fix logout button to redirect to login page not admin page
