@@ -84,6 +84,9 @@ def calendar(request):
     # Set the start date for the calendar as the later of the two dates
     start_date = max(registration_date, one_year_ago)
 
+    # Format start_date as a string in format 'YYYY-MM-DD'
+    formatted_start_date = start_date.strftime('%Y-%m-%d')
+
     # Get attendance records for the user
     # For new users this will return empty queryset
     attendance_records = AttendanceRecord.objects.filter(user=request.user, date__range=[start_date, current_date])
@@ -92,7 +95,7 @@ def calendar(request):
     events = [{'title': record.type, 'start': record.date} for record in attendance_records]
 
     context = {
-        'start_date': start_date,
+        'start_date': formatted_start_date,
         'events': events,
     }
     return render(request, 'tracker/calendar.html', context)
