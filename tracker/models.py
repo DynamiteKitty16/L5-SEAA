@@ -21,7 +21,10 @@ class AttendanceRecord(models.Model):
             ('NWD', 'Non Working Day'),
             ('BT', 'Business Travel'),
             ('T', 'Training'),
-        )
+        ),
+        # Ideally want the form to be blank for the user to fill out so set the type, will review for analytics / reporting
+        null=True,  # Allows the field to be null
+        blank=True,  # Allows the Django admin and own forms to leave this field blank
     )
 
 class LeaveRequest(models.Model):
