@@ -68,11 +68,11 @@
         document.addEventListener('DOMContentLoaded', function() {
             var calendarEl = document.getElementById('calendar');
             var calendar = new FullCalendar.Calendar(calendarEl, {
-                initialView: 'timeGridWeek', // Default to current week view
+                initialView: 'dayGridWeek', // Default to current week view
                 headerToolbar: {
                     left: 'prev,next today',
                     center: 'title',
-                    right: 'timeGridWeek,dayGridMonth' // Buttons to switch views
+                    right: 'dayGridWeek,timeGridWeek,dayGridMonth' // Buttons to switch views
                 },
                 validRange: {
                     start: '{{ start_date }}', // Start date from context
