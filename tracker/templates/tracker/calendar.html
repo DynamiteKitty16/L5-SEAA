@@ -74,6 +74,14 @@
                     center: 'title',
                     right: 'dayGridWeek,timeGridWeek,dayGridMonth' // Buttons to switch views
                 },
+                    views: {
+                    timeGridWeek: { // Week view with hours
+                        buttonText: 'Week (Hours)'
+                    },
+                    dayGridWeek: { // Week view as whole days
+                        buttonText: 'Week (Days)'
+                    }
+                },
                 validRange: {
                     start: '{{ start_date }}', // Start date from context
                 },
