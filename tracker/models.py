@@ -10,7 +10,7 @@ class UserProfile(models.Model):
 class AttendanceRecord(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     date = models.DateField()
-    status = models.CharField(
+    type = models.CharField(
         max_length=3,
         choices=(
             ('WFH', 'Working From Home'),

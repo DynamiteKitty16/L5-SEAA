@@ -1,23 +1,58 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- FullCalendar CSS -->
-    <link href='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/main.min.css' rel='stylesheet' />
-</head>
-<body>
     <div class="container">
         <h2>Employee Dashboard</h2>
         <!-- Calendar Container -->
         <div id='calendar'></div>
     </div>
 
+    <!-- Modal for Edit Restriction -->
+    <div class="modal fade" id="editRestrictionModal" tabindex="-1" aria-labelledby="editRestrictionModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editRestrictionModalLabel">Edit Restriction</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    You can only edit the current week, the past week, and two weeks into the future. If anything needs correcting please submit a request.
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Event Creation Modal -->
+    <div class="modal fade" id="eventCreationModal" tabindex="-1" aria-labelledby="eventCreationModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="eventCreationModalLabel">Select Attendance Type</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="eventForm">
+                        <div class="mb-3">
+                            <label for="attendanceType" class="form-label">Attendance Type</label>
+                            <select class="form-select" id="attendanceType">
+                                <option value="WFH">Working From Home</option>
+                                <option value="IO">In Office</option>
+                                <option value="BT">Business Travel</option>
+                                <option value="T">Training</option>
+                            </select>
+                        </div>
+                        <input type="hidden" id="selectedDate">
+                        <button type="submit" class="btn btn-primary">Save</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- FullCalendar JS -->
-    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             var calendarEl = document.getElementById('calendar');
@@ -31,11 +66,53 @@
                 validRange: {
                     start: '{{ start_date }}', // Start date from context
                 },
+
+                dateClick: function(info) {
+                    if (info.date >= '{{ start_editable_date }}' && info.date <= '{{ end_editable_date }}') {
+                        // Open the modal
+                        var eventCreationModal = new bootstrap.Modal(document.getElementById('eventCreationModal'));
+                        document.getElementById('selectedDate').value = info.dateStr; // Set the clicked date
+                        eventCreationModal.show();
+                    } else {
+                        // Show edit restriction modal
+                        var restrictionModal = new bootstrap.Modal(document.getElementById('editRestrictionModal'));
+                        restrictionModal.show();
+                    }
+                },
             });
 
             calendar.render();
-        });
+
+            // Handle form submission
+            document.getElementById('eventForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                var attendanceType = document.getElementById('attendanceType').value;
+                var selectedDate = document.getElementById('selectedDate').value;
+
+                // AJAX request to Django backend
+                fetch('/handle-attendance/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': getCSRFToken() // Ensure you include CSRF token
+                    },
+                    body: JSON.stringify({
+                        date: selectedDate,
+                        type: attendanceType
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if(data.status === 'success') {
+                        // Update the calendar with the new event
+                        calendar.addEvent({
+                            title: attendanceType,
+                            start: selectedDate
+                        });
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+            });
+
     </script>
-</body>
-</html>
 {% endblock %}

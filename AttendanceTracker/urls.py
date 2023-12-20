@@ -34,4 +34,5 @@ urlpatterns = [
     path('register/', views.register, name='register'),
     path('registration_success/', views.registration_success, name='registration_success'),
     path('calendar/', views.calendar, name='calendar'),
+    path('handle-attendance/', views.handle_attendance, name='handle_attendance'),
 ]

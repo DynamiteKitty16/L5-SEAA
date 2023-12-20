@@ -11,6 +11,9 @@ from django.http import JsonResponse
 from django.utils import timezone
 from .models import AttendanceRecord
 from datetime import datetime, timedelta
+from django.views.decorators.csrf import csrf_exempt
+
+import json
 
 @login_required
 def home(request):
@@ -94,8 +97,49 @@ def calendar(request):
     # Convert records to a format suitable for FullCalendar
     events = [{'title': record.type, 'start': record.date} for record in attendance_records]
 
+    # Set the editable dates
+    start_editable_date = current_date - timedelta(days=7)  # One week ago
+    end_editable_date = current_date + timedelta(days=14)  # Two weeks ahead
+
+    # Format dates for passing to template
+    formatted_start_editable_date = start_editable_date.strftime('%Y-%m-%d')
+    formatted_end_editable_date = end_editable_date.strftime('%Y-%m-%d')
+
     context = {
         'start_date': formatted_start_date,
         'events': events,
+        'start_editable_date': formatted_start_editable_date,
+        'end_editable_date': formatted_end_editable_date,
     }
     return render(request, 'tracker/calendar.html', context)
+
+
+# View for handling the AJAX and storing of Attendence data records
+@csrf_exempt
+@login_required
+def handle_attendance(request):
+    if request.method == 'POST':
+        data = json.loads(request.body)
+        date_str = data.get('date')
+        attendance_type = data.get('type')
+
+        # Validate the data
+        try:
+            date = datetime.strptime(date_str, '%Y-%m-%d').date()
+            if attendance_type not in ['WFH', 'IO', 'BT', 'T']:
+                raise ValueError("Invalid attendance type")
+        except ValueError as e:
+            return JsonResponse({'status': 'error', 'message': str(e)}, status=400)
+
+        # Create or update the attendance record
+        record, created = AttendanceRecord.objects.update_or_create(
+            user=request.user,
+            date=date,
+            defaults={'type': attendance_type}
+        )
+
+        # Save the record
+        record.save()
+
+        return JsonResponse({'status': 'success'})
+    return JsonResponse({'status': 'error'}, status=400)
