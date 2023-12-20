@@ -40,7 +40,7 @@
                     <a class="nav-link" href="#">{{ request.user.first_name }}</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#">Calendar</a>
+                    <a class="nav-link" href="{% url 'calendar' %}">Calendar</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="#">Requests</a>
@@ -51,7 +51,7 @@
         </div>
     </nav>
     {% endif %}  
-      
+
     <main class="mb-5">
         {% block content %}
         <!-- not sure if the div form-container needs to go here -->

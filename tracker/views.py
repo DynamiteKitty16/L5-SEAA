@@ -9,6 +9,8 @@ from .forms import CustomUserCreationForm
 from django.shortcuts import render, redirect
 from django.http import JsonResponse
 from django.utils import timezone
+from .models import AttendanceRecord
+from datetime import datetime, timedelta
 
 @login_required
 def home(request):
@@ -72,6 +74,25 @@ def extend_session(request):
     return JsonResponse({'status': 'success'})
 
 @login_required
-def employee_dashboard(request):
-    # Create a view for the employee dashboard for calender and analytics
-    return render(request, 'tracker/employee_dashboard.html')
+def calendar(request): 
+
+    # Have not included in my model / forms but user.date_joined is taken from Django default 'User' model   
+    registration_date = request.user.date_joined.date()
+    current_date = datetime.now().date()
+    one_year_ago = current_date - timedelta(days=365)
+
+    # Set the start date for the calendar as the later of the two dates
+    start_date = max(registration_date, one_year_ago)
+
+    # Get attendance records for the user
+    # For new users this will return empty queryset
+    attendance_records = AttendanceRecord.objects.filter(user=request.user, date__range=[start_date, current_date])
+
+    # Convert records to a format suitable for FullCalendar
+    events = [{'title': record.type, 'start': record.date} for record in attendance_records]
+
+    context = {
+        'start_date': start_date,
+        'events': events,
+    }
+    return render(request, 'tracker/calendar.html', context)

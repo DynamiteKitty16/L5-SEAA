@@ -19,7 +19,8 @@ class AttendanceRecord(models.Model):
             ('S', 'Sick'),
             ('FL', 'Flexi Leave'),
             ('NWD', 'Non Working Day'),
-            ('BT', 'Business Travel')
+            ('BT', 'Business Travel'),
+            ('T', 'Training'),
         )
     )
 
