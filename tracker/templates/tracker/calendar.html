@@ -82,6 +82,7 @@
             var calendar = new FullCalendar.Calendar(calendarEl, {
                 initialView: 'dayGridWeek', // Default to current week view
                 locale: 'en-gb',
+                hiddenDays: [0, 6],
                 headerToolbar: {
                     left: 'prev,next today',
                     center: 'title',
@@ -128,7 +129,13 @@
                     element.innerText = arg.event.title;
                     return { domNodes: [element] };
                 },
-        
+
+                dayRender: function(dayRenderInfo) {
+                // Grey out Saturdays and Sundays in month view
+                if (dayRenderInfo.date.getDay() === 0 || dayRenderInfo.date.getDay() === 6) {
+                    dayRenderInfo.el.style.backgroundColor = '#eaeaea';
+                }
+            },
             });
 
             calendar.render();
