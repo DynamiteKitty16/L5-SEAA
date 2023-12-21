@@ -128,7 +128,3 @@ a:hover, a:focus, a:active {
 .fc-dayGridWeek-view .fc-scrollgrid { 
     max-height: 200px;
 }
-
-.fc-time-grid .fc-slats td:last-child {
-    height: 300px;
-}
