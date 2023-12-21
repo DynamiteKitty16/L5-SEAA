@@ -86,37 +86,11 @@
                 validRange: {
                     start: '{{ start_date }}', // Start date from context
                 },
+                slotMinTime: '09:00:00', // Start time for the calendar view
+                slotMaxTime: '17:00:00', // End time for the calendar view
 
+                
                 dateClick: function(info) {
-                    /*
-                    if (info.date >= '{{ start_editable_date }}' && info.date <= '{{ end_editable_date }}') {
-                        // Open the modal
-                        var eventCreationModal = new bootstrap.Modal(document.getElementById('eventCreationModal'));
-                        document.getElementById('selectedDate').value = info.dateStr; // Set the clicked date
-                        console.log("Clicked date:", info.dateStr);
-                        eventCreationModal.show();
-                    } else {
-                        // Show edit restriction modal
-                        var restrictionModal = new bootstrap.Modal(document.getElementById('editRestrictionModal'));
-                        restrictionModal.show();
-                    }
-                    
-                    if (info.date >= '{{ start_editable_date }}' && info.date <= '{{ end_editable_date }}') {
-                        console.log("Editable date clicked:", info.dateStr);
-                        var eventCreationModal = new bootstrap.Modal(document.getElementById('eventCreationModal'));
-                        document.getElementById('selectedDate').value = info.dateStr; // Set the clicked date
-                        eventCreationModal.show();
-                    } else {
-                        console.log("Non-editable date clicked:", info.dateStr);
-                        console.log("Start editable date:", '{{ start_editable_date }}');
-                        console.log("End editable date:", '{{ end_editable_date }}');
-                        console.log("Clicked date:", info.dateStr);
-
-                        var restrictionModal = new bootstrap.Modal(document.getElementById('editRestrictionModal'));
-                        restrictionModal.show();
-                    }
-                },
-                */
                 var clickedDate = new Date(info.dateStr);
                     var startDate = new Date('{{ start_editable_date }}');
                     var endDate = new Date('{{ end_editable_date }}');
