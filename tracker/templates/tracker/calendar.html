@@ -85,23 +85,16 @@
                 headerToolbar: {
                     left: 'prev,next today',
                     center: 'title',
-                    right: 'dayGridWeek,timeGridWeek,dayGridMonth' // Buttons to switch views
+                    right: 'dayGridWeek,dayGridMonth' // Buttons to switch views
                 },
                     views: {
-                    timeGridWeek: { // Week view with hours
-                        buttonText: 'week (hours)',
-                        allDaySlot: false
-                    },
                     dayGridWeek: { // Week view as whole days
-                        buttonText: 'week (days)'
+                        buttonText: 'week'
                     }
                 },
                 validRange: {
                     start: '{{ start_date }}', // Start date from context
                 },
-                slotMinTime: '09:00:00', // Start time for the calendar view
-                slotMaxTime: '18:00:00', // End time for the calendar view
-                slotDuration: '01:00:00', // Duration of each time slot
 
 
                 dateClick: function(info) {
