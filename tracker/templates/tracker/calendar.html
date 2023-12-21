@@ -92,6 +92,7 @@
                         // Open the modal
                         var eventCreationModal = new bootstrap.Modal(document.getElementById('eventCreationModal'));
                         document.getElementById('selectedDate').value = info.dateStr; // Set the clicked date
+                        console.log("Clicked date:", info.dateStr);
                         eventCreationModal.show();
                     } else {
                         // Show edit restriction modal
