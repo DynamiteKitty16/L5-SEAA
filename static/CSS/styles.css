@@ -140,12 +140,8 @@ a:hover, a:focus, a:active {
 /* Targeting events in the week (days) view */
 .fc-dayGridWeek-view .fc-event div {
     height: 100px;
-}
-
-/* Targeting the font in week (days) view */
-.fc-dayGridWeek-view .fc-event div {
-    height: 25px;
-    font-size: 16px;
+    /* Target the font */
+    font-size: 20px;
     color: #fff;
     text-align: center;
 }
