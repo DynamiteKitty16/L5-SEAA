@@ -129,19 +129,19 @@ a:hover, a:focus, a:active {
     max-height: 150px;
 }
 
-.fc-timeGridWeek-view .fc-timegrid-slot {
-    height: 50px;
-}
-
-.fc-timeGridWeek-view .fc-scrollgrid { 
-    max-height: 500px;
-}
-
 /* Targeting events in the week (days) view */
 .fc-dayGridWeek-view .fc-event div {
     height: 100px;
     /* Target the font */
     font-size: 22px;
+    color: #fff;
+    text-align: center;
+}
+
+.fc-dayGridMonth-view .fc-event div {
+    height: 100px;
+    /* Target the font */
+    font-size: 18px;
     color: #fff;
     text-align: center;
 }
