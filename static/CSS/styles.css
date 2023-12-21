@@ -122,3 +122,9 @@ a:hover, a:focus, a:active {
 .custom-logout-btn:hover {
     background-color: #005f6a;
 }
+
+/* Adjusting FullCalendar sizes */
+
+.fc-dayGridWeek-view .fc-scrollgrid { 
+    max-height: 600px;
+}
