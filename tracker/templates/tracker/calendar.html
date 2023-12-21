@@ -108,6 +108,10 @@
                         eventCreationModal.show();
                     } else {
                         console.log("Non-editable date clicked:", info.dateStr);
+                        console.log("Start editable date:", '{{ start_editable_date }}');
+                        console.log("End editable date:", '{{ end_editable_date }}');
+                        console.log("Clicked date:", info.dateStr);
+
                         var restrictionModal = new bootstrap.Modal(document.getElementById('editRestrictionModal'));
                         restrictionModal.show();
                     }
