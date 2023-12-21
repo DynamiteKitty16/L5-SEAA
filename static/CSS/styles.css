@@ -126,14 +126,14 @@ a:hover, a:focus, a:active {
 /* Adjusting FullCalendar sizes */
 
 .fc-dayGridWeek-view .fc-scrollgrid { 
-    max-height: 150px;
+    max-height: 100px;
 }
 
 /* Targeting events in the week (days) view */
 .fc-dayGridWeek-view .fc-event div {
-    height: 100px;
+    height: 50px;
     /* Target the font */
-    font-size: 22px;
+    font-size: 16px;
     color: #fff;
     text-align: center;
 }
