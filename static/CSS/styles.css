@@ -136,3 +136,8 @@ a:hover, a:focus, a:active {
 .fc-timeGridWeek-view .fc-scrollgrid { 
     max-height: 500px;
 }
+
+/* Targeting events in the week (days) view */
+.fc-dayGridWeek-view .fc-event {
+    height: 100%;
+}
