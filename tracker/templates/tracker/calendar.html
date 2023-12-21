@@ -65,6 +65,18 @@
             return '';
         }
 
+        const attendanceTypeColors = {
+            'WFH': '#28a745', // Green
+            'IO': '#007bff', // Blue
+            'AL': '#17a2b8', // Cyan
+            'S': '#ffc107', // Yellow
+            'FL': '#fd7e14', // Orange
+            'NWD': '#6c757d', // Grey
+            'BT': '#dc3545', // Red
+            'T': '#6610f2' // Purple
+        };
+
+
         document.addEventListener('DOMContentLoaded', function() {
             var calendarEl = document.getElementById('calendar');
             var calendar = new FullCalendar.Calendar(calendarEl, {
@@ -112,6 +124,18 @@
                         restrictionModal.show();
                     }
                 },
+
+                events: '{{ events | safe }}',
+
+                eventContent: function(arg) {
+                    // Custom rendering of events
+                    var color = attendanceTypeColors[arg.event.title] || '#378006'; // Default color if not found
+                    var element = document.createElement('div');
+                    element.style.backgroundColor = color;
+                    element.innerText = arg.event.title;
+                    return { domNodes: [element] };
+                },
+        
             });
 
             calendar.render();
@@ -140,7 +164,8 @@
                         // Update the calendar with the new event
                         calendar.addEvent({
                             title: attendanceType,
-                            start: selectedDate
+                            start: selectedDate,
+                            color: attendanceTypeColors[attendanceType]
                         });
                     }
                 })
