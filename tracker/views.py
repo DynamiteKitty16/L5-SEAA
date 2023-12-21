@@ -75,6 +75,9 @@ def extend_session(request):
     request.session.modified = True
     return JsonResponse({'status': 'success'})
 
+
+# Views for FullCalendar
+
 @login_required
 def calendar(request): 
 
@@ -91,7 +94,7 @@ def calendar(request):
 
     # Get attendance records for the user
     # For new users this will return empty queryset
-    attendance_records = AttendanceRecord.objects.filter(user=request.user, date__range=[start_date, current_date])
+    attendance_records = AttendanceRecord.objects.filter(user=request.user)
 
     # Convert records to a format suitable for FullCalendar
     events = [{'title': record.type, 'start': record.date.strftime('%Y-%m-%d')} for record in attendance_records]
