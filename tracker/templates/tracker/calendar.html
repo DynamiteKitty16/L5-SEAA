@@ -87,9 +87,10 @@
                     start: '{{ start_date }}', // Start date from context
                 },
                 slotMinTime: '09:00:00', // Start time for the calendar view
-                slotMaxTime: '17:00:00', // End time for the calendar view
+                slotMaxTime: '18:00:00', // End time for the calendar view
+                slotDuration: '01:00:00', // Duration of each time slot
 
-                
+
                 dateClick: function(info) {
                 var clickedDate = new Date(info.dateStr);
                     var startDate = new Date('{{ start_editable_date }}');
