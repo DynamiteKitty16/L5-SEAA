@@ -139,9 +139,9 @@ a:hover, a:focus, a:active {
 }
 
 .fc-dayGridMonth-view .fc-event div {
-    height: 100px;
+    height: 100%;
     /* Target the font */
-    font-size: 18px;
+    font-size: 16px;
     color: #fff;
     text-align: center;
 }
