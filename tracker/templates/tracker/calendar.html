@@ -100,7 +100,7 @@
                         var restrictionModal = new bootstrap.Modal(document.getElementById('editRestrictionModal'));
                         restrictionModal.show();
                     }
-                    */
+                    
                     if (info.date >= '{{ start_editable_date }}' && info.date <= '{{ end_editable_date }}') {
                         console.log("Editable date clicked:", info.dateStr);
                         var eventCreationModal = new bootstrap.Modal(document.getElementById('eventCreationModal'));
@@ -112,6 +112,26 @@
                         console.log("End editable date:", '{{ end_editable_date }}');
                         console.log("Clicked date:", info.dateStr);
 
+                        var restrictionModal = new bootstrap.Modal(document.getElementById('editRestrictionModal'));
+                        restrictionModal.show();
+                    }
+                },
+                */
+                var clickedDate = new Date(info.dateStr);
+                    var startDate = new Date('{{ start_editable_date }}');
+                    var endDate = new Date('{{ end_editable_date }}');
+
+                    console.log("Parsed Clicked date:", clickedDate);
+                    console.log("Parsed Start editable date:", startDate);
+                    console.log("Parsed End editable date:", endDate);
+
+                    if (clickedDate >= startDate && clickedDate <= endDate) {
+                        // Code for editable date
+                        var eventCreationModal = new bootstrap.Modal(document.getElementById('eventCreationModal'));
+                        document.getElementById('selectedDate').value = info.dateStr;
+                        eventCreationModal.show();
+                    } else {
+                        // Code for non-editable date
                         var restrictionModal = new bootstrap.Modal(document.getElementById('editRestrictionModal'));
                         restrictionModal.show();
                     }
