@@ -132,3 +132,7 @@ a:hover, a:focus, a:active {
 .fc-timeGridWeek-view .fc-timegrid-slot {
     height: 50px;
 }
+
+.fc-timeGridWeek-view .fc-scrollgrid { 
+    max-height: 600px;
+}
