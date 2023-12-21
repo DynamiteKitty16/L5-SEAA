@@ -94,7 +94,7 @@ def calendar(request):
     attendance_records = AttendanceRecord.objects.filter(user=request.user, date__range=[start_date, current_date])
 
     # Convert records to a format suitable for FullCalendar
-    events = [{'title': record.type, 'start': record.date} for record in attendance_records]
+    events = [{'title': record.type, 'start': record.date.strftime('%Y-%m-%d')} for record in attendance_records]
 
     # Convert the events list to a JSON string
     events_json = json.dumps(events)
