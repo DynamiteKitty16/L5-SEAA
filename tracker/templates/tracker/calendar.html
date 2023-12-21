@@ -103,9 +103,9 @@
                     */
                     if (info.date >= '{{ start_editable_date }}' && info.date <= '{{ end_editable_date }}') {
                         console.log("Editable date clicked:", info.dateStr);
-                        // var eventCreationModal = new bootstrap.Modal(document.getElementById('eventCreationModal'));
-                        // document.getElementById('selectedDate').value = info.dateStr;
-                        // eventCreationModal.show();
+                        var eventCreationModal = new bootstrap.Modal(document.getElementById('eventCreationModal'));
+                        document.getElementById('selectedDate').value = info.dateStr; // Set the clicked date
+                        eventCreationModal.show();
                     } else {
                         console.log("Non-editable date clicked:", info.dateStr);
                         var restrictionModal = new bootstrap.Modal(document.getElementById('editRestrictionModal'));
