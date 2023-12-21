@@ -125,7 +125,7 @@
                     }
                 },
 
-                events: '{{ events | safe }}',
+                events: JSON.PARSE('{{ events | safe }}'),
 
                 eventContent: function(arg) {
                     // Custom rendering of events

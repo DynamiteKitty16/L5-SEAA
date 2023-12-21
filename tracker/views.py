@@ -6,7 +6,6 @@ from django.contrib import messages
 from django.contrib.auth.forms import AuthenticationForm
 from django.conf import settings
 from .forms import CustomUserCreationForm
-from django.shortcuts import render, redirect
 from django.http import JsonResponse
 from django.utils import timezone
 from .models import AttendanceRecord
@@ -97,6 +96,9 @@ def calendar(request):
     # Convert records to a format suitable for FullCalendar
     events = [{'title': record.type, 'start': record.date} for record in attendance_records]
 
+    # Convert the events list to a JSON string
+    events_json = json.dumps(events)
+
     # Set the editable dates
     start_editable_date = current_date - timedelta(days=7)  # One week ago
     end_editable_date = current_date + timedelta(days=14)  # Two weeks ahead
@@ -107,7 +109,7 @@ def calendar(request):
 
     context = {
         'start_date': formatted_start_date,
-        'events': events,
+        'events': events_json,
         'start_editable_date': formatted_start_editable_date,
         'end_editable_date': formatted_end_editable_date,
     }
