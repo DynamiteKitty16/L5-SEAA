@@ -126,7 +126,7 @@ a:hover, a:focus, a:active {
 /* Adjusting FullCalendar sizes */
 
 .fc-dayGridWeek-view .fc-scrollgrid { 
-    max-height: 100px;
+    max-height: 150px;
 }
 
 .fc-timeGridWeek-view .fc-timegrid-slot {
