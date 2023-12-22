@@ -21,7 +21,7 @@
           return;
       }
 
-      var ctx = document.getElementById('myChart').getContext('2d');
+      var ctx = document.getElementById('attendanceChart').getContext('2d');
       var attendanceData = JSON.parse('{{ attendance_counts | safe }}');
       var labels = Object.keys(attendanceData);
       var data = Object.values(attendanceData);
