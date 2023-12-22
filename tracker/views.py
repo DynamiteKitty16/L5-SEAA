@@ -19,7 +19,7 @@ import json
 def home_view(request):
     attendance_counts = get_attendance_counts_for_month(request.user)
     context = {
-        'attendance_counts': attendance_counts,
+        'attendance_counts': json.dumps(attendance_counts),
     }
     return render(request, 'tracker/home.html', context)
 

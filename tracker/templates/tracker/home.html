@@ -19,7 +19,7 @@
 </div>
 
 <script type="text/javascript">
-  var attendanceData = JSON.parse('{{ attendance_counts|json_script:"attendance-data" }}');
+  var attendanceData = JSON.parse('{{ attendance_counts | safe }}');
   var ctx = document.getElementById('attendanceChart').getContext('2d');
   var myChart = new Chart(ctx, {
       type: 'bar',
