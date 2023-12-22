@@ -7,11 +7,6 @@
       <h1 class="mb-4">Welcome to Availability Tracker</h1>
       <p class="lead">This is your go-to app for managing work attendance and leave requests.</p>
       <h3>Attendance Summary for This Month:</h3>
-      <ul>
-      {% for type, count in attendance_counts.items %}
-          <li>{{ type }}: {{ count }} days</li>
-      {% endfor %}
-      </ul>
       <!-- Canvas for Chart.js -->
       <canvas id="attendanceChart" width="400" height="400"></canvas>
     </div>
