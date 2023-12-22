@@ -11,12 +11,20 @@ from django.utils import timezone
 from .models import AttendanceRecord
 from datetime import datetime, timedelta
 from django.views.decorators.csrf import csrf_exempt
+from collections import Counter
 
 import json
 
 @login_required
 def home(request):
     return render(request, 'tracker/home.html')
+
+def home_view(request):
+    attendance_counts = get_attendance_counts_for_month(request.user)
+    context = {
+        'attendance_counts': attendance_counts,
+    }
+    return render(request, 'home.html', context)
 
 def register(request):
     if request.method == 'POST':
@@ -148,3 +156,18 @@ def handle_attendance(request):
 
         return JsonResponse({'status': 'success'})
     return JsonResponse({'status': 'error'}, status=400)
+
+# Create count of items in the AttendanceRecord to be used elsewhere
+
+def get_attendance_counts_for_month(user):
+    current_month = timezone.now().month
+    current_year = timezone.now().year
+    records = AttendanceRecord.objects.filter(
+        user=user, 
+        date__year=current_year, 
+        date__month=current_month
+    ).exclude(type='Sick')  # Exclude 'Sick' type
+
+    # Count occurrences of each type
+    counts = Counter(record.type for record in records)
+    return dict(counts)
