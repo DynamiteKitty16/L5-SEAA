@@ -18,32 +18,60 @@
   </div>
 </div>
 
-<script type="text/javascript">
-  var attendanceData = JSON.parse('{{ attendance_counts | safe }}');
-  var ctx = document.getElementById('attendanceChart').getContext('2d');
-  var myChart = new Chart(ctx, {
-      type: 'bar',
-      data: {
-          labels: Object.keys(attendanceData),
-          datasets: [{
-              label: '# of Days',
-              data: Object.values(attendanceData),
-              backgroundColor: [
-                  'rgba(255, 99, 132, 0.2)',
-              ],
-              borderColor: [
-                  'rgba(255, 99, 132, 1)',
-              ],
-              borderWidth: 1
-          }]
-      },
-      options: {
-          scales: {
-              y: {
-                  beginAtZero: true
+<!-- Canvas for Chart.js -->
+<div class="container">
+  <canvas id="myChart" width="400" height="400"></canvas>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+      // Ensure Chart.js is loaded
+      if (typeof Chart === 'undefined') {
+          console.error('Chart.js not loaded');
+          return;
+      }
+
+      var ctx = document.getElementById('myChart').getContext('2d');
+      var attendanceData = JSON.parse('{{ attendance_counts | safe }}');
+      var labels = Object.keys(attendanceData);
+      var data = Object.values(attendanceData);
+
+      // Color mapping for attendance types
+      const attendanceTypeColors = {
+          'WFH': '#28a745', // Green
+          'IO': '#007bff', // Blue
+          'AL': '#17a2b8', // Cyan
+          'S': '#ffc107', // Yellow
+          'FL': '#fd7e14', // Orange
+          'NWD': '#6c757d', // Grey
+          'BT': '#dc3545', // Red
+          'T': '#6610f2' // Purple
+      };
+
+      // Assign colors based on attendance type
+      var backgroundColors = labels.map(label => attendanceTypeColors[label] || '#378006'); // Default color
+      var borderColors = backgroundColors;
+
+      var myChart = new Chart(ctx, {
+          type: 'bar',
+          data: {
+              labels: labels,
+              datasets: [{
+                  label: 'Days',
+                  data: data,
+                  backgroundColor: backgroundColors,
+                  borderColor: borderColors,
+                  borderWidth: 1
+              }]
+          },
+          options: {
+              scales: {
+                  y: {
+                      beginAtZero: true
+                  }
               }
           }
-      }
+      });
   });
 </script>
 {% endblock %}
