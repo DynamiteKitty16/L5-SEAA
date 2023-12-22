@@ -38,6 +38,20 @@
           'T': '#6610f2' // Purple
       };
 
+      // Full name mapping
+      const attendanceTypeFullNames = {
+        'WFH': 'Working From Home',
+        'IO': 'In Office',
+        'AL': 'Annual Leave',
+        'S': 'Sick',
+        'FL': 'Flexi Leave',
+        'NWD': 'Non Working Day',
+        'BT': 'Business Travel',
+        'T': 'Training'
+        // ... other types
+    };
+
+
       // Assign colors based on attendance type
       var backgroundColors = labels.map(label => attendanceTypeColors[label] || '#378006'); // Default color
       var borderColors = backgroundColors;
@@ -62,6 +76,15 @@
                         stepSize: 1
                       }
                   }
+              },
+              tooltips: {
+                callbacks: {
+                  label: function(tooltipsItem, data) {
+                    var label = data.labels[tooltipsItem.index];
+                    var fullName = attendanceTypeFullNames[label] || label;
+                    return fullName + ': ' + tooltipsItem.value;
+                  }
+                }
               }
           }
       });
