@@ -8,14 +8,9 @@
       <p class="lead">This is your go-to app for managing work attendance and leave requests.</p>
       <h3>Attendance Summary for This Month:</h3>
       <!-- Canvas for Chart.js -->
-      <canvas id="attendanceChart" width="400" height="400"></canvas>
+      <canvas id="attendanceChart" width="300" height="300"></canvas>
     </div>
   </div>
-</div>
-
-<!-- Canvas for Chart.js -->
-<div class="container">
-  <canvas id="myChart" width="400" height="400"></canvas>
 </div>
 
 <script>
@@ -62,7 +57,8 @@
           options: {
               scales: {
                   y: {
-                      beginAtZero: true
+                      beginAtZero: true,
+                      stepSize: 1,
                   }
               }
           }
