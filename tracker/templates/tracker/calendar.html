@@ -108,16 +108,24 @@
                     console.log("Parsed End editable date:", endDate);
 
                     if (clickedDate >= startDate && clickedDate <= endDate) {
-                        // Code for editable date
-                        var eventCreationModal = new bootstrap.Modal(document.getElementById('eventCreationModal'));
-                        document.getElementById('selectedDate').value = info.dateStr;
-                        eventCreationModal.show();
+                        var existingEvent = calendar.getEvents().find(event => event.startStr === info.dateStr);
+                        if (existingEvent) {
+                        // Populate the modal with existing event data
+                        document.getElementById('attendanceType').value = existingEvent.title;
                     } else {
-                        // Code for non-editable date
-                        var restrictionModal = new bootstrap.Modal(document.getElementById('editRestrictionModal'));
-                        restrictionModal.show();
+                        // Reset the modal for a new event
+                        document.getElementById('attendanceType').value = ''; // Default or first option
                     }
-                },
+                    // Code for editable date
+                    document.getElementById('selectedDate').value = info.dateStr;
+                    var eventCreationModal = new bootstrap.Modal(document.getElementById('eventCreationModal'));
+                    eventCreationModal.show();
+                } else {
+                    // Code for non-editable date
+                    var restrictionModal = new bootstrap.Modal(document.getElementById('editRestrictionModal'));
+                    restrictionModal.show();
+                }
+            },
 
                 events: JSON.parse('{{ events | safe }}'),
 
@@ -130,12 +138,12 @@
                     return { domNodes: [element] };
                 },
 
-                dayRender: function(dayRenderInfo) {
+                //dayRender: function(dayRenderInfo) {
                 // Grey out Saturdays and Sundays in month view
-                if (dayRenderInfo.date.getDay() === 0 || dayRenderInfo.date.getDay() === 6) {
-                    dayRenderInfo.el.style.backgroundColor = '#eaeaea';
-                }
-            },
+                //if (dayRenderInfo.date.getDay() === 0 || dayRenderInfo.date.getDay() === 6) {
+                    //dayRenderInfo.el.style.backgroundColor = '#eaeaea';
+                //}
+            //},
             });
 
             calendar.render();
@@ -145,6 +153,12 @@
                 e.preventDefault();
                 var attendanceType = document.getElementById('attendanceType').value;
                 var selectedDate = document.getElementById('selectedDate').value;
+
+                // Remove existing event on this date if it exists
+                var existingEvent = calendar.getEvents().find(event => event.startStr === selectedDate);
+                if (existingEvent) {
+                    existingEvent.remove();
+                }
 
                 // AJAX request to Django backend
                 fetch('/handle-attendance/', {
