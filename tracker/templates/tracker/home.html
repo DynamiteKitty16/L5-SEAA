@@ -45,10 +45,10 @@
       var myChart = new Chart(ctx, {
           type: 'bar',
           data: {
-              labels: ['Working From Home', 'In Office', 'Annual Leave', 'Flexi Leave', 'Non Working Day', 'Business Travel', 'Training'],
+              labels: labels, // Dynamic labels from attendanceData
               datasets: [{
                   label: 'Attendance Summary',
-                  data: data,
+                  data: data, // Dynamic data from attendanceData
                   backgroundColor: backgroundColors,
                   borderColor: borderColors,
                   borderWidth: 1
