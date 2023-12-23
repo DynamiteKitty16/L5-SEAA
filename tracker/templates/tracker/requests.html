@@ -107,14 +107,16 @@
         $('#id_start_date').datepicker({
             format: 'yyyy-mm-dd',
             startDate: today,
-            endDate: nextYear
+            endDate: nextYear,
+            daysOfWeekDisabled: [0, 6]  // Disable Sundays (0) and Saturdays (6)
         });
 
         // Initialize Datepicker for End Date
         $('#id_end_date').datepicker({
             format: 'yyyy-mm-dd',
             startDate: today,
-            endDate: nextYear
+            endDate: nextYear,
+            daysOfWeekDisabled: [0, 6]  // Disable Sundays (0) and Saturdays (6)
         });
     });
 </script>
