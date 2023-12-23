@@ -83,37 +83,40 @@
         </div>
     </div>
 </div>
-{% endblock %}
 
-{% block scripts %}
+
 <script>
-    $(document).ready(function() {
-        // Function to initialize Datepickers
-        function initializeDatepickers() {
-            var today = new Date();
-            var nextYear = new Date(new Date().setFullYear(today.getFullYear() + 1));
-
-            $('#id_start_date').datepicker({
-                format: 'yyyy-mm-dd',
-                startDate: today,
-                endDate: nextYear,
-                daysOfWeekDisabled: [0, 6]  // Disable Sundays (0) and Saturdays (6)
-            });
-
-            $('#id_end_date').datepicker({
-                format: 'yyyy-mm-dd',
-                startDate: today,
-                endDate: nextYear,
-                daysOfWeekDisabled: [0, 6]  // Disable Sundays (0) and Saturdays (6)
-            });
+    document.addEventListener('DOMContentLoaded', function() {
+        // Check if jQuery is loaded
+        if (typeof $ === 'undefined') {
+            console.error('jQuery not loaded');
+            return;
         }
 
-        // Initialize Datepickers when the document is ready
-        initializeDatepickers();
+        // Check if Bootstrap Datepicker is loaded
+        if (typeof $.fn.datepicker === 'undefined') {
+            console.error('Bootstrap Datepicker not loaded');
+            return;
+        }
 
-        // Reinitialize Datepickers when the modal is shown
-        $('#submitRequestModal').on('shown.bs.modal', function() {
-            initializeDatepickers();
+        // Define today and nextYear
+        var today = new Date();
+        var nextYear = new Date(new Date().setFullYear(today.getFullYear() + 1));
+
+        // Initialize Datepicker for Start Date
+        $('#id_start_date').datepicker({
+            format: 'yyyy-mm-dd',
+            startDate: today,
+            endDate: nextYear,
+            daysOfWeekDisabled: [0, 6]  // Disable Sundays (0) and Saturdays (6)
+        });
+
+        // Initialize Datepicker for End Date
+        $('#id_end_date').datepicker({
+            format: 'yyyy-mm-dd',
+            startDate: today,
+            endDate: nextYear,
+            daysOfWeekDisabled: [0, 6]  // Disable Sundays (0) and Saturdays (6)
         });
     });
 </script>
