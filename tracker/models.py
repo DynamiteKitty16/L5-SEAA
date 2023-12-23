@@ -51,9 +51,13 @@ class LeaveRequest(models.Model):
         return f"{self.user.username} - {self.leave_type} - {self.start_date} to {self.end_date}"
 
     def clean(self):
-        # Check if the leave request date is in the past
-        if self.date < timezone.now().date():
-            raise ValidationError('You cannot request leave for a past date.')
+        # Check if the start date is in the past
+        if self.start_date < timezone.now().date():
+            raise ValidationError('Start date cannot be in the past.')
+
+        # Check if the end date is before the start date
+        if self.end_date < self.start_date:
+            raise ValidationError('End date cannot be before the start date.')
 
     def save(self, *args, **kwargs):
         self.clean()
