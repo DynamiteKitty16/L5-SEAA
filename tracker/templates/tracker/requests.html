@@ -43,37 +43,29 @@
             </button>
 
     <!-- Modal -->
-    <div class="modal fade" id="submitRequestModal" tabindex="-1" aria-labelledby="submitRequestModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="submitRequestModalLabel">New Leave Request</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <form method="post">
-                        {% csrf_token %}
-                        <div class="mb-3">
-                            <label for="id_leave_type" class="form-label">Leave type:</label>
-                            {{ form.leave_type }}
-                        </div>
-                        <div class="mb-3">
-                            <label for="id_start_date" class="form-label">Start date:</label>
-                            {{ form.start_date }}
-                        </div>
-                        <div class="mb-3">
-                            <label for="id_end_date" class="form-label">End date:</label>
-                            {{ form.end_date }}
-                        </div>
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="submit" class="btn btn-primary">Submit Request</button>
+    <div class="modal-body">
+        <form method="post">
+            {% csrf_token %}
+            <div class="form-group row mb-3">
+                <label for="id_leave_type" class="col-sm-4 col-form-label">Leave type:</label>
+                <div class="col-sm-8">
+                    {{ form.leave_type }}
                 </div>
             </div>
-        </div>
-    </div>
+            <div class="form-group row mb-3">
+                <label for="id_start_date" class="col-sm-4 col-form-label">Start date:</label>
+                <div class="col-sm-8">
+                    {{ form.start_date }}
+                </div>
+            </div>
+            <div class="form-group row mb-3">
+                <label for="id_end_date" class="col-sm-4 col-form-label">End date:</label>
+                <div class="col-sm-8">
+                    {{ form.end_date }}
+                </div>
+            </div>
+        </form>
+    </div>    
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
