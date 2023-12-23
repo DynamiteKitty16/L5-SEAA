@@ -49,8 +49,7 @@
         'NWD': 'Non Working Day',
         'BT': 'Business Travel',
         'T': 'Training'
-    };
-
+      };
 
       // Assign colors based on attendance type
       var backgroundColors = labels.map(label => attendanceTypeColors[label] || '#378006'); // Default color
@@ -78,15 +77,18 @@
                   }
               },
               legend: {
-                display:false
+                display: false
               },
-              tooltips: {
-                callbacks: {
-                  label: function(tooltipItem, data) {
-                    var label = data.labels[tooltipItem.index];
-                    var fullName = attendanceTypeFullNames[label] || label;
-                    return fullName + ': ' + tooltipItem.value;
-                  }
+              plugins: {
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            var label = context.label;
+                            var value = context.raw;
+                            var fullName = attendanceTypeFullNames[label] || label;
+                            return fullName + ': ' + value;
+                        }
+                    }
                 }
               }
           }
