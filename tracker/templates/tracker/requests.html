@@ -42,28 +42,48 @@
                 Submit a New Request
             </button>
 
-            <!-- Modal -->
-            <div class="modal fade" id="submitRequestModal" tabindex="-1" aria-labelledby="submitRequestModalLabel" aria-hidden="true">
-                <div class="modal-dialog">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title" id="submitRequestModalLabel">New Leave Request</h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+    <!-- Modal -->
+    <div class="modal fade" id="submitRequestModal" tabindex="-1" aria-labelledby="submitRequestModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="submitRequestModalLabel">New Leave Request</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form method="post">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label for="id_leave_type" class="form-label">Leave type:</label>
+                            {{ form.leave_type }}
                         </div>
-                        <div class="modal-body">
-                            <form method="post">
-                                {% csrf_token %}
-                                {{ form.as_p }}
-                            </form>
+                        <div class="mb-3">
+                            <label for="id_start_date" class="form-label">Start date:</label>
+                            {{ form.start_date }}
                         </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                            <button type="submit" class="btn btn-primary">Submit Request</button>
+                        <div class="mb-3">
+                            <label for="id_end_date" class="form-label">End date:</label>
+                            {{ form.end_date }}
                         </div>
-                    </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Submit Request</button>
                 </div>
             </div>
         </div>
     </div>
-</div>
+
+    <script>
+        $(document).ready(function(){
+            $('#id_start_date').datepicker({
+                format: 'yyyy-mm-dd'
+            });
+            $('#id_end_date').datepicker({
+                format: 'yyyy-mm-dd'
+            });
+        });
+        </script>
+        
 {% endblock %}
