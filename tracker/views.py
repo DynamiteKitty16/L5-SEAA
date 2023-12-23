@@ -15,6 +15,8 @@ from collections import Counter
 
 import json
 
+# Home page and required home functions
+
 def get_attendance_counts_for_month(user):
     current_month = timezone.now().month
     current_year = timezone.now().year
@@ -25,6 +27,8 @@ def get_attendance_counts_for_month(user):
     )
     counts = Counter(record.type for record in records)
     return dict(counts)
+
+# Login and Register
 
 @login_required
 def home_view(request):
@@ -94,9 +98,13 @@ def extend_session(request):
 
 # Views for FullCalendar
 
+def get_start_of_week(date):
+    # Get the start of the week (Monday)
+    start_of_week = date - timedelta(days=date.weekday())
+    return start_of_week
+
 @login_required
 def calendar(request): 
-
     # Have not included in my model / forms but user.date_joined is taken from Django default 'User' model   
     registration_date = request.user.date_joined.date()
     current_date = datetime.now().date()
@@ -118,9 +126,18 @@ def calendar(request):
     # Convert the events list to a JSON string
     events_json = json.dumps(events)
 
-    # Set the editable dates
-    start_editable_date = current_date - timedelta(days=7)  # One week ago
-    end_editable_date = current_date + timedelta(days=14)  # Two weeks ahead
+    # Function to get the start of the week (Monday)
+    def get_start_of_week(date):
+        return date - timedelta(days=date.weekday())
+
+    # Calculate the start of the current work week
+    start_of_current_week = get_start_of_week(current_date)
+
+    # Start editable date is the Monday of the previous week
+    start_editable_date = start_of_current_week - timedelta(weeks=1)
+
+    # End editable date is the Friday of the second week ahead
+    end_editable_date = start_of_current_week + timedelta(weeks=2, days=4)
 
     # Format dates for passing to template
     formatted_start_editable_date = start_editable_date.strftime('%Y-%m-%d')
