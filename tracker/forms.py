@@ -3,6 +3,8 @@ from .models import UserProfile, AttendanceRecord, LeaveRequest
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
 from django.core.validators import RegexValidator
+from django.utils.translation import gettext_lazy as _
+from django.core.exceptions import ValidationError
 
 # Define any regex validators for Django
 name_regex = RegexValidator(r'^[a-zA-Z\s]+$', 'Only letters and spaces are allowed.')
@@ -66,4 +68,19 @@ class LeaveRequestForm(forms.ModelForm):
         super(LeaveRequestForm, self).__init__(*args, **kwargs)
         self.fields['start_date'].widget.attrs.update({'autocomplete': 'off'})
         self.fields['end_date'].widget.attrs.update({'autocomplete': 'off'})
+
+    def clean(self):
+        cleaned_data = super().clean()
+        start_date = cleaned_data.get("start_date")
+        end_date = cleaned_data.get("end_date")
+
+        # Check if start_date is a weekend
+        if start_date and start_date.weekday() >= 5:  # 5 for Saturday, 6 for Sunday
+            self.add_error('start_date', _("Start date cannot be on a weekend."))
+
+        # Check if end_date is a weekend
+        if end_date and end_date.weekday() >= 5:  # 5 for Saturday, 6 for Sunday
+            self.add_error('end_date', _("End date cannot be on a weekend."))
+
+        return cleaned_data
         
