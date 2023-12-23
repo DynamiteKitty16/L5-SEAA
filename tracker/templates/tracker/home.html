@@ -23,6 +23,7 @@
 
       var ctx = document.getElementById('attendanceChart').getContext('2d');
       var attendanceData = JSON.parse('{{ attendance_counts | safe }}');
+      console.log(attendanceData);
       var labels = Object.keys(attendanceData);
       var data = Object.values(attendanceData);
 
@@ -77,12 +78,15 @@
                       }
                   }
               },
+              legend: {
+                display:false
+              },
               tooltips: {
                 callbacks: {
-                  label: function(tooltipsItem, data) {
-                    var label = data.labels[tooltipsItem.index];
+                  label: function(tooltipItem, data) {
+                    var label = data.labels[tooltipItem.index];
                     var fullName = attendanceTypeFullNames[label] || label;
-                    return fullName + ': ' + tooltipsItem.value;
+                    return fullName + ': ' + tooltipItem.value;
                   }
                 }
               }

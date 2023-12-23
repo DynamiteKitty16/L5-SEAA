@@ -15,6 +15,17 @@ from collections import Counter
 
 import json
 
+def get_attendance_counts_for_month(user):
+    current_month = timezone.now().month
+    current_year = timezone.now().year
+    records = AttendanceRecord.objects.filter(
+        user=user, 
+        date__year=current_year, 
+        date__month=current_month
+    )
+    counts = Counter(record.type for record in records)
+    return dict(counts)
+
 @login_required
 def home_view(request):
     attendance_counts = get_attendance_counts_for_month(request.user)
