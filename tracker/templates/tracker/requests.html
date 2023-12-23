@@ -76,6 +76,28 @@
     </div>
 
     <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Ensure jQuery is loaded
+            if (typeof $ === 'undefined') {
+                console.error('jQuery not loaded');
+                return;
+            }
+
+            // Ensure Bootstrap Datepicker is loaded
+            if (typeof $.fn.datepicker === 'undefined') {
+                console.error('Bootstrap Datepicker not loaded');
+                return;
+            }
+
+            // Initialize Datepicker
+            $('#id_start_date').datepicker({
+                format: 'yyyy-mm-dd'
+            });
+            $('#id_end_date').datepicker({
+                format: 'yyyy-mm-dd'
+            });
+        });
+
         $(document).ready(function(){
             $('#id_start_date').datepicker({
                 format: 'yyyy-mm-dd'
