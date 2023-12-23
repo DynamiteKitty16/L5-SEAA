@@ -61,4 +61,9 @@ class LeaveRequestForm(forms.ModelForm):
     class Meta:
         model = LeaveRequest
         fields = ['leave_type', 'start_date', 'end_date']
+
+    def __init__(self, *args, **kwargs):
+        super(LeaveRequestForm, self).__init__(*args, **kwargs)
+        self.fields['start_date'].widget.attrs.update({'autocomplete': 'off'})
+        self.fields['end_date'].widget.attrs.update({'autocomplete': 'off'})
         
