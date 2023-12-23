@@ -4,6 +4,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.contrib import messages
 from django.contrib.auth.forms import AuthenticationForm
+from django.contrib.auth.forms import LeaveRequestForm, LeaveRequest
 from django.conf import settings
 from .forms import CustomUserCreationForm
 from django.http import JsonResponse
@@ -196,3 +197,25 @@ def get_attendance_counts_for_month(user):
     # Count occurrences of each type
     counts = Counter(record.type for record in records)
     return dict(counts)
+
+# Views to handle requests
+
+@login_required
+def requests_view(request):
+    if request.method == 'POST':
+        form = LeaveRequestForm(request.POST)
+        if form.is_valid():
+            leave_request = form.save(commit=False)
+            leave_request.user = request.user
+            # Set manager field based on your logic
+            leave_request.save()
+            # Redirect or show success message
+    else:
+        form = LeaveRequestForm()
+
+    user_requests = LeaveRequest.objects.filter(user=request.user)
+    context = {
+        'form': form,
+        'user_requests': user_requests,
+    }
+    return render(request, 'tracker/requests.html', context)

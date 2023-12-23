@@ -61,5 +61,5 @@ class AttendanceRecordForm(forms.ModelForm):
 class LeaveRequestForm(forms.ModelForm):
     class Meta:
         model = LeaveRequest
-        fields = '__all__'
+        fields = ['leave_type', 'start_date', 'end_date']
         

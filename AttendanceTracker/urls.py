@@ -16,6 +16,7 @@ Including another URLconf
 """
 from django.contrib.auth import views as auth_views
 from django.contrib.auth.views import LogoutView
+from .views import requests_view
 from django.contrib import admin
 from django.urls import path
 from tracker import views
@@ -35,4 +36,5 @@ urlpatterns = [
     path('registration_success/', views.registration_success, name='registration_success'),
     path('calendar/', views.calendar, name='calendar'),
     path('handle-attendance/', views.handle_attendance, name='handle_attendance'),
+    path('requests/', requests_view, name='requests'),
 ]
