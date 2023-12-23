@@ -84,59 +84,38 @@
     </div>
 </div>
 
+
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        // Ensure jQuery is loaded
+        // Check if jQuery is loaded
         if (typeof $ === 'undefined') {
             console.error('jQuery not loaded');
             return;
         }
 
-        // Ensure Bootstrap Datepicker is loaded
+        // Check if Bootstrap Datepicker is loaded
         if (typeof $.fn.datepicker === 'undefined') {
             console.error('Bootstrap Datepicker not loaded');
             return;
         }
 
-        // Initialize Datepicker
-        $('#id_start_date').datepicker({
-            format: 'yyyy-mm-dd'
-        });
-        $('#id_end_date').datepicker({
-            format: 'yyyy-mm-dd'
-        });
-
-        $(document).ready(function(){
+        // Define today and nextYear
         var today = new Date();
         var nextYear = new Date(new Date().setFullYear(today.getFullYear() + 1));
 
+        // Initialize Datepicker for Start Date
         $('#id_start_date').datepicker({
             format: 'yyyy-mm-dd',
             startDate: today,
             endDate: nextYear
         });
-    });
+
+        // Initialize Datepicker for End Date
         $('#id_end_date').datepicker({
             format: 'yyyy-mm-dd',
             startDate: today,
             endDate: nextYear
         });
     });
-        $(document).ready(function(){
-        var today = new Date();
-        var nextYear = new Date(new Date().setFullYear(today.getFullYear() + 1));
-
-        $('#id_start_date').datepicker({
-            format: 'yyyy-mm-dd',
-            startDate: today,
-            endDate: nextYear
-        });
-        $('#id_end_date').datepicker({
-            format: 'yyyy-mm-dd',
-            startDate: today,
-            endDate: nextYear
-        });
-    });
-
 </script>
 {% endblock %}
