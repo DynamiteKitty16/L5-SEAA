@@ -12,6 +12,7 @@ from django.utils import timezone
 from .models import AttendanceRecord
 from datetime import datetime, timedelta
 from django.views.decorators.csrf import csrf_exempt
+from django.core.exceptions import ValidationError
 from collections import Counter
 
 import json
@@ -219,3 +220,13 @@ def requests_view(request):
         'user_requests': user_requests,
     }
     return render(request, 'tracker/requests.html', context)
+
+def clean(self):
+        # Ensure the start date is not in the past
+        if self.start_date < timezone.now().date():
+            raise ValidationError("Start date cannot be in the past.")
+
+        # Ensure the end date is not before the start date
+        if self.end_date < self.start_date:
+            raise ValidationError("End date cannot be before the start date.")
+        

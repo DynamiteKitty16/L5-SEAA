@@ -105,6 +105,38 @@
         $('#id_end_date').datepicker({
             format: 'yyyy-mm-dd'
         });
+
+        $(document).ready(function(){
+        var today = new Date();
+        var nextYear = new Date(new Date().setFullYear(today.getFullYear() + 1));
+
+        $('#id_start_date').datepicker({
+            format: 'yyyy-mm-dd',
+            startDate: today,
+            endDate: nextYear
+        });
     });
+        $('#id_end_date').datepicker({
+            format: 'yyyy-mm-dd',
+            startDate: today,
+            endDate: nextYear
+        });
+    });
+        $(document).ready(function(){
+        var today = new Date();
+        var nextYear = new Date(new Date().setFullYear(today.getFullYear() + 1));
+
+        $('#id_start_date').datepicker({
+            format: 'yyyy-mm-dd',
+            startDate: today,
+            endDate: nextYear
+        });
+        $('#id_end_date').datepicker({
+            format: 'yyyy-mm-dd',
+            startDate: today,
+            endDate: nextYear
+        });
+    });
+
 </script>
 {% endblock %}
