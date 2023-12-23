@@ -104,27 +104,27 @@
         var nextYear = new Date(new Date().setFullYear(today.getFullYear() + 1));
 
         // Initialize Datepicker for Start Date
-        $('#id_start_date').datepicker({
+        var startDatePicker = $('#id_start_date').datepicker({
             format: 'yyyy-mm-dd',
             startDate: today,
             endDate: nextYear,
-            daysOfWeekDisabled: [0, 6]  // Disable Sundays (0) and Saturdays (6)
+            daysOfWeekDisabled: [0, 6]
         });
 
         // Initialize Datepicker for End Date
-        $('#id_end_date').datepicker({
+        var endDatePicker = $('#id_end_date').datepicker({
             format: 'yyyy-mm-dd',
             startDate: today,
             endDate: nextYear,
-            daysOfWeekDisabled: [0, 6]  // Disable Sundays (0) and Saturdays (6)
+            daysOfWeekDisabled: [0, 6]
         });
 
-        // When the start date changes, update the end date's minimum date
+        // Event listener for start date change
         startDatePicker.on('changeDate', function(e) {
             endDatePicker.datepicker('setStartDate', e.date);
         });
 
-        // When the end date changes, validate if it's before the start date
+        // Event listener for end date change
         endDatePicker.on('changeDate', function(e) {
             var startDate = startDatePicker.datepicker('getDate');
             var endDate = e.date;
