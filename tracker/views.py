@@ -4,7 +4,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.contrib import messages
 from django.contrib.auth.forms import AuthenticationForm
-from django.contrib.auth.forms import LeaveRequestForm, LeaveRequest
+from tracker.forms import LeaveRequestForm, LeaveRequest
 from django.conf import settings
 from .forms import CustomUserCreationForm
 from django.http import JsonResponse

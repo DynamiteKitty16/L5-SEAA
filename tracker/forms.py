@@ -2,7 +2,6 @@ from django import forms
 from .models import UserProfile, AttendanceRecord, LeaveRequest
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
-from .models import UserProfile
 from django.core.validators import RegexValidator
 
 # Define any regex validators for Django
