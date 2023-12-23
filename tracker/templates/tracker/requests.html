@@ -83,21 +83,11 @@
         </div>
     </div>
 </div>
+{% endblock %}
 
+{% block scripts %}
 <script>
     $(document).ready(function(){
-        // Ensure jQuery is loaded
-        if (typeof $ === 'undefined') {
-            console.error('jQuery not loaded');
-            return;
-        }
-
-        // Ensure Bootstrap Datepicker is loaded
-        if (typeof $.fn.datepicker === 'undefined') {
-            console.error('Bootstrap Datepicker not loaded');
-            return;
-        }
-
         var today = new Date();
         var nextYear = new Date(new Date().setFullYear(today.getFullYear() + 1));
 
