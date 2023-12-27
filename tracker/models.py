@@ -47,7 +47,7 @@ class LeaveRequest(models.Model):
     leave_type = models.CharField(max_length=3, choices=TYPE_CHOICES)
     start_date = models.DateField()
     end_date = models.DateField()
-    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='Pending')
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='Pending')
     manager = models.ForeignKey(User, related_name='manager', on_delete=models.SET_NULL, null=True)
 
     def __str__(self):
