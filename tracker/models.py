@@ -33,6 +33,8 @@ class LeaveRequest(models.Model):
         ('Pending', 'Pending'),
         ('Approved', 'Approved'),
         ('Denied', 'Denied'),
+        ('Cancellation Pending', 'Cancellation Pending'),  # New status
+        ('Cancelled', 'Cancelled'),  # Status for successfully cancelled requests
     ]
 
     TYPE_CHOICES = [

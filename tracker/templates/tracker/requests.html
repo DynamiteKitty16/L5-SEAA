@@ -1,3 +1,8 @@
+
+Your template looks mostly correct, but there are a few adjustments needed to fully integrate the "Cancel Request" functionality. Here's the revised version of your template with necessary modifications:
+
+html
+Copy code
 {% extends 'base.html' %}
 
 {% block content %}
@@ -17,6 +22,7 @@
                                 <th>Start Date</th>
                                 <th>End Date</th>
                                 <th>Status</th>
+                                <th>Actions</th> <!-- Added Actions Column -->
                             </tr>
                         </thead>
                         <tbody>
@@ -26,10 +32,18 @@
                                 <td>{{ request.start_date }}</td>
                                 <td>{{ request.end_date }}</td>
                                 <td>{{ request.get_status_display }}</td>
+                                <td>
+                                    {% if request.status in ['Pending', 'Approved'] %}
+                                        <!-- Trigger Modal Button for Cancel Request -->
+                                        <button type="button" class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#cancelRequestModal" data-request-id="{{ request.id }}">
+                                            Cancel
+                                        </button>
+                                    {% endif %}
+                                </td>
                             </tr>
                             {% empty %}
                             <tr>
-                                <td colspan="4">No requests found.</td>
+                                <td colspan="5">No requests found.</td>
                             </tr>
                             {% endfor %}
                         </tbody>
@@ -37,7 +51,7 @@
                 </div>
             </div>
 
-            <!-- Button to trigger modal -->
+            <!-- Button to trigger submit request modal -->
             <button type="button" class="btn btn-primary mt-3" data-bs-toggle="modal" data-bs-target="#submitRequestModal">
                 Submit a New Request
             </button>
@@ -80,11 +94,30 @@
                     </div>
                 </div>
             </div>
+
+            <!-- Cancel Request Modal -->
+            <div class="modal fade" id="cancelRequestModal" tabindex="-1" aria-labelledby="cancelRequestModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="cancelRequestModalLabel">Cancel Leave Request</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            Are you sure you want to cancel this leave request?
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            <button type="button" class="btn btn-danger" id="confirmCancel">Confirm Cancel</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>
 
-
+<!-- Script for Datepicker and Validation -->
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         // Check if jQuery is loaded
@@ -133,6 +166,24 @@
                 endDatePicker.datepicker('update', ''); // Clear the end date
             }
         });
+    });
+</script>
+
+<!-- Script for Handling Cancel Request Modal -->
+<script>
+    // Script for handling the cancel request modal
+    $('#cancelRequestModal').on('show.bs.modal', function (event) {
+        var button = $(event.relatedTarget) // Button that triggered the modal
+        var requestId = button.data('request-id') // Extract info from data-* attributes
+        var modal = $(this)
+        modal.find('#confirmCancel').data('request-id', requestId) // Update the confirm button's data
+    });
+
+    // Script for handling the cancel request confirmation
+    $('#confirmCancel').click(function() {
+        var requestId = $(this).data('request-id');
+        // AJAX call to cancel the request
+        // After successful cancellation, close the modal and refresh the page or update the table
     });
 </script>
 {% endblock %}
