@@ -33,7 +33,7 @@ Copy code
                                 <td>{{ request.end_date }}</td>
                                 <td>{{ request.get_status_display }}</td>
                                 <td>
-                                    {% if request.status in ['Pending', 'Approved'] %}
+                                    {% if request.status == 'Pending' or request.status == 'Approved' %}
                                         <!-- Trigger Modal Button for Cancel Request -->
                                         <button type="button" class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#cancelRequestModal" data-request-id="{{ request.id }}">
                                             Cancel
