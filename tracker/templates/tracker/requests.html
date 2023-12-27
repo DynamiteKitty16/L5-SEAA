@@ -1,8 +1,3 @@
-
-Your template looks mostly correct, but there are a few adjustments needed to fully integrate the "Cancel Request" functionality. Here's the revised version of your template with necessary modifications:
-
-html
-Copy code
 {% extends 'base.html' %}
 
 {% block content %}
@@ -169,6 +164,7 @@ Copy code
     });
 </script>
 
+
 <!-- Script for Handling Cancel Request Modal -->
 <script>
     // Script for handling the cancel request modal
@@ -180,10 +176,26 @@ Copy code
     });
 
     // Script for handling the cancel request confirmation
+    var cancelRequestUrl = '{% url "cancel_leave_request" %}';
+    var csrfToken = '{{ csrf_token }}';
+
     $('#confirmCancel').click(function() {
         var requestId = $(this).data('request-id');
-        // AJAX call to cancel the request
-        // After successful cancellation, close the modal and refresh the page or update the table
+        $.ajax({
+            url: cancelRequestUrl,
+            type: 'POST',
+            data: {
+                'request_id': requestId,
+                'csrfmiddlewaretoken': csrfToken
+            },
+            success: function(response) {
+                location.reload(); // Reload the page to reflect changes
+            },
+            error: function(xhr, textStatus, errorThrown) {
+                // Handle error
+                alert('Error: ' + xhr.responseText);
+            }
+        });
     });
 </script>
 {% endblock %}

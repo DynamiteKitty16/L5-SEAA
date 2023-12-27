@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required
+from .models import LeaveRequest
 from django.contrib.auth.models import User
 from django.contrib import messages
 from django.contrib.auth.forms import AuthenticationForm
@@ -8,6 +9,7 @@ from tracker.forms import LeaveRequestForm, LeaveRequest
 from django.conf import settings
 from .forms import CustomUserCreationForm
 from django.http import JsonResponse
+from django.shortcuts import get_object_or_404
 from django.utils import timezone
 from .models import AttendanceRecord
 from datetime import datetime, timedelta
@@ -229,4 +231,23 @@ def clean(self):
         # Ensure the end date is not before the start date
         if self.end_date < self.start_date:
             raise ValidationError("End date cannot be before the start date.")
+        
+        
+# View to handle cancellation for requests
+
+@login_required
+def cancel_leave_request(request):
+    if request.method == 'POST':
+        request_id = request.POST.get('request_id')
+        leave_request = get_object_or_404(LeaveRequest, id=request_id, user=request.user)
+
+        # Check if the request can be cancelled
+        if leave_request.status in ['Pending', 'Approved']:
+            leave_request.status = 'Cancelled'  # Update the status to 'Cancelled'
+            leave_request.save()
+            return JsonResponse({'status': 'success', 'message': 'Leave request cancelled successfully.'})
+        else:
+            return JsonResponse({'status': 'error', 'message': 'This request cannot be cancelled.'}, status=400)
+
+    return JsonResponse({'status': 'error', 'message': 'Invalid request.'}, status=400)
         
