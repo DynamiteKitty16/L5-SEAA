@@ -150,3 +150,10 @@ a:hover, a:focus, a:active {
     color: #fff;
     text-align: center;
 }
+
+
+/* Requests.html scrollbar for leave requests */
+.scrollable-table {
+    max-height: 400px;
+    overflow-y: scroll;
+}

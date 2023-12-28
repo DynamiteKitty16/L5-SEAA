@@ -16,6 +16,7 @@ from datetime import datetime, timedelta
 from django.views.decorators.csrf import csrf_exempt
 from django.core.exceptions import ValidationError
 from collections import Counter
+from django.db.models import Case, When, Value, IntegerField
 
 import json
 
@@ -216,12 +217,23 @@ def requests_view(request):
     else:
         form = LeaveRequestForm()
 
-    user_requests = LeaveRequest.objects.filter(user=request.user)
+    user_requests = LeaveRequest.objects.filter(user=request.user).annotate(
+        custom_order=Case(
+            When(status='Pending', then=Value(1)),
+            When(status='Approved', then=Value(2)),
+            When(status='Cancelled', then=Value(3)),
+            When(status='Denied', then=Value(4)),
+            default=Value(5),
+            output_field=IntegerField(),
+        )
+    ).order_by('custom_order')
+
     context = {
         'form': form,
         'user_requests': user_requests,
     }
     return render(request, 'tracker/requests.html', context)
+
 
 def clean(self):
         # Ensure the start date is not in the past
