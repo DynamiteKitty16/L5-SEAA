@@ -154,6 +154,6 @@ a:hover, a:focus, a:active {
 
 /* Requests.html scrollbar for leave requests */
 .scrollable-table {
-    max-height: 100px;
+    max-height: 400px;
     overflow-y: scroll;
 }
