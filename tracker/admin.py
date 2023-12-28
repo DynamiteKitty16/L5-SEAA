@@ -2,7 +2,6 @@ from django.contrib import admin
 from tracker.models import UserProfile, AttendanceRecord, LeaveRequest
 
 # Register models.
-admin.site.register(UserProfile)
 admin.site.register(AttendanceRecord)
 admin.site.register(LeaveRequest)
 
