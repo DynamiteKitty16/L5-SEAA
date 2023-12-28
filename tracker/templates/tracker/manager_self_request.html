@@ -43,7 +43,7 @@
                                             </button>
                                         {% endif %}
                                         <!-- Cancel Button -->
-                                        {% if request.status in ['Pending', 'Approved'] %}
+                                        {% if request.status == 'Pending' or request.status == 'Approved' %}
                                             <button type="button" class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#cancelRequestModal" data-request-id="{{ request.id }}">
                                                 Cancel
                                             </button>
