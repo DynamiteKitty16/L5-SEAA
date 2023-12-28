@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-2">
+    <div class="row">
+        <!-- Employee List -->
+        <div class="col-md-4">
+            <h3>My Employees</h3>
+            <ul class="list-group">
+                {% for employee in employees %}
+                <li class="list-group-item list-group-item-action" data-employee-id="{{ employee.id }}">
+                    {{ employee.get_full_name }}
+                </li>
+                {% empty %}
+                <li class="list-group-item">No employees found.</li>
+                {% endfor %}
+            </ul>
+        </div>
+
+        <!-- Requests Table -->
+        <div class="col-md-8">
+            <h3>Employee Requests</h3>
+            <div class="table-responsive scrollable-table">
+                <table class="table table-striped table-hover">
+                    <thead>
+                        <tr>
+                            <th>Type</th>
+                            <th>Start Date</th>
+                            <th>End Date</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="requests-table-body">
+                        <!-- Requests will be loaded here via JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // JavaScript to handle employee selection and request management
+        // Fetch and display requests of the selected employee
+        // Implement AJAX calls for approve, deny, and delete actions
+    });
+</script>
+{% endblock %}

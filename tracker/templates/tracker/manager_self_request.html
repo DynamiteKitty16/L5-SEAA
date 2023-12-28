@@ -1,0 +1,161 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-2">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <h2 class="text-center">Self-Request Management</h2>
+
+            <!-- Form to Submit New Request -->
+            <div class="submit-request mt-4">
+                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#submitRequestModal">
+                    Submit a New Request
+                </button>
+            </div>
+
+            <!-- My Requests Section -->
+            <div class="my-requests mt-4">
+                <h3>My Requests</h3>
+                <div class="table-responsive scrollable-table">
+                    <table class="table table-striped table-hover">
+                        <thead>
+                            <tr>
+                                <th>Type</th>
+                                <th>Start Date</th>
+                                <th>End Date</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for request in user_requests %}
+                            <tr>
+                                <td>{{ request.get_leave_type_display }}</td>
+                                <td>{{ request.start_date }}</td>
+                                <td>{{ request.end_date }}</td>
+                                <td>{{ request.get_status_display }}</td>
+                                <td>
+                                    <!-- Approve Button for Self-Approval -->
+                                    {% if request.status == 'Pending' %}
+                                        <button type="button" class="btn btn-success btn-sm">
+                                            Approve
+                                        </button>
+                                    {% endif %}
+                                    <!-- Cancel Button -->
+                                    {% if request.status in ['Pending', 'Approved'] %}
+                                        <button type="button" class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#cancelRequestModal" data-request-id="{{ request.id }}">
+                                            Cancel
+                                        </button>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="5">No requests found.</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Script for Datepicker and Validation -->
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Check if jQuery is loaded
+        if (typeof $ === 'undefined') {
+            console.error('jQuery not loaded');
+            return;
+        }
+
+        // Check if Bootstrap Datepicker is loaded
+        if (typeof $.fn.datepicker === 'undefined') {
+            console.error('Bootstrap Datepicker not loaded');
+            return;
+        }
+
+        // Define today and nextYear
+        var today = new Date();
+        var nextYear = new Date(new Date().setFullYear(today.getFullYear() + 1));
+
+        // Initialize Datepicker for Start Date
+        var startDatePicker = $('#id_start_date').datepicker({
+            format: 'yyyy-mm-dd',
+            startDate: today,
+            endDate: nextYear,
+            daysOfWeekDisabled: [0, 6]
+        });
+
+        // Initialize Datepicker for End Date
+        var endDatePicker = $('#id_end_date').datepicker({
+            format: 'yyyy-mm-dd',
+            startDate: today,
+            endDate: nextYear,
+            daysOfWeekDisabled: [0, 6]
+        });
+
+        // Event listener for start date change
+        startDatePicker.on('changeDate', function(e) {
+            endDatePicker.datepicker('setStartDate', e.date);
+        });
+
+        // Event listener for end date change
+        endDatePicker.on('changeDate', function(e) {
+            var startDate = startDatePicker.datepicker('getDate');
+            var endDate = e.date;
+            if (startDate && endDate && endDate < startDate) {
+                alert('End date cannot be before the start date.');
+                endDatePicker.datepicker('update', ''); // Clear the end date
+            }
+        });
+    });
+</script>   
+
+<!-- Script for Handling Cancel Request Modal -->
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Attach event listener to modal
+        var cancelModal = document.getElementById('cancelRequestModal');
+        cancelModal.addEventListener('show.bs.modal', function (event) {
+            var button = event.relatedTarget; // Button that triggered the modal
+            var requestId = button.getAttribute('data-request-id'); // Extract info from data-* attributes
+            var confirmButton = cancelModal.querySelector('#confirmCancel');
+            confirmButton.setAttribute('data-request-id', requestId); // Update the confirm button's data
+        });
+
+        // Handling the cancel request confirmation
+        var confirmCancel = document.getElementById('confirmCancel');
+        confirmCancel.addEventListener('click', function() {
+            var requestId = this.getAttribute('data-request-id');
+            var cancelRequestUrl = '{% url "cancel_leave_request" %}';
+            var csrfToken = '{{ csrf_token }}';
+
+            fetch(cancelRequestUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'X-CSRFToken': csrfToken
+                },
+                body: 'request_id=' + requestId
+            })
+            .then(response => {
+                if (response.ok) {
+                    return response.json();
+                } else {
+                    throw new Error('Network response was not ok.');
+                }
+            })
+            .then(data => {
+                location.reload(); // Reload the page to reflect changes
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Error: ' + error.message);
+            });
+        });
+    });
+</script>
+{% endblock %}

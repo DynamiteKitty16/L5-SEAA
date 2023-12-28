@@ -211,9 +211,13 @@ def requests_view(request):
         if form.is_valid():
             leave_request = form.save(commit=False)
             leave_request.user = request.user
-            # Set manager field based on your logic
+
+            # Retrieve the user's manager from UserProfile and set it for the leave request
+            user_profile, created = UserProfile.objects.get_or_create(user=request.user)
+            leave_request.manager = user_profile.manager
+        
             leave_request.save()
-            # Redirect or show success message
+
     else:
         form = LeaveRequestForm()
 
@@ -245,21 +249,42 @@ def clean(self):
             raise ValidationError("End date cannot be before the start date.")
 
 
-# View to direct request to manager
+# Similiar view to above but for the Manager self-approval
 
-def leave_request_view(request):
+@login_required
+def manager_self_requests_view(request):
+    # Ensure the user is a manager
+    if not request.user.userprofile.is_manager:
+        return redirect('some_other_view')
+
     if request.method == 'POST':
         form = LeaveRequestForm(request.POST)
         if form.is_valid():
             leave_request = form.save(commit=False)
             leave_request.user = request.user
+            leave_request.manager = request.user.userprofile  # Manager approves their own request
             leave_request.save()
-            # The page will refresh automatically upon form submission
     else:
         form = LeaveRequestForm()
 
-    return render(request, 'tracker/requests.html', {'form': form})
-        
+    user_requests = LeaveRequest.objects.filter(user=request.user).annotate(
+        custom_order=Case(
+            When(status='Pending', then=Value(1)),
+            When(status='Approved', then=Value(2)),
+            When(status='Cancelled', then=Value(3)),
+            When(status='Denied', then=Value(4)),
+            default=Value(5),
+            output_field=IntegerField(),
+        )
+    ).order_by('custom_order')
+
+    context = {
+        'form': form,
+        'user_requests': user_requests,
+    }
+    return render(request, 'tracker/manager_self_requests.html', context)
+
+
         
 # View to handle cancellation for requests
 
@@ -278,4 +303,22 @@ def cancel_leave_request(request):
             return JsonResponse({'status': 'error', 'message': 'This request cannot be cancelled.'}, status=400)
 
     return JsonResponse({'status': 'error', 'message': 'Invalid request.'}, status=400)
-        
+
+
+# Manager view to review requests
+@login_required
+def manager_dashboard_view(request):
+    # Ensure the user is a manager
+    if not request.user.userprofile.is_manager:
+        return redirect('home_view')
+
+    # Get the list of employees managed by the current user
+    employees = UserProfile.objects.filter(manager=request.user.userprofile)
+
+    # Fetch leave requests managed by the current user
+    managed_requests = LeaveRequest.objects.filter(manager__user=request.user)
+
+    return render(request, 'tracker/manage_requests.html', {
+        'employees': employees,
+        'managed_requests': managed_requests
+    })

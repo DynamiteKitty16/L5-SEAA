@@ -40,4 +40,6 @@ urlpatterns = [
     path('handle-attendance/', views.handle_attendance, name='handle_attendance'),
     path('requests/', requests_view, name='requests'),
     path('cancel-request/', cancel_leave_request, name='cancel_leave_request'),
+    path('manage-requests/', views.manage_requests_view, name='manage_requests'),
+    path('manager_self_requests/', views.manager_self_requests_view, name='manager_self_requests'),
 ]
