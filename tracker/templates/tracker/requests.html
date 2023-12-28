@@ -114,7 +114,7 @@
 
 <!-- Script for Datepicker and Validation -->
 <script>
-    $(document).ready(function() {
+    document.addEventListener('DOMContentLoaded', function() {
         // Initialize Datepicker for Start Date
         var startDatePicker = $('#id_start_date').datepicker({
             format: 'yyyy-mm-dd',
@@ -147,6 +147,7 @@
         });
     });
 </script>
+
 
 <!-- Script for Handling Cancel Request Modal -->
 <script>
