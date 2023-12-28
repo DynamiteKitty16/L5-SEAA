@@ -51,7 +51,7 @@
                 </li>
                 {% if request.user.userprofile.is_manager %}
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'self_request' %}">Self-Request</a>
+                        <a class="nav-link" href="{% url 'manager_self_requests' %}">Self-Request</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'manage_requests' %}">Manage Requests</a>
