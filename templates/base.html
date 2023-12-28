@@ -33,7 +33,7 @@
                     <div class="ms-auto">
                         <span class="welcome-text">
                             <i class="fa fa-user-circle"></i> <!-- Font Awesome User Icon -->
-                            Welcome, {{ request.user.first_name }}
+                            {{ request.user.first_name }}
                         </span>
                         <a href="{% url 'logout' %}" class="btn custom-logout-btn">Logout</a>
                     </div>
