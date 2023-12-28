@@ -167,6 +167,7 @@
     <!-- Script for Handling Cancel Request Modal -->
 <script>
     $(document).ready(function() {
+        console.log("jQuery version:", $.fn.jquery); // This should log the jQuery version
         // Script for handling the cancel request modal
         $('#cancelRequestModal').on('show.bs.modal', function (event) {
             var button = $(event.relatedTarget); // Button that triggered the modal
