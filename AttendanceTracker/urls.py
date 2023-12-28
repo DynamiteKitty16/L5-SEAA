@@ -41,5 +41,5 @@ urlpatterns = [
     path('requests/', requests_view, name='requests'),
     path('cancel-request/', cancel_leave_request, name='cancel_leave_request'),
     path('manage-requests/', views.manager_requests_view, name='manage_requests'),
-    path('manager_self_requests/', views.manager_self_requests_view, name='manager_self_requests'),
+    path('manage-requests/', views.manager_self_requests_view, name='manage_requests'),
 ]
