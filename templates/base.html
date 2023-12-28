@@ -18,6 +18,8 @@
         <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
         <!-- Bootstrap Datepicker CSS -->
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css">
+        <!-- Font Awesome for icon -->
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
     </head>
 <body>
     <header>
@@ -29,7 +31,8 @@
                 </a>
                 {% if request.user.is_authenticated %}
                     <div class="ms-auto">
-                        <span class="navbar-text">
+                        <span class="welcome-text">
+                            <i class="fa fa-user-circle"></i> <!-- Font Awesome User Icon -->
                             Welcome, {{ request.user.first_name }}
                         </span>
                         <a href="{% url 'logout' %}" class="btn custom-logout-btn">Logout</a>

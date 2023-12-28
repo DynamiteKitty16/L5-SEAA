@@ -49,6 +49,20 @@ nav a {
     color: #333;
 }
 
+.welcome-text {
+    color: #fff;
+    margin-right: 10px;
+    font-size: 1rem;
+    line-height: 1.5;
+}
+
+.welcome-text .fa-user-circle {
+    margin-right: 5px;
+    color: #fff;
+    font-size: 1.5em;
+}
+
+
 h1 {
     margin-top: 5px;
 }
