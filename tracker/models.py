@@ -7,6 +7,7 @@ from django.db.models import Q
 class UserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     manager = models.ForeignKey('self', on_delete=models.SET_NULL, null=True, blank=True, related_name='managed_employees')
+    is_manager = models.BooleanField(default=False)
 
 class AttendanceRecord(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
