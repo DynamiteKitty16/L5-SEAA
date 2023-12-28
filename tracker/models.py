@@ -11,6 +11,9 @@ class UserProfile(models.Model):
     manager = models.ForeignKey('self', on_delete=models.SET_NULL, null=True, blank=True, related_name='managed_employees')
     is_manager = models.BooleanField(default=False)
 
+    def __str__(self):
+        return f"{self.user.username} - Manager: {self.manager.user.username if self.manager else 'None'}"
+
 # Signal to create or update UserProfile whenever a User instance is saved
 @receiver(post_save, sender=User)
 def create_or_update_user_profile(sender, instance, created, **kwargs):

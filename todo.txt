@@ -1,4 +1,4 @@
-create custom error pages?
+
 how to prevent sql injection
 review security
 fix logout button to redirect to login page not admin page
@@ -10,5 +10,4 @@ need to add in some sort of help page with the email etc maybe set up some guide
     </footer>
 
 
-check validation of names on registration
-put in a validation for the email address
+reloading on the requests page after making a form submission, resubmits the form, allowing users to add another request for an already requested leave
