@@ -255,7 +255,7 @@ def clean(self):
 def manager_self_requests_view(request):
     # Ensure the user is a manager
     if not request.user.userprofile.is_manager:
-        return redirect('some_other_view')
+        return redirect('home_view')
 
     if request.method == 'POST':
         form = LeaveRequestForm(request.POST)
