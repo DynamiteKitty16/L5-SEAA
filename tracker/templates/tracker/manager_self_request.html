@@ -35,17 +35,19 @@
                                 <td>{{ request.end_date }}</td>
                                 <td>{{ request.get_status_display }}</td>
                                 <td>
-                                    <!-- Approve Button for Self-Approval -->
-                                    {% if request.status == 'Pending' %}
-                                        <button type="button" class="btn btn-success btn-sm">
-                                            Approve
-                                        </button>
-                                    {% endif %}
-                                    <!-- Cancel Button -->
-                                    {% if request.status in ['Pending', 'Approved'] %}
-                                        <button type="button" class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#cancelRequestModal" data-request-id="{{ request.id }}">
-                                            Cancel
-                                        </button>
+                                    {% if request.show_buttons %}
+                                        <!-- Approve Button for Self-Approval -->
+                                        {% if request.status == 'Pending' %}
+                                            <button type="button" class="btn btn-success btn-sm">
+                                                Approve
+                                            </button>
+                                        {% endif %}
+                                        <!-- Cancel Button -->
+                                        {% if request.status in ['Pending', 'Approved'] %}
+                                            <button type="button" class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#cancelRequestModal" data-request-id="{{ request.id }}">
+                                                Cancel
+                                            </button>
+                                        {% endif %}
                                     {% endif %}
                                 </td>
                             </tr>
