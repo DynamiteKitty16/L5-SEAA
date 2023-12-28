@@ -53,15 +53,16 @@ nav a {
     color: #fff;
     margin-right: 15px;
     font-size: 1rem;
-    line-height: 2;
-    display: flex;
+    display: inline-flex;
     align-items: center;
+    vertical-align: middle;
 }
 
 .welcome-text .fa-user-circle {
     margin-right: 5px;
     color: #fff;
     font-size: 1.5em;
+    vertical-align: middle;
 }
 
 
