@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import UserProfile, AttendanceRecord, LeaveRequest
+from tracker.models import UserProfile, AttendanceRecord, LeaveRequest
 
 # Register models.
 admin.site.register(UserProfile)
