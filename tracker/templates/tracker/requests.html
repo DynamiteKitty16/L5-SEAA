@@ -116,13 +116,13 @@
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         // Check if jQuery is loaded
-        if (typeof $ === 'undefined') {
+        if (typeof jQuery === 'undefined') {
             console.error('jQuery not loaded');
             return;
         }
 
         // Check if Bootstrap Datepicker is loaded
-        if (typeof $.fn.datepicker === 'undefined') {
+        if (typeof jQuery.fn.datepicker === 'undefined') {
             console.error('Bootstrap Datepicker not loaded');
             return;
         }
@@ -132,7 +132,7 @@
         var nextYear = new Date(new Date().setFullYear(today.getFullYear() + 1));
 
         // Initialize Datepicker for Start Date
-        var startDatePicker = $('#id_start_date').datepicker({
+        var startDatePicker = jQuery('#id_start_date').datepicker({
             format: 'yyyy-mm-dd',
             startDate: today,
             endDate: nextYear,
@@ -140,7 +140,7 @@
         });
 
         // Initialize Datepicker for End Date
-        var endDatePicker = $('#id_end_date').datepicker({
+        var endDatePicker = jQuery('#id_end_date').datepicker({
             format: 'yyyy-mm-dd',
             startDate: today,
             endDate: nextYear,
@@ -168,10 +168,10 @@
 <!-- Script for Handling Cancel Request Modal -->
 <script>
     // Script for handling the cancel request modal
-    $('#cancelRequestModal').on('show.bs.modal', function (event) {
-        var button = $(event.relatedTarget) // Button that triggered the modal
+    jQuery('#cancelRequestModal').on('show.bs.modal', function (event) {
+        var button = jQuery(event.relatedTarget) // Button that triggered the modal
         var requestId = button.data('request-id') // Extract info from data-* attributes
-        var modal = $(this)
+        var modal = jQuery(this)
         modal.find('#confirmCancel').data('request-id', requestId) // Update the confirm button's data
     });
 
@@ -179,9 +179,9 @@
     var cancelRequestUrl = '{% url "cancel_leave_request" %}';
     var csrfToken = '{{ csrf_token }}';
 
-    $('#confirmCancel').click(function() {
-        var requestId = $(this).data('request-id');
-        $.ajax({
+    jQuery('#confirmCancel').click(function() {
+        var requestId = jQuery(this).data('request-id');
+        jQuery.ajax({
             url: cancelRequestUrl,
             type: 'POST',
             data: {
