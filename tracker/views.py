@@ -282,7 +282,7 @@ def manager_self_requests_view(request):
         'form': form,
         'user_requests': user_requests,
     }
-    return render(request, 'tracker/manager_self_requests.html', context)
+    return render(request, 'tracker/manager_self_request.html', context)
 
 
         
