@@ -115,34 +115,34 @@
 <!-- Script for Datepicker and Validation -->
 <script>
     $(document).ready(function() {
-        // Define today and nextYear
-        var today = new Date();
-        var nextYear = new Date(new Date().setFullYear(today.getFullYear() + 1));
-
         // Initialize Datepicker for Start Date
-        $('#id_start_date').datepicker({
+        var startDatePicker = $('#id_start_date').datepicker({
             format: 'yyyy-mm-dd',
-            startDate: today,
-            endDate: nextYear,
+            startDate: new Date(),
+            endDate: new Date(new Date().setFullYear(new Date().getFullYear() + 1)),
             daysOfWeekDisabled: [0, 6]
-        }).on('changeDate', function(e) {
-            // Update End Date's startDate
-            $('#id_end_date').datepicker('setStartDate', e.date);
         });
 
         // Initialize Datepicker for End Date
-        $('#id_end_date').datepicker({
+        var endDatePicker = $('#id_end_date').datepicker({
             format: 'yyyy-mm-dd',
-            startDate: today,
-            endDate: nextYear,
+            startDate: new Date(),
+            endDate: new Date(new Date().setFullYear(new Date().getFullYear() + 1)),
             daysOfWeekDisabled: [0, 6]
-        }).on('changeDate', function(e) {
-            // Validate End Date
-            var startDate = $('#id_start_date').datepicker('getDate');
+        });
+
+        // Event listener for start date change
+        startDatePicker.on('changeDate', function(e) {
+            endDatePicker.datepicker('setStartDate', e.date);
+        });
+
+        // Event listener for end date change
+        endDatePicker.on('changeDate', function(e) {
+            var startDate = startDatePicker.datepicker('getDate');
             var endDate = e.date;
             if (startDate && endDate && endDate < startDate) {
                 alert('End date cannot be before the start date.');
-                $('#id_end_date').datepicker('update', ''); // Clear the end date
+                endDatePicker.datepicker('update', ''); // Clear the end date
             }
         });
     });
@@ -155,7 +155,8 @@
         $('#cancelRequestModal').on('show.bs.modal', function (event) {
             var button = $(event.relatedTarget); // Button that triggered the modal
             var requestId = button.data('request-id'); // Extract info from data-* attributes
-            $('#confirmCancel').data('request-id', requestId); // Update the confirm button's data
+            var modal = $(this);
+            modal.find('#confirmCancel').data('request-id', requestId); // Update the confirm button's data
         });
 
         // Script for handling the cancel request confirmation
@@ -172,7 +173,8 @@
                     location.reload(); // Reload the page to reflect changes
                 },
                 error: function(xhr, textStatus, errorThrown) {
-                    alert('Error: ' + xhr.responseText); // Handle error
+                    // Handle error
+                    alert('Error: ' + xhr.responseText);
                 }
             });
         });
