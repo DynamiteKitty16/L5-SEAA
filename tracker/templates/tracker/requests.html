@@ -114,87 +114,67 @@
 
 <!-- Script for Datepicker and Validation -->
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // Check if jQuery is loaded
-        if (typeof jQuery === 'undefined') {
-            console.error('jQuery not loaded');
-            return;
-        }
-
-        // Check if Bootstrap Datepicker is loaded
-        if (typeof jQuery.fn.datepicker === 'undefined') {
-            console.error('Bootstrap Datepicker not loaded');
-            return;
-        }
-
+    $(document).ready(function() {
         // Define today and nextYear
         var today = new Date();
         var nextYear = new Date(new Date().setFullYear(today.getFullYear() + 1));
 
         // Initialize Datepicker for Start Date
-        var startDatePicker = jQuery('#id_start_date').datepicker({
+        $('#id_start_date').datepicker({
             format: 'yyyy-mm-dd',
             startDate: today,
             endDate: nextYear,
             daysOfWeekDisabled: [0, 6]
+        }).on('changeDate', function(e) {
+            // Update End Date's startDate
+            $('#id_end_date').datepicker('setStartDate', e.date);
         });
 
         // Initialize Datepicker for End Date
-        var endDatePicker = jQuery('#id_end_date').datepicker({
+        $('#id_end_date').datepicker({
             format: 'yyyy-mm-dd',
             startDate: today,
             endDate: nextYear,
             daysOfWeekDisabled: [0, 6]
-        });
-
-        // Event listener for start date change
-        startDatePicker.on('changeDate', function(e) {
-            endDatePicker.datepicker('setStartDate', e.date);
-        });
-
-        // Event listener for end date change
-        endDatePicker.on('changeDate', function(e) {
-            var startDate = startDatePicker.datepicker('getDate');
+        }).on('changeDate', function(e) {
+            // Validate End Date
+            var startDate = $('#id_start_date').datepicker('getDate');
             var endDate = e.date;
             if (startDate && endDate && endDate < startDate) {
                 alert('End date cannot be before the start date.');
-                endDatePicker.datepicker('update', ''); // Clear the end date
+                $('#id_end_date').datepicker('update', ''); // Clear the end date
             }
         });
     });
 </script>
 
-
 <!-- Script for Handling Cancel Request Modal -->
 <script>
-    // Script for handling the cancel request modal
-    jQuery('#cancelRequestModal').on('show.bs.modal', function (event) {
-        var button = jQuery(event.relatedTarget) // Button that triggered the modal
-        var requestId = button.data('request-id') // Extract info from data-* attributes
-        var modal = jQuery(this)
-        modal.find('#confirmCancel').data('request-id', requestId) // Update the confirm button's data
-    });
+    $(document).ready(function() {
+        // Script for handling the cancel request modal
+        $('#cancelRequestModal').on('show.bs.modal', function (event) {
+            var button = $(event.relatedTarget); // Button that triggered the modal
+            var requestId = button.data('request-id'); // Extract info from data-* attributes
+            $('#confirmCancel').data('request-id', requestId); // Update the confirm button's data
+        });
 
-    // Script for handling the cancel request confirmation
-    var cancelRequestUrl = '{% url "cancel_leave_request" %}';
-    var csrfToken = '{{ csrf_token }}';
-
-    jQuery('#confirmCancel').click(function() {
-        var requestId = jQuery(this).data('request-id');
-        jQuery.ajax({
-            url: cancelRequestUrl,
-            type: 'POST',
-            data: {
-                'request_id': requestId,
-                'csrfmiddlewaretoken': csrfToken
-            },
-            success: function(response) {
-                location.reload(); // Reload the page to reflect changes
-            },
-            error: function(xhr, textStatus, errorThrown) {
-                // Handle error
-                alert('Error: ' + xhr.responseText);
-            }
+        // Script for handling the cancel request confirmation
+        $('#confirmCancel').click(function() {
+            var requestId = $(this).data('request-id');
+            $.ajax({
+                url: '{% url "cancel_leave_request" %}',
+                type: 'POST',
+                data: {
+                    'request_id': requestId,
+                    'csrfmiddlewaretoken': '{{ csrf_token }}'
+                },
+                success: function(response) {
+                    location.reload(); // Reload the page to reflect changes
+                },
+                error: function(xhr, textStatus, errorThrown) {
+                    alert('Error: ' + xhr.responseText); // Handle error
+                }
+            });
         });
     });
 </script>
