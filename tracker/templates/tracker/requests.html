@@ -162,35 +162,22 @@
             }
         });
     });
+</script>   
 
-    // Script for handling the cancel request modal
-    $('#cancelRequestModal').on('show.bs.modal', function (event) {
-        var button = $(event.relatedTarget) // Button that triggered the modal
-        var requestId = button.data('request-id') // Extract info from data-* attributes
-        var modal = $(this)
-        modal.find('#confirmCancel').data('request-id', requestId) // Update the confirm button's data
-    });
+    <!-- Script for Handling Cancel Request Modal -->
+<script>
+    $(document).ready(function() {
+        // Script for handling the cancel request modal
+        $('#cancelRequestModal').on('show.bs.modal', function (event) {
+            var button = $(event.relatedTarget); // Button that triggered the modal
+            var requestId = button.data('request-id'); // Extract info from data-* attributes
+            console.log("Modal shown for request ID:", requestId); // Debugging line
+        });
 
-    // Script for handling the cancel request confirmation
-    var cancelRequestUrl = '{% url "cancel_leave_request" %}';
-    var csrfToken = '{{ csrf_token }}';
-
-    $('#confirmCancel').click(function() {
-        var requestId = $(this).data('request-id');
-        $.ajax({
-            url: cancelRequestUrl,
-            type: 'POST',
-            data: {
-                'request_id': requestId,
-                'csrfmiddlewaretoken': csrfToken
-            },
-            success: function(response) {
-                location.reload(); // Reload the page to reflect changes
-            },
-            error: function(xhr, textStatus, errorThrown) {
-                // Handle error
-                alert('Error: ' + xhr.responseText);
-            }
+        // Script for handling the cancel request confirmation
+        $('#confirmCancel').click(function() {
+            var requestId = $(this).data('request-id');
+            console.log("Cancel confirmed for request ID:", requestId); // Debugging line
         });
     });
 </script>
