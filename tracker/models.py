@@ -59,7 +59,7 @@ class LeaveRequest(models.Model):
     start_date = models.DateField()
     end_date = models.DateField()
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='Pending')
-    manager = models.ForeignKey(User, related_name='manager', on_delete=models.SET_NULL, null=True)
+    manager = models.ForeignKey(UserProfile, on_delete=models.SET_NULL, null=True, related_name='leave_requests_to_approve')
 
     def __str__(self):
         return f"{self.user.username} - {self.leave_type} - {self.start_date} to {self.end_date}"

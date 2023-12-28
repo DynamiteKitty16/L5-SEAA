@@ -8,4 +8,7 @@ admin.site.register(LeaveRequest)
 # Assing users as managers through django interface
 @admin.register(UserProfile)
 class UserProfileAdmin(admin.ModelAdmin):
-    list_display = ['user', 'is_manager']
+    list_display = ['user', 'manager', 'is_manager']
+    list_editable = ['manager']
+    search_fields = ['user__username', 'manager__username']
+    

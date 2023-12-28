@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required
-from .models import LeaveRequest
+from .models import UserProfile, LeaveRequest
 from django.contrib.auth.models import User
 from django.contrib import messages
 from django.contrib.auth.forms import AuthenticationForm
@@ -243,6 +243,22 @@ def clean(self):
         # Ensure the end date is not before the start date
         if self.end_date < self.start_date:
             raise ValidationError("End date cannot be before the start date.")
+
+
+# View to direct request to manager
+
+def leave_request_view(request):
+    if request.method == 'POST':
+        form = LeaveRequestForm(request.POST)
+        if form.is_valid():
+            leave_request = form.save(commit=False)
+            leave_request.user = request.user
+            leave_request.save()
+            # The page will refresh automatically upon form submission
+    else:
+        form = LeaveRequestForm()
+
+    return render(request, 'tracker/requests.html', {'form': form})
         
         
 # View to handle cancellation for requests
