@@ -115,19 +115,35 @@
 <!-- Script for Datepicker and Validation -->
 <script>
     document.addEventListener('DOMContentLoaded', function() {
+        // Check if jQuery is loaded
+        if (typeof $ === 'undefined') {
+            console.error('jQuery not loaded');
+            return;
+        }
+
+        // Check if Bootstrap Datepicker is loaded
+        if (typeof $.fn.datepicker === 'undefined') {
+            console.error('Bootstrap Datepicker not loaded');
+            return;
+        }
+
+        // Define today and nextYear
+        var today = new Date();
+        var nextYear = new Date(new Date().setFullYear(today.getFullYear() + 1));
+
         // Initialize Datepicker for Start Date
         var startDatePicker = $('#id_start_date').datepicker({
             format: 'yyyy-mm-dd',
-            startDate: new Date(),
-            endDate: new Date(new Date().setFullYear(new Date().getFullYear() + 1)),
+            startDate: today,
+            endDate: nextYear,
             daysOfWeekDisabled: [0, 6]
         });
 
         // Initialize Datepicker for End Date
         var endDatePicker = $('#id_end_date').datepicker({
             format: 'yyyy-mm-dd',
-            startDate: new Date(),
-            endDate: new Date(new Date().setFullYear(new Date().getFullYear() + 1)),
+            startDate: today,
+            endDate: nextYear,
             daysOfWeekDisabled: [0, 6]
         });
 
@@ -151,33 +167,34 @@
 
 <!-- Script for Handling Cancel Request Modal -->
 <script>
-    jQuery(document).ready(function() {
-        // Script for handling the cancel request modal
-        jQuery('#cancelRequestModal').on('show.bs.modal', function (event) {
-            var button = jQuery(event.relatedTarget); // Button that triggered the modal
-            var requestId = button.data('request-id'); // Extract info from data-* attributes
-            var modal = jQuery(this);
-            modal.find('#confirmCancel').data('request-id', requestId); // Update the confirm button's data
-        });
+    // Script for handling the cancel request modal
+    $('#cancelRequestModal').on('show.bs.modal', function (event) {
+        var button = $(event.relatedTarget) // Button that triggered the modal
+        var requestId = button.data('request-id') // Extract info from data-* attributes
+        var modal = $(this)
+        modal.find('#confirmCancel').data('request-id', requestId) // Update the confirm button's data
+    });
 
-        // Script for handling the cancel request confirmation
-        jQuery('#confirmCancel').click(function() {
-            var requestId = jQuery(this).data('request-id');
-            jQuery.ajax({
-                url: '{% url "cancel_leave_request" %}',
-                type: 'POST',
-                data: {
-                    'request_id': requestId,
-                    'csrfmiddlewaretoken': '{{ csrf_token }}'
-                },
-                success: function(response) {
-                    location.reload(); // Reload the page to reflect changes
-                },
-                error: function(xhr, textStatus, errorThrown) {
-                    // Handle error
-                    alert('Error: ' + xhr.responseText);
-                }
-            });
+    // Script for handling the cancel request confirmation
+    var cancelRequestUrl = '{% url "cancel_leave_request" %}';
+    var csrfToken = '{{ csrf_token }}';
+
+    $('#confirmCancel').click(function() {
+        var requestId = $(this).data('request-id');
+        $.ajax({
+            url: cancelRequestUrl,
+            type: 'POST',
+            data: {
+                'request_id': requestId,
+                'csrfmiddlewaretoken': csrfToken
+            },
+            success: function(response) {
+                location.reload(); // Reload the page to reflect changes
+            },
+            error: function(xhr, textStatus, errorThrown) {
+                // Handle error
+                alert('Error: ' + xhr.responseText);
+            }
         });
     });
 </script>
