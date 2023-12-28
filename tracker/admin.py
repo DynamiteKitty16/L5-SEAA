@@ -5,3 +5,8 @@ from .models import UserProfile, AttendanceRecord, LeaveRequest
 admin.site.register(UserProfile)
 admin.site.register(AttendanceRecord)
 admin.site.register(LeaveRequest)
+
+# Assing users as managers through django interface
+@admin.register(UserProfile)
+class UserProfileAdmin(admin.ModelAdmin):
+    list_display = ['user', 'is_manager']
