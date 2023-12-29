@@ -9,5 +9,3 @@ need to add in some sort of help page with the email etc maybe set up some guide
         <!-- Created footer a in styles.css to handle style of this email address -->
     </footer>
 
-
-reloading on the requests page after making a form submission, resubmits the form, allowing users to add another request for an already requested leave
