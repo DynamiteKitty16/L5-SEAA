@@ -151,49 +151,4 @@
         });
     });
 </script>   
-
-<!-- Script for Handling Cancel Request Modal -->
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // Attach event listener to modal
-        var cancelModal = document.getElementById('cancelRequestModal');
-        cancelModal.addEventListener('show.bs.modal', function (event) {
-            var button = event.relatedTarget; // Button that triggered the modal
-            var requestId = button.getAttribute('data-request-id'); // Extract info from data-* attributes
-            var confirmButton = cancelModal.querySelector('#confirmCancel');
-            confirmButton.setAttribute('data-request-id', requestId); // Update the confirm button's data
-        });
-
-        // Handling the cancel request confirmation
-        var confirmCancel = document.getElementById('confirmCancel');
-        confirmCancel.addEventListener('click', function() {
-            var requestId = this.getAttribute('data-request-id');
-            var cancelRequestUrl = '{% url "cancel_leave_request" %}';
-            var csrfToken = '{{ csrf_token }}';
-
-            fetch(cancelRequestUrl, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                    'X-CSRFToken': csrfToken
-                },
-                body: 'request_id=' + requestId
-            })
-            .then(response => {
-                if (response.ok) {
-                    return response.json();
-                } else {
-                    throw new Error('Network response was not ok.');
-                }
-            })
-            .then(data => {
-                location.reload(); // Reload the page to reflect changes
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('Error: ' + error.message);
-            });
-        });
-    });
-</script>
 {% endblock %}
