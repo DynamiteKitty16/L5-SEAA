@@ -42,4 +42,5 @@ urlpatterns = [
     path('cancel-request/', cancel_leave_request, name='cancel_leave_request'),
     path('manage-requests/', views.manager_dashboard_view, name='manage_requests'),
     path('manager_self_requests/', views.manager_self_requests_view, name='manager_self_requests'),
+    path('approve_request/<int:request_id>/', views.approve_request, name='approve_request'),
 ]

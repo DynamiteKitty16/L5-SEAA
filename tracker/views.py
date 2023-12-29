@@ -9,7 +9,7 @@ from tracker.forms import LeaveRequestForm, LeaveRequest
 from django.conf import settings
 from .forms import CustomUserCreationForm
 from django.http import JsonResponse
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404, redirect
 from django.utils import timezone
 from .models import AttendanceRecord
 from datetime import datetime, timedelta
@@ -102,11 +102,6 @@ def extend_session(request):
 
 
 # Views for FullCalendar
-
-def get_start_of_week(date):
-    # Get the start of the week (Monday)
-    start_of_week = date - timedelta(days=date.weekday())
-    return start_of_week
 
 @login_required
 def calendar(request): 
@@ -208,7 +203,7 @@ def get_attendance_counts_for_month(user):
 def requests_view(request):
 
     form = LeaveRequestForm()  # Define form for GET requests
-    
+
     if request.method == 'POST':
         form = LeaveRequestForm(request.POST)
         if form.is_valid():
@@ -258,18 +253,32 @@ def manager_self_requests_view(request):
     # Ensure the user is a manager
     if not request.user.userprofile.is_manager:
         return redirect('home_view')
-    
+
     form = LeaveRequestForm()  # Define form for GET requests
 
     if request.method == 'POST':
-        form = LeaveRequestForm(request.POST)
-        if form.is_valid():
-            leave_request = form.save(commit=False)
-            leave_request.user = request.user
-            leave_request.manager = request.user.userprofile  # Manager approves their own request
+        if 'approve_request_id' in request.POST:
+            # Handle approval action
+            request_id = request.POST.get('approve_request_id')
+            leave_request = LeaveRequest.objects.get(id=request_id)
+            leave_request.status = 'Approved'
             leave_request.save()
 
-            return redirect('manager_self_requests')
+            if request.is_ajax():
+                # AJAX request: Return JSON response
+                return JsonResponse({'status': 'success', 'message': 'Request approved'})
+            else:
+                # Non-AJAX request: Redirect
+                return redirect('manager_self_requests')
+        else:
+            # Handle new leave request submission
+            form = LeaveRequestForm(request.POST)
+            if form.is_valid():
+                leave_request = form.save(commit=False)
+                leave_request.user = request.user
+                leave_request.manager = request.user.userprofile  # Manager approves their own request
+                leave_request.save()
+                return redirect('manager_self_requests')
 
     user_requests = LeaveRequest.objects.filter(user=request.user).annotate(
         custom_order=Case(
@@ -291,6 +300,7 @@ def manager_self_requests_view(request):
         'user_requests': user_requests,
     }
     return render(request, 'tracker/manager_self_request.html', context)
+
 
         
 # View to handle cancellation for requests
@@ -329,3 +339,29 @@ def manager_dashboard_view(request):
         'employees': employees,
         'managed_requests': managed_requests
     })
+
+
+# View for approved requests to be updated in the user (requestor) calendar
+@login_required
+def approve_request(request, request_id):
+    leave_request = get_object_or_404(LeaveRequest, id=request_id)
+
+    if request.user.userprofile.is_manager and (leave_request.user == request.user or leave_request.user.manager == request.user):
+        leave_request.status = 'Approved'
+        leave_request.save()
+
+        # Create AttendanceRecord for each day of the leave
+        current_date = leave_request.start_date
+        while current_date <= leave_request.end_date:
+            AttendanceRecord.objects.create(
+                user=leave_request.user,
+                date=current_date,
+                type=leave_request.leave_type
+            )
+            current_date += timedelta(days=1)
+
+        messages.success(request, "Leave request approved and attendance records updated.")
+    else:
+        messages.error(request, "You do not have permission to approve this request.")
+
+    return redirect('manager_self_requests')

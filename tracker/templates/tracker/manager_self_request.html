@@ -31,7 +31,7 @@
                                     {% if request.show_buttons %}
                                         <!-- Approve Button for Self-Approval -->
                                         {% if request.status == 'Pending' %}
-                                            <button type="button" class="btn btn-success btn-sm">
+                                            <button type="button" class="btn btn-success btn-sm approve-btn" data-request-id="{{ request.id }}">
                                                 Approve
                                             </button>
                                         {% endif %}
@@ -42,6 +42,9 @@
                                             </button>
                                         {% endif %}
                                     {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
                                 </td>
                             </tr>
                             {% empty %}
@@ -211,6 +214,21 @@
             .catch(error => {
                 console.error('Error:', error);
                 alert('Error: ' + error.message);
+            });
+        });
+    });
+</script>
+
+
+<!-- Script for handling approve button -->
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Handle Approve Button Click
+        document.querySelectorAll('.approve-btn').forEach(function(button) {
+            button.addEventListener('click', function() {
+                var requestId = this.getAttribute('data-request-id');
+                var approveRequestUrl = `{% url 'approve_request' 0 %}`.replace('0', requestId);
+                window.location.href = approveRequestUrl;
             });
         });
     });
