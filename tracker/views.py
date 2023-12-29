@@ -218,7 +218,7 @@ def requests_view(request):
         
             leave_request.save()
 
-            return redirect('requests')
+            return redirect('tracker/requests.html')
 
     user_requests = LeaveRequest.objects.filter(user=request.user).annotate(
         custom_order=Case(
@@ -264,7 +264,7 @@ def manager_self_requests_view(request):
             leave_request.manager = request.user.userprofile  # Manager approves their own request
             leave_request.save()
 
-            return redirect('manager_self_request')
+            return redirect('tracker/manager_self_request.html')
 
     user_requests = LeaveRequest.objects.filter(user=request.user).annotate(
         custom_order=Case(
