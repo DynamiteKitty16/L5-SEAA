@@ -206,6 +206,9 @@ def get_attendance_counts_for_month(user):
 
 @login_required
 def requests_view(request):
+
+    form = LeaveRequestForm()  # Define form for GET requests
+    
     if request.method == 'POST':
         form = LeaveRequestForm(request.POST)
         if form.is_valid():
@@ -218,7 +221,7 @@ def requests_view(request):
         
             leave_request.save()
 
-            return redirect('tracker/requests.html')
+            return redirect('requests/')
 
     user_requests = LeaveRequest.objects.filter(user=request.user).annotate(
         custom_order=Case(
@@ -255,6 +258,8 @@ def manager_self_requests_view(request):
     # Ensure the user is a manager
     if not request.user.userprofile.is_manager:
         return redirect('home_view')
+    
+    form = LeaveRequestForm()  # Define form for GET requests
 
     if request.method == 'POST':
         form = LeaveRequestForm(request.POST)
@@ -264,7 +269,7 @@ def manager_self_requests_view(request):
             leave_request.manager = request.user.userprofile  # Manager approves their own request
             leave_request.save()
 
-            return redirect('tracker/manager_self_request.html')
+            return redirect('manager_self_requests')
 
     user_requests = LeaveRequest.objects.filter(user=request.user).annotate(
         custom_order=Case(
