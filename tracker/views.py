@@ -221,14 +221,6 @@ def requests_view(request):
             # Save the new request
             new_leave_request.save()
 
-            # Update calendar event
-            update_calendar_event(
-                request.user,
-                new_leave_request.start_date,
-                new_leave_request.end_date,
-                new_leave_request.leave_type
-            )
-
             return redirect('requests')
 
     user_requests = LeaveRequest.objects.filter(user=request.user).annotate(
@@ -296,16 +288,8 @@ def manager_self_requests_view(request):
                     new_leave_request.end_date
                 )
 
-                # Save the new request
+                # Save the new request WITHOUT updating the calendar
                 new_leave_request.save()
-
-                # Update calendar event
-                update_calendar_event(
-                    request.user,
-                    new_leave_request.start_date,
-                    new_leave_request.end_date,
-                    new_leave_request.leave_type
-                )
 
         return redirect('manager_self_requests')
 
@@ -320,7 +304,7 @@ def manager_self_requests_view(request):
         )
     ).order_by('custom_order')
 
-     # Add 'show_buttons' attribute based on the condition
+    # Add 'show_buttons' attribute based on the condition
     for req in user_requests:
         req.show_buttons = req.status in ['Pending', 'Approved']
 
