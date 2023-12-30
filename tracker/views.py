@@ -275,7 +275,11 @@ def manager_self_requests_view(request):
 
     if request.method == 'POST':
         if 'approve_request_id' in request.POST:
-            # ... existing approval logic ...
+            # Handle approval action
+            request_id = request.POST.get('approve_request_id')
+            leave_request = LeaveRequest.objects.get(id=request_id)
+            leave_request.status = 'Approved'
+            leave_request.save()
         else:
             # Handle new leave request submission
             form = LeaveRequestForm(request.POST)
