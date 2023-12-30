@@ -17,6 +17,6 @@ class UserProfileAdmin(admin.ModelAdmin):
 
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
         if db_field.name == "manager":
-            kwargs["queryset"] = User.objects.filter(is_manager=True)
+            kwargs["queryset"] = UserProfile.objects.filter(is_manager=True).select_related('user')
         return super().formfield_for_foreignkey(db_field, request, **kwargs)
     
