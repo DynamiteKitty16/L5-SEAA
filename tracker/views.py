@@ -401,7 +401,19 @@ def get_employee_requests(request, employee_id):
 
     try:
         employee = User.objects.get(id=employee_id)
-        requests = LeaveRequest.objects.filter(user_id=employee_id).annotate(
+        current_date = timezone.now().date()
+
+        # Fetch all requests for the employee
+        all_requests = LeaveRequest.objects.filter(user_id=employee_id)
+
+        # Auto-cancel outdated requests
+        outdated_requests = all_requests.filter(start_date__lte=current_date, status='Pending')
+        for req in outdated_requests:
+            req.status = 'Cancelled'
+            req.save()
+
+        # Continue with existing logic
+        requests = all_requests.annotate(
             custom_order=Case(
                 When(status='Pending', then=Value(1)),
                 When(status='Approved', then=Value(2)),
