@@ -401,7 +401,15 @@ def get_employee_requests(request, employee_id):
 
     try:
         employee = User.objects.get(id=employee_id)
-        requests = LeaveRequest.objects.filter(user_id=employee_id).order_by('status', '-start_date')
+        requests = LeaveRequest.objects.filter(user_id=employee_id).annotate(
+            custom_order=Case(
+                When(status='Pending', then=Value(1)),
+                When(status='Approved', then=Value(2)),
+                When(status='Denied', then=Value(3)),
+                default=Value(4),
+                output_field=IntegerField(),
+            )
+        ).order_by('custom_order', '-start_date')
         
         # Manually serialize the data
         data = [{
