@@ -198,9 +198,9 @@ def get_attendance_counts_for_month(user):
     counts = Counter(record.type for record in records)
     return dict(counts)
 
+
 # Views to handle requests
 
-@login_required
 @login_required
 def requests_view(request):
     form = LeaveRequestForm()  # Define form for GET requests
@@ -222,16 +222,8 @@ def requests_view(request):
                 overlapping_request.status = 'Cancelled'
                 overlapping_request.save()
 
-            # Save the new request
+            # Save the new request without updating the calendar
             new_leave_request.save()
-
-            # Update calendar event
-            update_calendar_event(
-                request.user,
-                new_leave_request.start_date,
-                new_leave_request.end_date,
-                new_leave_request.leave_type
-            )
 
             return redirect('requests')
 
@@ -253,16 +245,6 @@ def requests_view(request):
     return render(request, 'tracker/requests.html', context)
 
 
-def clean(self):
-        # Ensure the start date is not in the past
-        if self.start_date < timezone.now().date():
-            raise ValidationError("Start date cannot be in the past.")
-
-        # Ensure the end date is not before the start date
-        if self.end_date < self.start_date:
-            raise ValidationError("End date cannot be before the start date.")
-
-
 # Similiar view to above but for the Manager self-approval
 
 @login_required
@@ -280,6 +262,14 @@ def manager_self_requests_view(request):
             leave_request = LeaveRequest.objects.get(id=request_id)
             leave_request.status = 'Approved'
             leave_request.save()
+
+            # Update calendar event upon approval
+            update_calendar_event(
+                leave_request.user,
+                leave_request.start_date,
+                leave_request.end_date,
+                leave_request.leave_type
+            )
         else:
             # Handle new leave request submission
             form = LeaveRequestForm(request.POST)
@@ -299,16 +289,8 @@ def manager_self_requests_view(request):
                     overlapping_request.status = 'Cancelled'
                     overlapping_request.save()
 
-                # Save the new request
+                # Save the new request without updating the calendar
                 new_leave_request.save()
-
-                # Update calendar event
-                update_calendar_event(
-                    request.user,
-                    new_leave_request.start_date,
-                    new_leave_request.end_date,
-                    new_leave_request.leave_type
-                )
 
                 return redirect('manager_self_requests')
 
