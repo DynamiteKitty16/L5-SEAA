@@ -403,11 +403,19 @@ def get_employee_requests(request, employee_id):
         employee = User.objects.get(id=employee_id)
         requests = LeaveRequest.objects.filter(user_id=employee_id).order_by('status', '-start_date')
         
-        # Serialize the queryset into JSON
-        data = serializers.serialize('json', requests)
+        # Manually serialize the data
+        data = [{
+            'id': req.id,
+            'leave_type': req.leave_type,
+            'start_date': req.start_date.strftime('%Y-%m-%d'),
+            'end_date': req.end_date.strftime('%Y-%m-%d'),
+            'status': req.status
+        } for req in requests]
+
         return JsonResponse(data, safe=False)
     except User.DoesNotExist:
         return JsonResponse({'error': 'Employee not found'}, status=404)
+
 
 # View for approving leave request
 @login_required
