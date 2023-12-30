@@ -348,19 +348,15 @@ def manager_dashboard_view(request):
         return redirect('home_view')
 
     # Get the list of employees managed by the current user
-    managed_users = User.objects.filter(userprofile__manager=request.user.userprofile)
+    employees = UserProfile.objects.filter(manager=request.user.userprofile).order_by('user__first_name', 'user__last_name')
 
-    # Fetch pending leave requests for each managed user
-    managed_requests = {}
-    for user in managed_users:
-        managed_requests[user] = LeaveRequest.objects.filter(user=user, status='Pending')
+    # Fetch leave requests managed by the current user
+    managed_requests = LeaveRequest.objects.filter(manager__user=request.user)
 
-    context = {
-        'managed_users': managed_users,
-        'managed_requests': managed_requests,
-    }
-
-    return render(request, 'tracker/manage_requests.html', context)
+    return render(request, 'tracker/manage_requests.html', {
+        'employees': employees,
+        'managed_requests': managed_requests
+    })
 
 
 # View for approved requests to be updated in the user (requestor) calendar
