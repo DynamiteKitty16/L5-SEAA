@@ -311,15 +311,20 @@ def cancel_leave_request(request):
         request_id = request.POST.get('request_id')
         leave_request = get_object_or_404(LeaveRequest, id=request_id, user=request.user)
 
-        # Check if the request can be cancelled
-        if leave_request.status in ['Pending', 'Approved']:
-            leave_request.status = 'Cancelled'  # Update the status to 'Cancelled'
+        # Check if the request can be cancelled and it's at least one day before the start date
+        if leave_request.status in ['Pending', 'Approved'] and timezone.now().date() < leave_request.start_date:
+            leave_request.status = 'Cancelled'
             leave_request.save()
+
+            # Remove corresponding AttendanceRecord entries
+            AttendanceRecord.objects.filter(user=request.user, date__range=[leave_request.start_date, leave_request.end_date]).delete()
+
             return JsonResponse({'status': 'success', 'message': 'Leave request cancelled successfully.'})
         else:
-            return JsonResponse({'status': 'error', 'message': 'This request cannot be cancelled.'}, status=400)
+            return JsonResponse({'status': 'error', 'message': 'This request cannot be cancelled or it is too late to cancel.'}, status=400)
 
     return JsonResponse({'status': 'error', 'message': 'Invalid request.'}, status=400)
+
 
 
 # Manager view to review requests
