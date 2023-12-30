@@ -11,7 +11,7 @@
                 <li class="list-group-item list-group-item-action employee-item" data-employee-id="{{ employee.id }}">
                     {{ employee.get_full_name }}
                 </li>
-                {% endfor %}
+                {% empty %}
                 <li class="list-group-item">No employees found.</li>
                 {% endfor %}
             </ul>
