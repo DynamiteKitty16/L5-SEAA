@@ -42,6 +42,18 @@ def should_update_existing_attendance(user, start_date, end_date, new_leave_type
             return True
     return False
 
+def cancel_overlapping_requests(user, start_date, end_date):
+    overlapping_requests = LeaveRequest.objects.filter(
+        user=user,
+        start_date__lte=end_date,
+        end_date__gte=start_date,
+        status__in=['Approved', 'Pending']  # Consider both approved and pending requests 
+    )
+    for request in overlapping_requests:
+        request.status = 'Cancelled'
+        request.save()
+
+
 def update_calendar_event(user, start_date, end_date, new_leave_type):
     for single_date in (start_date + timedelta(n) for n in range((end_date - start_date).days + 1)):
         # Update existing attendance records

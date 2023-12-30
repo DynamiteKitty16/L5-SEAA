@@ -17,7 +17,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.core.exceptions import ValidationError
 from collections import Counter
 from django.db.models import Case, When, Value, IntegerField
-from .leave_utils import get_overlapping_request, update_calendar_event
+from .leave_utils import get_overlapping_request, update_calendar_event, cancel_overlapping_requests
 
 import json
 
@@ -211,19 +211,23 @@ def requests_view(request):
             new_leave_request = form.save(commit=False)
             new_leave_request.user = request.user
 
-            # Check for overlapping requests
-            overlapping_request = get_overlapping_request(
+            # Cancel overlapping requests
+            cancel_overlapping_requests(
                 request.user,
                 new_leave_request.start_date,
                 new_leave_request.end_date
             )
 
-            if overlapping_request:
-                overlapping_request.status = 'Cancelled'
-                overlapping_request.save()
-
-            # Save the new request without updating the calendar
+            # Save the new request
             new_leave_request.save()
+
+            # Update calendar event
+            update_calendar_event(
+                request.user,
+                new_leave_request.start_date,
+                new_leave_request.end_date,
+                new_leave_request.leave_type
+            )
 
             return redirect('requests')
 
@@ -263,7 +267,14 @@ def manager_self_requests_view(request):
             leave_request.status = 'Approved'
             leave_request.save()
 
-            # Update calendar event upon approval
+            # Cancel overlapping requests
+            cancel_overlapping_requests(
+                leave_request.user,
+                leave_request.start_date,
+                leave_request.end_date
+            )
+
+            # Update calendar event
             update_calendar_event(
                 leave_request.user,
                 leave_request.start_date,
@@ -278,21 +289,25 @@ def manager_self_requests_view(request):
                 new_leave_request.user = request.user
                 new_leave_request.manager = request.user.userprofile
 
-                # Check for overlapping requests
-                overlapping_request = get_overlapping_request(
+                # Cancel overlapping requests
+                cancel_overlapping_requests(
                     request.user,
                     new_leave_request.start_date,
                     new_leave_request.end_date
                 )
 
-                if overlapping_request:
-                    overlapping_request.status = 'Cancelled'
-                    overlapping_request.save()
-
-                # Save the new request without updating the calendar
+                # Save the new request
                 new_leave_request.save()
 
-                return redirect('manager_self_requests')
+                # Update calendar event
+                update_calendar_event(
+                    request.user,
+                    new_leave_request.start_date,
+                    new_leave_request.end_date,
+                    new_leave_request.leave_type
+                )
+
+        return redirect('manager_self_requests')
 
     user_requests = LeaveRequest.objects.filter(user=request.user).annotate(
         custom_order=Case(
@@ -304,10 +319,6 @@ def manager_self_requests_view(request):
             output_field=IntegerField(),
         )
     ).order_by('custom_order')
-
-    # Add 'show_buttons' attribute based on the condition
-    for req in user_requests:
-        req.show_buttons = req.status in ['Pending', 'Approved']
 
     context = {
         'form': form,
