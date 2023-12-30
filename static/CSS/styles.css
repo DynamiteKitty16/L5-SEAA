@@ -174,3 +174,9 @@ a:hover, a:focus, a:active {
     max-height: 400px;
     overflow-y: scroll;
 }
+
+/* Visual indication to which user is selected in the manage-requests view */
+.employee-item.active {
+    background-color: #007bff;
+    color: white;
+}

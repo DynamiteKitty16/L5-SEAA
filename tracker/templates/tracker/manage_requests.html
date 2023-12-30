@@ -10,7 +10,7 @@
                 {% for employee in managed_users %}
                 <li class="list-group-item list-group-item-action employee-item" data-employee-id="{{ employee.id }}">
                     {{ employee.get_full_name }}
-                </li>
+                </li>                
                 {% empty %}
                 <li class="list-group-item">No employees found.</li>
                 {% endfor %}
@@ -47,7 +47,15 @@
 
     employeeItems.forEach(item => {
         item.addEventListener('click', function() {
+
+            // Remove active class from all items
+            employeeItems.forEach(i => i.classList.remove('active'));
+
+            // Add active class to clicked item
+            this.classList.add('active');
+
             const employeeId = this.getAttribute('data-employee-id');
+
             fetch(`/get-employee-requests/${employeeId}/`)
                 .then(response => response.json())
                 .then(data => {
