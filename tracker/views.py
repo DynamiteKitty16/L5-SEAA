@@ -17,6 +17,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.core.exceptions import ValidationError
 from collections import Counter
 from django.db.models import Case, When, Value, IntegerField
+from .leave_utils import get_overlapping_request, update_calendar_event
 
 import json
 
@@ -200,23 +201,39 @@ def get_attendance_counts_for_month(user):
 # Views to handle requests
 
 @login_required
+@login_required
 def requests_view(request):
-
     form = LeaveRequestForm()  # Define form for GET requests
 
     if request.method == 'POST':
         form = LeaveRequestForm(request.POST)
         if form.is_valid():
-            leave_request = form.save(commit=False)
-            leave_request.user = request.user
+            new_leave_request = form.save(commit=False)
+            new_leave_request.user = request.user
 
-            # Retrieve the user's manager from UserProfile and set it for the leave request
-            user_profile, created = UserProfile.objects.get_or_create(user=request.user)
-            leave_request.manager = user_profile.manager
-        
-            leave_request.save()
+            # Check for overlapping requests
+            overlapping_request = get_overlapping_request(
+                request.user,
+                new_leave_request.start_date,
+                new_leave_request.end_date
+            )
 
-            return redirect('requests/')
+            if overlapping_request:
+                overlapping_request.status = 'Cancelled'
+                overlapping_request.save()
+
+            # Save the new request
+            new_leave_request.save()
+
+            # Update calendar event
+            update_calendar_event(
+                request.user,
+                new_leave_request.start_date,
+                new_leave_request.end_date,
+                new_leave_request.leave_type
+            )
+
+            return redirect('requests')
 
     user_requests = LeaveRequest.objects.filter(user=request.user).annotate(
         custom_order=Case(
@@ -258,26 +275,37 @@ def manager_self_requests_view(request):
 
     if request.method == 'POST':
         if 'approve_request_id' in request.POST:
-            # Handle approval action
-            request_id = request.POST.get('approve_request_id')
-            leave_request = LeaveRequest.objects.get(id=request_id)
-            leave_request.status = 'Approved'
-            leave_request.save()
-
-            if request.is_ajax():
-                # AJAX request: Return JSON response
-                return JsonResponse({'status': 'success', 'message': 'Request approved'})
-            else:
-                # Non-AJAX request: Redirect
-                return redirect('manager_self_requests')
+            # ... existing approval logic ...
         else:
             # Handle new leave request submission
             form = LeaveRequestForm(request.POST)
             if form.is_valid():
-                leave_request = form.save(commit=False)
-                leave_request.user = request.user
-                leave_request.manager = request.user.userprofile  # Manager approves their own request
-                leave_request.save()
+                new_leave_request = form.save(commit=False)
+                new_leave_request.user = request.user
+                new_leave_request.manager = request.user.userprofile
+
+                # Check for overlapping requests
+                overlapping_request = get_overlapping_request(
+                    request.user,
+                    new_leave_request.start_date,
+                    new_leave_request.end_date
+                )
+
+                if overlapping_request:
+                    overlapping_request.status = 'Cancelled'
+                    overlapping_request.save()
+
+                # Save the new request
+                new_leave_request.save()
+
+                # Update calendar event
+                update_calendar_event(
+                    request.user,
+                    new_leave_request.start_date,
+                    new_leave_request.end_date,
+                    new_leave_request.leave_type
+                )
+
                 return redirect('manager_self_requests')
 
     user_requests = LeaveRequest.objects.filter(user=request.user).annotate(
@@ -355,13 +383,13 @@ def approve_request(request, request_id):
         leave_request.status = 'Approved'
         leave_request.save()
 
-        # Create AttendanceRecord for each day of the leave
+        # Update or create AttendanceRecord for each day of the leave
         current_date = leave_request.start_date
         while current_date <= leave_request.end_date:
-            AttendanceRecord.objects.create(
+            AttendanceRecord.objects.update_or_create(
                 user=leave_request.user,
                 date=current_date,
-                type=leave_request.leave_type
+                defaults={'type': leave_request.leave_type}
             )
             current_date += timedelta(days=1)
 
