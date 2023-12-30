@@ -320,6 +320,10 @@ def manager_self_requests_view(request):
         )
     ).order_by('custom_order')
 
+     # Add 'show_buttons' attribute based on the condition
+    for req in user_requests:
+        req.show_buttons = req.status in ['Pending', 'Approved']
+
     context = {
         'form': form,
         'user_requests': user_requests,
