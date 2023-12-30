@@ -400,9 +400,8 @@ def get_employee_requests(request, employee_id):
 
     try:
         employee = User.objects.get(id=employee_id)
-        requests = LeaveRequest.objects.filter(user=employee, status='Pending').values(
-            'id', 'leave_type', 'start_date', 'end_date', 'status'
-        )
+        requests = LeaveRequest.objects.filter(user_id=employee_id).order_by('status', '-start_date')
+            
         return JsonResponse(list(requests), safe=False)
     except User.DoesNotExist:
         return JsonResponse({'error': 'Employee not found'}, status=404)
