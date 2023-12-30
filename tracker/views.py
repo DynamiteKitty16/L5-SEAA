@@ -18,6 +18,7 @@ from django.core.exceptions import ValidationError
 from collections import Counter
 from django.db.models import Case, When, Value, IntegerField
 from .leave_utils import get_overlapping_request, update_calendar_event, cancel_overlapping_requests
+from django.core import serializers
 
 import json
 
@@ -401,8 +402,10 @@ def get_employee_requests(request, employee_id):
     try:
         employee = User.objects.get(id=employee_id)
         requests = LeaveRequest.objects.filter(user_id=employee_id).order_by('status', '-start_date')
-            
-        return JsonResponse(list(requests), safe=False)
+        
+        # Serialize the queryset into JSON
+        data = serializers.serialize('json', requests)
+        return JsonResponse(data, safe=False)
     except User.DoesNotExist:
         return JsonResponse({'error': 'Employee not found'}, status=404)
 
