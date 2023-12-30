@@ -100,24 +100,58 @@
             headers: {
                 'X-CSRFToken': getCsrfToken(),
                 'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ requestId: requestId })
+            }
         })
         .then(response => response.json())
         .then(data => {
             if (data.status === 'success') {
-                // Update the UI or notify the user
-                alert('Request approved successfully');
-            } else {
-                // Handle error
-                alert('Error approving request');
+                // Find the row with the request and update its status
+                const requestRow = document.querySelector(`button[data-request-id="${requestId}"]`).parentNode.parentNode;
+                requestRow.cells[3].textContent = 'Approved'; // Update status cell
+                // Replace Approve/Deny buttons with Cancel button
+                requestRow.cells[4].innerHTML = `<button class="btn btn-warning btn-sm cancel-btn" data-request-id="${requestId}">Cancel</button>`;
+                attachCancelEvent(requestRow.querySelector('.cancel-btn'));
             }
         });
     }
 
+    // Cancel button is added when a request is approved by a manager, so that there is a way for the manager
+    // to cancel the request should it be needed
+    function attachCancelEvent(button) {
+        button.addEventListener('click', function() {
+            const requestId = this.getAttribute('data-request-id');
+            // Call a function to handle the cancellation
+            handleCancellation(requestId);
+        });
+    }
+
+    function handleCancellation(requestId) {
+        fetch(`/cancel-leave-request/${requestId}/`, { 
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': getCsrfToken(),
+                'Content-Type': 'application/json'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'success') {
+                // Find the row with the request and update its status
+                const requestRow = document.querySelector(`button[data-request-id="${requestId}"]`).parentNode.parentNode;
+                requestRow.cells[3].textContent = 'Cancelled'; // Update status cell
+                // Remove the Cancel button
+                requestRow.cells[4].innerHTML = '';
+            } else {
+                // Handle error
+                console.error('Error cancelling request:', data.message);
+            }
+        });
+    }
+    
+
     // Function to handle denial
     function handleDenial(requestId) {
-    // AJAX call to deny the request
+        // AJAX call to deny the request
         fetch(`/deny-leave-request/${requestId}/`, { 
             method: 'POST',
             headers: {
@@ -129,11 +163,14 @@
         .then(response => response.json())
         .then(data => {
             if (data.status === 'success') {
-                // Update the UI or notify the user
-                alert('Request denied successfully');
+                // Find the row with the request and update its status
+                const requestRow = document.querySelector(`button[data-request-id="${requestId}"]`).parentNode.parentNode;
+                requestRow.cells[3].textContent = 'Denied'; // Update status cell
+                // Remove the action buttons
+                requestRow.cells[4].innerHTML = '';
             } else {
                 // Handle error
-                alert('Error denying request');
+                console.error('Error denying request:', data.message);
             }
         });
     }

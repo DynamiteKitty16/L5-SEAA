@@ -428,3 +428,22 @@ def deny_leave_request(request, request_id):
         leave_request.save()
         return JsonResponse({'status': 'success'})
     return JsonResponse({'status': 'error'}, status=400)
+
+# View for cancelling an approved leave request if it has already been approved
+@login_required
+@csrf_exempt
+def cancel_leave_request(request, request_id):
+    if request.method == 'POST':
+        leave_request = LeaveRequest.objects.get(id=request_id)
+        if leave_request.status == 'Approved':
+            leave_request.status = 'Cancelled'
+            leave_request.save()
+            # Remove the corresponding event from the user's calendar
+            AttendanceRecord.objects.filter(
+                user=leave_request.user,
+                date__range=[leave_request.start_date, leave_request.end_date]
+            ).delete()
+            return JsonResponse({'status': 'success'})
+        else:
+            return JsonResponse({'status': 'error', 'message': 'Only approved requests can be cancelled'}, status=400)
+    return JsonResponse({'status': 'error'}, status=400)
