@@ -1,5 +1,5 @@
 from django import forms
-from .models import UserProfile, AttendanceRecord, LeaveRequest
+from .models import UserProfile, User, AttendanceRecord, LeaveRequest
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
 from django.core.validators import RegexValidator
@@ -53,6 +53,17 @@ class CustomUserCreationForm(UserCreationForm):
         if commit:
             user.save()
         return user
+    
+# Form to handle restricting dropdown list in django admin for manager selection
+class UserProfileAdminForm(forms.ModelForm):
+    class Meta:
+        model = UserProfile
+        fields = '__all__'
+
+    def __init__(self, *args, **kwargs):
+        super(UserProfileAdminForm, self).__init__(*args, **kwargs)
+        # Restrict manager choices to users who are managers
+        self.fields['manager'].queryset = User.objects.filter(is_manager=True)
     
 class AttendanceRecordForm(forms.ModelForm):
     class Meta:
