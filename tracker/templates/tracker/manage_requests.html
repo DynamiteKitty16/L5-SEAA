@@ -92,6 +92,30 @@
         });
     }
 
+    // Function for handle approval
+    function handleApproval(requestId) {
+    // AJAX call to approve the request
+        fetch(`/approve-leave-request/${requestId}/`, { 
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': getCsrfToken(),
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ requestId: requestId })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'success') {
+                // Update the UI or notify the user
+                alert('Request approved successfully');
+            } else {
+                // Handle error
+                alert('Error approving request');
+            }
+        });
+    }
+
+    // Function to handle denial
     function handleDenial(requestId) {
     // AJAX call to deny the request
         fetch(`/deny-leave-request/${requestId}/`, { 
