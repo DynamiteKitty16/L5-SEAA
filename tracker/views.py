@@ -348,15 +348,19 @@ def manager_dashboard_view(request):
         return redirect('home_view')
 
     # Get the list of employees managed by the current user
-    employees = UserProfile.objects.filter(manager=request.user.userprofile)
+    managed_users = User.objects.filter(userprofile__manager=request.user.userprofile)
 
-    # Fetch leave requests managed by the current user
-    managed_requests = LeaveRequest.objects.filter(manager__user=request.user)
+    # Fetch pending leave requests for each managed user
+    managed_requests = {}
+    for user in managed_users:
+        managed_requests[user] = LeaveRequest.objects.filter(user=user, status='Pending')
 
-    return render(request, 'tracker/manage_requests.html', {
-        'employees': employees,
-        'managed_requests': managed_requests
-    })
+    context = {
+        'managed_users': managed_users,
+        'managed_requests': managed_requests,
+    }
+
+    return render(request, 'tracker/manage_requests.html', context)
 
 
 # View for approved requests to be updated in the user (requestor) calendar
@@ -383,3 +387,44 @@ def approve_request(request, request_id):
         messages.error(request, "You do not have permission to approve this request.")
 
     return redirect('manager_self_requests')
+
+
+# View for returning the pending leave requests for a selected employee using JSON
+
+from django.http import JsonResponse
+
+@login_required
+def get_employee_requests(request, employee_id):
+    if not request.user.userprofile.is_manager:
+        return JsonResponse({'error': 'Unauthorized'}, status=403)
+
+    try:
+        employee = User.objects.get(id=employee_id)
+        requests = LeaveRequest.objects.filter(user=employee, status='Pending').values(
+            'id', 'leave_type', 'start_date', 'end_date', 'status'
+        )
+        return JsonResponse(list(requests), safe=False)
+    except User.DoesNotExist:
+        return JsonResponse({'error': 'Employee not found'}, status=404)
+
+# View for approving leave request
+@login_required
+@csrf_exempt
+def approve_leave_request(request, request_id):
+    if request.method == 'POST':
+        leave_request = LeaveRequest.objects.get(id=request_id)
+        leave_request.status = 'Approved'
+        leave_request.save()
+        return JsonResponse({'status': 'success'})
+    return JsonResponse({'status': 'error'}, status=400)
+
+# View for denying request
+@login_required
+@csrf_exempt
+def deny_leave_request(request, request_id):
+    if request.method == 'POST':
+        leave_request = LeaveRequest.objects.get(id=request_id)
+        leave_request.status = 'Denied'
+        leave_request.save()
+        return JsonResponse({'status': 'success'})
+    return JsonResponse({'status': 'error'}, status=400)

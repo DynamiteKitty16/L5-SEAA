@@ -7,11 +7,11 @@
         <div class="col-md-4">
             <h3>My Employees</h3>
             <ul class="list-group">
-                {% for employee in employees %}
-                <li class="list-group-item list-group-item-action" data-employee-id="{{ employee.id }}">
+                {% for employee in managed_users %}
+                <li class="list-group-item list-group-item-action employee-item" data-employee-id="{{ employee.id }}">
                     {{ employee.get_full_name }}
                 </li>
-                {% empty %}
+                {% endfor %}
                 <li class="list-group-item">No employees found.</li>
                 {% endfor %}
             </ul>
@@ -42,9 +42,82 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        // JavaScript to handle employee selection and request management
-        // Fetch and display requests of the selected employee
-        // Implement AJAX calls for approve, deny, and delete actions
+    const employeeItems = document.querySelectorAll('.employee-item');
+    const requestsTableBody = document.getElementById('requests-table-body');
+
+    employeeItems.forEach(item => {
+        item.addEventListener('click', function() {
+            const employeeId = this.getAttribute('data-employee-id');
+            fetch(`/get-employee-requests/${employeeId}/`)
+                .then(response => response.json())
+                .then(data => {
+                    requestsTableBody.innerHTML = '';
+                    data.forEach(request => {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td>${request.leave_type}</td>
+                            <td>${request.start_date}</td>
+                            <td>${request.end_date}</td>
+                            <td>${request.status}</td>
+                            <td>
+                                <button class="btn btn-success btn-sm approve-btn" data-request-id="${request.id}">Approve</button>
+                                <button class="btn btn-danger btn-sm deny-btn" data-request-id="${request.id}">Deny</button>
+                            </td>
+                        `;
+                        requestsTableBody.appendChild(row);
+                    });
+                    attachButtonEvents();
+                })
+                .catch(error => console.error('Error:', error));
+        });
     });
+
+    function attachButtonEvents() {
+        // Attach event listner to Approve buttons
+        document.querySelectorAll('.approve-btn').forEach(button => {
+            button.addEventListener('click', function() {
+                const requestId = this.getAttribute('data-request-id');
+                // Call a function to handle the approval
+                handleApproval(requestId);
+            });
+        });
+        
+        // Attach event listener to Deny buttons
+        document.querySelectorAll('.deny-btn').forEach(button => {
+            button.addEventListener('click', function() {
+                const requestId = this.getAttribute('data-request-id');
+                // Call a function to handle the denial
+                handleDenial(requestId);
+            });
+        });
+    }
+
+    function handleDenial(requestId) {
+    // AJAX call to deny the request
+        fetch(`/deny-leave-request/${requestId}/`, { 
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': getCsrfToken(),
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ requestId: requestId })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'success') {
+                // Update the UI or notify the user
+                alert('Request denied successfully');
+            } else {
+                // Handle error
+                alert('Error denying request');
+            }
+        });
+    }
+
+    function getCsrfToken() {
+        // Function to get CSRF token from cookie
+        return document.cookie.split('; ').find(row => row.startsWith('csrftoken=')).split('=')[1];
+    }
+});
 </script>
 {% endblock %}

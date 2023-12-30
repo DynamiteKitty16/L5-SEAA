@@ -43,4 +43,7 @@ urlpatterns = [
     path('manage-requests/', views.manager_dashboard_view, name='manage_requests'),
     path('manager_self_requests/', views.manager_self_requests_view, name='manager_self_requests'),
     path('approve_request/<int:request_id>/', views.approve_request, name='approve_request'),
+    path('get-employee-requests/<int:employee_id>/', views.get_employee_requests, name='get_employee_requests'),
+    path('approve-leave-request/<int:request_id>/', views.approve_leave_request, name='approve_leave_request'),
+    path('deny-leave-request/<int:request_id>/', views.deny_leave_request, name='deny_leave_request'),
 ]
