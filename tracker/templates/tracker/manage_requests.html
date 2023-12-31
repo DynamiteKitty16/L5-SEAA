@@ -179,8 +179,12 @@
         })
         .then(data => {
             if (data.status === 'success') {
-                // Refresh the page
-                window.location.reload();
+                // Find the row with the request and update its status
+                const requestRow = document.querySelector(`button[data-request-id="${requestId}"]`).parentNode.parentNode;
+                requestRow.cells[3].textContent = 'Cancelled'; // Update status cell
+
+                // Remove the action buttons
+                requestRow.cells[4].innerHTML = '';
             } else {
                 console.error('Error cancelling request:', data.message);
             }
@@ -189,8 +193,6 @@
             console.error('Error:', error);
         });
     }
-
-
     
 
     // Function to handle denial
