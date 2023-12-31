@@ -53,7 +53,8 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-danger" id="confirmCancel">Confirm Cancel</button>
+                <!-- Updated Confirm Cancel Button -->
+                <button type="button" class="btn btn-danger" id="confirmCancel" onclick="confirmCancellation()">Confirm Cancel</button>
             </div>
         </div>
     </div>
@@ -168,21 +169,27 @@
         });
     }
 
+    // Placing as part of testing in the modal as the event listner doesn't seem to be working
+    // on the attach button section of this javascript
+    function confirmCancellation() {
+        var confirmButton = document.getElementById('confirmCancel');
+        var requestId = confirmButton.getAttribute('data-request-id');
+        handleCancellation(requestId);
+    }
+    // End testing block on the confirmCancellation
+
     // Cancel button is added when a request is approved by a manager, so that there is a way for the manager
     // to cancel the request should it be needed
     function attachCancelEvent(button) {
-        console.log("attachCancelEvent called for request ID:", button.getAttribute('data-request-id'));
         button.addEventListener('click', function() {
             const requestId = this.getAttribute('data-request-id');
-            // Trigger the modal for cancellation confirmation
-            var cancelModal = document.getElementById('cancelRequestModal');
-            var confirmButton = cancelModal.querySelector('#confirmCancel');
+            var confirmButton = document.getElementById('confirmCancel');
             confirmButton.setAttribute('data-request-id', requestId);
-            // Bootstrap's way to programmatically show a modal
-            var modal = new bootstrap.Modal(cancelModal);
+            var modal = new bootstrap.Modal(document.getElementById('cancelRequestModal'));
             modal.show();
         });
     }
+
 
 
     function handleCancellation(requestId) {
