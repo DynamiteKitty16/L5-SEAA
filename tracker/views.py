@@ -412,14 +412,22 @@ def get_employee_requests(request, employee_id):
         return JsonResponse({'error': 'Employee not found'}, status=404)
 
 
-# View for approving leave request
-@login_required
-@csrf_exempt
 def approve_leave_request(request, request_id):
     if request.method == 'POST':
         leave_request = LeaveRequest.objects.get(id=request_id)
         leave_request.status = 'Approved'
         leave_request.save()
+
+        # Update or create AttendanceRecord for each day of the leave
+        current_date = leave_request.start_date
+        while current_date <= leave_request.end_date:
+            AttendanceRecord.objects.update_or_create(
+                user=leave_request.user,
+                date=current_date,
+                defaults={'type': leave_request.leave_type}
+            )
+            current_date += timedelta(days=1)
+
         return JsonResponse({'status': 'success'})
     return JsonResponse({'status': 'error'}, status=400)
 
