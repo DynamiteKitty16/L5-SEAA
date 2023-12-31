@@ -164,27 +164,31 @@
     }
 
     function handleCancellation(requestId) {
-        fetch(`/cancel-leave-request/${requestId}/`, { 
+        fetch(`/cancel-leave-request-manage/${requestId}/`, { 
             method: 'POST',
             headers: {
                 'X-CSRFToken': getCsrfToken(),
-                'Content-Type': 'application/x-www-form-urlencoded'
+                'Content-Type': 'application/json'
             }
         })
-        .then(response => response.json())
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
         .then(data => {
             if (data.status === 'success') {
-                // Find the row with the request and update its status
-                const requestRow = document.querySelector(`button[data-request-id="${requestId}"]`).parentNode.parentNode;
-                requestRow.cells[3].textContent = 'Cancelled'; // Update status cell
-                // Remove the Cancel button
-                requestRow.cells[4].innerHTML = '';
+                // Update the UI to reflect the cancellation
             } else {
-                // Handle error
                 console.error('Error cancelling request:', data.message);
             }
+        })
+        .catch(error => {
+            console.error('Error:', error);
         });
     }
+
     
 
     // Function to handle denial

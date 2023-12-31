@@ -49,4 +49,5 @@ urlpatterns = [
     path('approve-leave-request/<int:request_id>/', views.approve_leave_request, name='approve_leave_request'),
     path('deny-leave-request/<int:request_id>/', views.deny_leave_request, name='deny_leave_request'),
     path('cancel-leave-request/<int:request_id>/', cancel_leave_request, name='cancel_leave_request'),
+    path('cancel-leave-request-manage/<int:request_id>/', views.cancel_leave_request_from_manage, name='cancel_leave_request_manage'),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
