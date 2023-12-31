@@ -21,6 +21,8 @@ from tracker.views import requests_view
 from django.contrib import admin
 from django.urls import path
 from tracker import views
+from django.conf import settings
+from django.conf.urls.static import static
 
 
 urlpatterns = [
@@ -47,4 +49,4 @@ urlpatterns = [
     path('approve-leave-request/<int:request_id>/', views.approve_leave_request, name='approve_leave_request'),
     path('deny-leave-request/<int:request_id>/', views.deny_leave_request, name='deny_leave_request'),
     path('cancel-leave-request/<int:request_id>/', cancel_leave_request, name='cancel_leave_request'),
-]
+] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
