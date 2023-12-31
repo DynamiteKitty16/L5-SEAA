@@ -186,6 +186,7 @@
 
 
     function handleCancellation(requestId) {
+        console.log("handleCancellation called for request ID:", requestId);
         fetch(`/cancel-leave-request/`, { 
             method: 'POST',
             headers: {
