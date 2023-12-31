@@ -122,9 +122,20 @@ def calendar(request):
     # For new users this will return empty queryset
     attendance_records = AttendanceRecord.objects.filter(user=request.user)
 
-    # Convert records to a format suitable for FullCalendar
-    events = [{'title': record.type, 'start': record.date.strftime('%Y-%m-%d')} for record in attendance_records]
-
+    events = []
+    for record in attendance_records:
+        is_approved_leave = LeaveRequest.objects.filter(
+            user=request.user,
+            start_date__lte=record.date,
+            end_date__gte=record.date,
+            status='Approved'
+        ).exists()
+        events.append({
+            # Convert records to a format suitable for FullCalendar
+            'title': record.type,
+            'start': record.date.strftime('%Y-%m-%d'),
+            'isApprovedLeave': is_approved_leave  # Restricts changing the event if it is an approved leave
+        })
     # Convert the events list to a JSON string
     events_json = json.dumps(events)
 
@@ -170,6 +181,18 @@ def handle_attendance(request):
                 raise ValueError("Invalid attendance type")
         except ValueError as e:
             return JsonResponse({'status': 'error', 'message': str(e)}, status=400)
+        
+        # Check if the date corresponds to an approved leave
+        is_approved_leave = LeaveRequest.objects.filter(
+            user=request.user,
+            start_date__lte=date,
+            end_date__gte=date,
+            status='Approved'
+        ).exists()
+
+        if is_approved_leave and attendance_type in ['AL', 'NWD', 'FL']:
+            # Prevent changing attendance type for approved leaves
+            return JsonResponse({'status': 'error', 'message': 'Cannot change attendance for approved leave.'}, status=403)
 
         # Create or update the attendance record
         record, created = AttendanceRecord.objects.update_or_create(

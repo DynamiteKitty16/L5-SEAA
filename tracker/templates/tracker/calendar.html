@@ -97,6 +97,13 @@
                     start: '{{ start_date }}', // Start date from context
                 },
 
+                eventClick: function(info) {
+                    // Check if the event is an approved leave
+                    if (info.event.extendedProps.isApprovedLeave) {
+                        alert('This event represents an approved leave and cannot be edited.');
+                        return; // Prevent any further action
+                    }
+                },
 
                 dateClick: function(info) {
                 var clickedDate = new Date(info.dateStr);
