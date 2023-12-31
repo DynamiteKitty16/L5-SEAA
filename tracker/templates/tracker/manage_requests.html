@@ -157,12 +157,15 @@
     }
 
     function handleCancellation(requestId) {
-        fetch(`/cancel-leave-request/${requestId}/`, { 
+        const formData = new FormData();
+        formData.append('request_id', requestId);
+
+        fetch(`/cancel-leave-request/`, { 
             method: 'POST',
             headers: {
                 'X-CSRFToken': getCsrfToken(),
-                'Content-Type': 'application/json'
-            }
+            },
+            body: formData
         })
         .then(response => response.json())
         .then(data => {
@@ -178,6 +181,7 @@
             }
         });
     }
+
     
 
     // Function to handle denial
