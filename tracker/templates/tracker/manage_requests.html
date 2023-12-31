@@ -1,5 +1,4 @@
 {% extends 'base.html' %}
-{% load static %}
 
 {% block content %}
 <div class="container mt-2">
@@ -61,6 +60,163 @@
 </div>
 {% endblock %}
 
+
 {% block scripts %}
-<script src="{% static 'manageRequests.js' %}"></script>
+<!-- Utility Functions -->
+<script>
+function getCsrfToken() {
+    // Function to get CSRF token from cookie
+    return document.cookie.split('; ').find(row => row.startsWith('csrftoken=')).split('=')[1];
+}
+</script>
+
+<!-- Generate Action Buttons Function -->
+<script>
+function generateActionButtons(request) {
+    let buttons = '';
+    if (request.status === 'Pending') {
+        buttons += `<button class="btn btn-success btn-sm approve-btn" data-request-id="${request.id}">Approve</button>`;
+        buttons += `<button class="btn btn-danger btn-sm deny-btn" data-request-id="${request.id}">Deny</button>`;
+    } else if (request.status === 'Approved') {
+        // Update this line to trigger the modal
+        buttons += `<button type="button" class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#cancelRequestModal" data-request-id="${request.id}">Cancel</button>`;
+    }
+    return buttons;
+}
+</script>
+
+<!-- Attach Button Events Function -->
+<script>
+function attachButtonEvents() {
+    // Attach event listener to Approve buttons
+    document.querySelectorAll('.approve-btn').forEach(button => {
+        button.addEventListener('click', function() {
+            const requestId = this.getAttribute('data-request-id');
+            handleApproval(requestId);
+        });
+    });
+
+    // Attach event listener to Deny buttons
+    document.querySelectorAll('.deny-btn').forEach(button => {
+        button.addEventListener('click', function() {
+            const requestId = this.getAttribute('data-request-id');
+            handleDenial(requestId);
+        });
+    });
+}
+</script>
+
+<!-- Handle Approval, Denial, and Cancellation Functions -->
+<script>
+function handleApproval(requestId) {
+    // AJAX call to approve the request
+    fetch(`/approve-leave-request/${requestId}/`, { 
+        method: 'POST',
+        headers: {
+            'X-CSRFToken': getCsrfToken(),
+            'Content-Type': 'application/json'
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.status === 'success') {
+            const requestRow = document.querySelector(`button[data-request-id="${requestId}"]`).parentNode.parentNode;
+            requestRow.cells[3].textContent = 'Approved';
+            requestRow.cells[4].innerHTML = `<button class="btn btn-warning btn-sm cancel-btn" data-request-id="${requestId}">Cancel</button>`;
+            attachCancelEvent(requestRow.querySelector('.cancel-btn'));
+        }
+    });
+}
+
+function handleDenial(requestId) {
+    // AJAX call to deny the request
+    fetch(`/deny-leave-request/${requestId}/`, { 
+        method: 'POST',
+        headers: {
+            'X-CSRFToken': getCsrfToken(),
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ requestId: requestId })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.status === 'success') {
+            const requestRow = document.querySelector(`button[data-request-id="${requestId}"]`).parentNode.parentNode;
+            requestRow.cells[3].textContent = 'Denied';
+            requestRow.cells[4].innerHTML = '';
+        }
+    });
+}
+
+function handleCancellation(requestId) {
+    // AJAX call to cancel the request
+    fetch(`/cancel-leave-request/`, { 
+        method: 'POST',
+        headers: {
+            'X-CSRFToken': getCsrfToken(),
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ request_id: requestId })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.status === 'success') {
+            const requestRow = document.querySelector(`button[data-request-id="${requestId}"]`).parentNode.parentNode;
+            requestRow.cells[3].textContent = 'Cancelled';
+            requestRow.cells[4].innerHTML = '';
+        }
+    });
+}
+
+function attachCancelEvent(button) {
+    button.addEventListener('click', function() {
+        const requestId = this.getAttribute('data-request-id');
+        var confirmButton = document.getElementById('confirmCancel');
+        confirmButton.setAttribute('data-request-id', requestId);
+        var modal = new bootstrap.Modal(document.getElementById('cancelRequestModal'));
+        modal.show();
+    });
+}
+</script>
+
+<!-- Employee List Click Event Handler -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const employeeItems = document.querySelectorAll('.employee-item');
+    const requestsTableBody = document.getElementById('requests-table-body');
+
+    employeeItems.forEach(item => {
+        item.addEventListener('click', function() {
+            employeeItems.forEach(i => i.classList.remove('active'));
+            this.classList.add('active');
+            const employeeId = this.getAttribute('data-employee-id');
+
+            fetch(`/get-employee-requests/${employeeId}/`)
+                .then(response => response.json())
+                .then(data => {
+                    data.sort((a, b) => {
+                        if (a.status === 'Cancelled' && b.status !== 'Cancelled') return 1;
+                        if (a.status !== 'Cancelled' && b.status === 'Cancelled') return -1;
+                        return 0;
+                    });
+
+                    requestsTableBody.innerHTML = '';
+                    data.forEach(request => {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td>${request.leave_type}</td>
+                            <td>${request.start_date}</td>
+                            <td>${request.end_date}</td>
+                            <td>${request.status}</td>
+                            <td>${generateActionButtons(request)}</td>
+                        `;
+                        requestsTableBody.appendChild(row);
+                    });
+                    attachButtonEvents();
+                })
+                .catch(error => console.error('Error:', error));
+        });
+    });
+});
+</script>
 {% endblock %}
