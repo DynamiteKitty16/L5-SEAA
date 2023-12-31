@@ -39,177 +39,112 @@
         </div>
     </div>
 </div>
+{% endblock %}
 
+{% block scripts %}
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-    const employeeItems = document.querySelectorAll('.employee-item');
-    const requestsTableBody = document.getElementById('requests-table-body');
+        const employeeItems = document.querySelectorAll('.employee-item');
+        const requestsTableBody = document.getElementById('requests-table-body');
 
-    employeeItems.forEach(item => {
-        item.addEventListener('click', function() {
+        employeeItems.forEach(item => {
+            item.addEventListener('click', function() {
+                employeeItems.forEach(i => i.classList.remove('active'));
+                this.classList.add('active');
+                const employeeId = this.getAttribute('data-employee-id');
 
-            // Remove active class from all items
-            employeeItems.forEach(i => i.classList.remove('active'));
+                fetch(`/get-employee-requests/${employeeId}/`)
+                    .then(response => response.json())
+                    .then(data => {
+                        data.sort((a, b) => {
+                            if (a.status === 'Cancelled' && b.status !== 'Cancelled') return 1;
+                            if (a.status !== 'Cancelled' && b.status === 'Cancelled') return -1;
+                            return 0;
+                        });
 
-            // Add active class to clicked item
-            this.classList.add('active');
-
-            const employeeId = this.getAttribute('data-employee-id');
-
-            fetch(`/get-employee-requests/${employeeId}/`)
-                .then(response => response.json())
-                .then(data => {
-                    // Sort requests with 'Cancelled' status to the end
-                    data.sort((a, b) => {
-                        if (a.status === 'Cancelled' && b.status !== 'Cancelled') {
-                            return 1;
-                        }
-                        if (a.status !== 'Cancelled' && b.status === 'Cancelled') {
-                            return -1;
-                        }
-                        return 0;
-                    });
-
-                    requestsTableBody.innerHTML = '';
-                    data.forEach(request => {
-                        const row = document.createElement('tr');
-                        row.innerHTML = `
-                            <td>${request.leave_type}</td>
-                            <td>${request.start_date}</td>
-                            <td>${request.end_date}</td>
-                            <td>${request.status}</td>
-                            <td>
-                                <!-- Update buttons based on the status -->
-                                ${generateActionButtons(request)}
-                            </td>
-                        `;
-                        requestsTableBody.appendChild(row);
-                    });
-                    attachButtonEvents();
-                })
-                .catch(error => console.error('Error:', error));
+                        requestsTableBody.innerHTML = '';
+                        data.forEach(request => {
+                            const row = document.createElement('tr');
+                            row.innerHTML = `
+                                <td>${request.leave_type}</td>
+                                <td>${request.start_date}</td>
+                                <td>${request.end_date}</td>
+                                <td>${request.status}</td>
+                                <td>${generateActionButtons(request)}</td>
+                            `;
+                            requestsTableBody.appendChild(row);
+                        });
+                        attachButtonEvents();
+                    })
+                    .catch(error => console.error('Error:', error));
+            });
         });
-    });
 
-    function generateActionButtons(request) {
-        let buttons = '';
-        if (request.status === 'Pending') {
-            buttons += `<button class="btn btn-success btn-sm approve-btn" data-request-id="${request.id}">Approve</button>`;
-            buttons += `<button class="btn btn-danger btn-sm deny-btn" data-request-id="${request.id}">Deny</button>`;
-        } else if (request.status === 'Approved') {
-            buttons += `<button class="btn btn-warning btn-sm cancel-btn" data-request-id="${request.id}">Cancel</button>`;
+        function generateActionButtons(request) {
+            let buttons = '';
+            if (request.status === 'Pending') {
+                buttons += `<button class="btn btn-success btn-sm approve-btn" data-request-id="${request.id}">Approve</button>`;
+                buttons += `<button class="btn btn-danger btn-sm deny-btn" data-request-id="${request.id}">Deny</button>`;
+            }
+            return buttons;
         }
-        return buttons;
-    }
 
-
-    function attachButtonEvents() {
-        // Attach event listner to Approve buttons
-        document.querySelectorAll('.approve-btn').forEach(button => {
-            button.addEventListener('click', function() {
-                const requestId = this.getAttribute('data-request-id');
-                // Call a function to handle the approval
-                handleApproval(requestId);
+        function attachButtonEvents() {
+            document.querySelectorAll('.approve-btn').forEach(button => {
+                button.addEventListener('click', function() {
+                    const requestId = this.getAttribute('data-request-id');
+                    handleApproval(requestId);
+                });
             });
-        });
-        
-        // Attach event listener to Deny buttons
-        document.querySelectorAll('.deny-btn').forEach(button => {
-            button.addEventListener('click', function() {
-                const requestId = this.getAttribute('data-request-id');
-                // Call a function to handle the denial
-                handleDenial(requestId);
+
+            document.querySelectorAll('.deny-btn').forEach(button => {
+                button.addEventListener('click', function() {
+                    const requestId = this.getAttribute('data-request-id');
+                    handleDenial(requestId);
+                });
             });
-        });
-    }
+        }
 
-    // Function for handle approval
-    function handleApproval(requestId) {
-    // AJAX call to approve the request
-        fetch(`/approve-leave-request/${requestId}/`, { 
-            method: 'POST',
-            headers: {
-                'X-CSRFToken': getCsrfToken(),
-                'Content-Type': 'application/json'
-            }
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.status === 'success') {
-                // Find the row with the request and update its status
-                const requestRow = document.querySelector(`button[data-request-id="${requestId}"]`).parentNode.parentNode;
-                requestRow.cells[3].textContent = 'Approved'; // Update status cell
-                // Replace Approve/Deny buttons with Cancel button
-                requestRow.cells[4].innerHTML = `<button class="btn btn-warning btn-sm cancel-btn" data-request-id="${requestId}">Cancel</button>`;
-                attachCancelEvent(requestRow.querySelector('.cancel-btn'));
-            }
-        });
-    }
+        function handleApproval(requestId) {
+            fetch(`/approve-leave-request/${requestId}/`, { 
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': getCsrfToken(),
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    const requestRow = document.querySelector(`button[data-request-id="${requestId}"]`).parentNode.parentNode;
+                    requestRow.cells[3].textContent = 'Approved';
+                    requestRow.cells[4].innerHTML = '';
+                }
+            });
+        }
 
-    // Cancel button is added when a request is approved by a manager, so that there is a way for the manager
-    // to cancel the request should it be needed
-    function attachCancelEvent(button) {
-        button.addEventListener('click', function() {
-            const requestId = this.getAttribute('data-request-id');
-            // Call a function to handle the cancellation
-            handleCancellation(requestId);
-        });
-    }
+        function handleDenial(requestId) {
+            fetch(`/deny-leave-request/${requestId}/`, { 
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': getCsrfToken(),
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ requestId: requestId })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    const requestRow = document.querySelector(`button[data-request-id="${requestId}"]`).parentNode.parentNode;
+                    requestRow.cells[3].textContent = 'Denied';
+                    requestRow.cells[4].innerHTML = '';
+                }
+            });
+        }
 
-    function handleCancellation(requestId) {
-        fetch(`/cancel-leave-request/${requestId}/`, { 
-            method: 'POST',
-            headers: {
-                'X-CSRFToken': getCsrfToken(),
-                'Content-Type': 'application/json'
-            }
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.status === 'success') {
-                // Find the row with the request and update its status
-                const requestRow = document.querySelector(`button[data-request-id="${requestId}"]`).parentNode.parentNode;
-                requestRow.cells[3].textContent = 'Cancelled'; // Update status cell
-                // Remove the Cancel button
-                requestRow.cells[4].innerHTML = '';
-            } else {
-                // Handle error
-                console.error('Error cancelling request:', data.message);
-            }
-        });
-    }
-    
-
-    // Function to handle denial
-    function handleDenial(requestId) {
-        // AJAX call to deny the request
-        fetch(`/deny-leave-request/${requestId}/`, { 
-            method: 'POST',
-            headers: {
-                'X-CSRFToken': getCsrfToken(),
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ requestId: requestId })
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.status === 'success') {
-                // Find the row with the request and update its status
-                const requestRow = document.querySelector(`button[data-request-id="${requestId}"]`).parentNode.parentNode;
-                requestRow.cells[3].textContent = 'Denied'; // Update status cell
-                // Remove the action buttons
-                requestRow.cells[4].innerHTML = '';
-            } else {
-                // Handle error
-                console.error('Error denying request:', data.message);
-            }
-        });
-    }
-
-    function getCsrfToken() {
-        // Function to get CSRF token from cookie
-        return document.cookie.split('; ').find(row => row.startsWith('csrftoken=')).split('=')[1];
-    }
-});
+        function getCsrfToken() {
+            return document.cookie.split('; ').find(row => row.startsWith('csrftoken=')).split('=')[1];
+        }
+    });
 </script>
 {% endblock %}
