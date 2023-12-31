@@ -59,6 +59,9 @@
             fetch(`/get-employee-requests/${employeeId}/`)
                 .then(response => response.json())
                 .then(data => {
+                    // Clear existing content in the table
+                    requestsTableBody.innerHTML = '';
+
                     // Sort requests with 'Cancelled' status to the end
                     data.sort((a, b) => {
                         if (a.status === 'Cancelled' && b.status !== 'Cancelled') {
@@ -95,7 +98,7 @@
                     attachButtonEvents();
                 })
                 .catch(error => console.error('Error:', error));
-        });
+            });
     });
 
     function generateActionButtons(request) {
