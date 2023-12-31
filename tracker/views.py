@@ -437,8 +437,9 @@ def deny_leave_request(request, request_id):
 # View for cancelling an approved leave request if it has already been approved
 @login_required
 @csrf_exempt
-def cancel_leave_request(request, request_id):
+def cancel_leave_request(request):
     if request.method == 'POST':
+        request_id = request.POST.get('request_id')
         leave_request = get_object_or_404(LeaveRequest, id=request_id)
 
         # Check if the user is either the owner of the request or a manager
