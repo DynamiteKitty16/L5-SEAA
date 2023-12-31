@@ -187,6 +187,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     employeeItems.forEach(item => {
         item.addEventListener('click', function() {
+            console.log("Employee item clicked:", this.getAttribute('data-employee-id'));
             employeeItems.forEach(i => i.classList.remove('active'));
             this.classList.add('active');
             const employeeId = this.getAttribute('data-employee-id');
