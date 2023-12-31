@@ -316,31 +316,6 @@ def manager_self_requests_view(request):
     return render(request, 'tracker/manager_self_request.html', context)
 
 
-        
-# View to handle cancellation for requests
-
-@login_required
-def cancel_leave_request(request):
-    if request.method == 'POST':
-        request_id = request.POST.get('request_id')
-        leave_request = get_object_or_404(LeaveRequest, id=request_id, user=request.user)
-
-        # Check if the request can be cancelled and it's at least one day before the start date
-        if leave_request.status in ['Pending', 'Approved'] and timezone.now().date() < leave_request.start_date:
-            leave_request.status = 'Cancelled'
-            leave_request.save()
-
-            # Remove corresponding AttendanceRecord entries
-            AttendanceRecord.objects.filter(user=request.user, date__range=[leave_request.start_date, leave_request.end_date]).delete()
-
-            return JsonResponse({'status': 'success', 'message': 'Leave request cancelled successfully.'})
-        else:
-            return JsonResponse({'status': 'error', 'message': 'This request cannot be cancelled or it is too late to cancel.'}, status=400)
-
-    return JsonResponse({'status': 'error', 'message': 'Invalid request.'}, status=400)
-
-
-
 # Manager view to review requests
 @login_required
 def manager_dashboard_view(request):
@@ -445,17 +420,6 @@ def approve_leave_request(request, request_id):
         leave_request = LeaveRequest.objects.get(id=request_id)
         leave_request.status = 'Approved'
         leave_request.save()
-
-        # Update or create AttendanceRecord for each day of the leave
-        current_date = leave_request.start_date
-        while current_date <= leave_request.end_date:
-            AttendanceRecord.objects.update_or_create(
-                user=leave_request.user,
-                date=current_date,
-                defaults={'type': leave_request.leave_type}
-            )
-            current_date += timedelta(days=1)
-
         return JsonResponse({'status': 'success'})
     return JsonResponse({'status': 'error'}, status=400)
 
@@ -475,22 +439,16 @@ def deny_leave_request(request, request_id):
 @csrf_exempt
 def cancel_leave_request(request, request_id):
     if request.method == 'POST':
-        leave_request = get_object_or_404(LeaveRequest, id=request_id)
-
-        # Check if the user is either the owner of the request or a manager
-        if request.user == leave_request.user or request.user.userprofile.is_manager:
-            # Check if the request can be cancelled (Pending or Approved) and it's before the start date
-            if leave_request.status in ['Pending', 'Approved'] and timezone.now().date() < leave_request.start_date:
-                leave_request.status = 'Cancelled'
-                leave_request.save()
-
-                # Remove corresponding AttendanceRecord entries
-                AttendanceRecord.objects.filter(user=leave_request.user, date__range=[leave_request.start_date, leave_request.end_date]).delete()
-
-                return JsonResponse({'status': 'success', 'message': 'Leave request cancelled successfully.'})
-            else:
-                return JsonResponse({'status': 'error', 'message': 'This request cannot be cancelled or it is too late to cancel.'}, status=400)
+        leave_request = LeaveRequest.objects.get(id=request_id)
+        if leave_request.status == 'Approved':
+            leave_request.status = 'Cancelled'
+            leave_request.save()
+            # Remove the corresponding event from the user's calendar
+            AttendanceRecord.objects.filter(
+                user=leave_request.user,
+                date__range=[leave_request.start_date, leave_request.end_date]
+            ).delete()
+            return JsonResponse({'status': 'success'})
         else:
-            return JsonResponse({'status': 'error', 'message': 'Unauthorized to cancel this request.'}, status=403)
-
-    return JsonResponse({'status': 'error', 'message': 'Invalid request method.'}, status=400)
+            return JsonResponse({'status': 'error', 'message': 'Only approved requests can be cancelled'}, status=400)
+    return JsonResponse({'status': 'error'}, status=400)
