@@ -70,7 +70,6 @@
                         return 0;
                     });
 
-                    requestsTableBody.innerHTML = '';
                     data.forEach(request => {
                         const row = document.createElement('tr');
                         row.innerHTML = `
@@ -78,12 +77,20 @@
                             <td>${request.start_date}</td>
                             <td>${request.end_date}</td>
                             <td>${request.status}</td>
-                            <td>
-                                <!-- Update buttons based on the status -->
-                                ${generateActionButtons(request)}
-                            </td>
+                            <td id="action-buttons-${request.id}"></td>
                         `;
                         requestsTableBody.appendChild(row);
+
+                        // Generate and append action buttons
+                        const actionButtonsHtml = generateActionButtons(request);
+                        const actionButtonsContainer = document.getElementById(`action-buttons-${request.id}`);
+                        actionButtonsContainer.innerHTML = actionButtonsHtml;
+
+                        // Attach event listeners to the buttons
+                        if (request.status === 'Approved') {
+                            const cancelButton = actionButtonsContainer.querySelector('.cancel-btn');
+                            attachCancelEvent(cancelButton);
+                        }
                     });
                     attachButtonEvents();
                 })
