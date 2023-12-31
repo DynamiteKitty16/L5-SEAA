@@ -157,15 +157,16 @@
     }
 
     function handleCancellation(requestId) {
-        const formData = new FormData();
-        formData.append('request_id', requestId);
+        const cancelRequestUrl = '/cancel-leave-request/';
+        const csrfToken = getCsrfToken();
 
-        fetch(`/cancel-leave-request/`, { 
+        fetch(cancelRequestUrl, {
             method: 'POST',
             headers: {
-                'X-CSRFToken': getCsrfToken(),
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'X-CSRFToken': csrfToken
             },
-            body: formData
+            body: 'request_id=' + requestId
         })
         .then(response => response.json())
         .then(data => {
@@ -179,9 +180,12 @@
                 // Handle error
                 console.error('Error cancelling request:', data.message);
             }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Error: ' + error.message);
         });
     }
-
     
 
     // Function to handle denial
