@@ -40,6 +40,26 @@
     </div>
 </div>
 
+<!-- Cancel Request Modal -->
+<div class="modal fade" id="cancelRequestModal" tabindex="-1" aria-labelledby="cancelRequestModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="cancelRequestModalLabel">Cancel Leave Request</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                Are you sure you want to cancel this leave request?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-danger" id="confirmCancel">Confirm Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
 <script>
     document.addEventListener('DOMContentLoaded', function() {
     const employeeItems = document.querySelectorAll('.employee-item');
@@ -97,10 +117,12 @@
             buttons += `<button class="btn btn-success btn-sm approve-btn" data-request-id="${request.id}">Approve</button>`;
             buttons += `<button class="btn btn-danger btn-sm deny-btn" data-request-id="${request.id}">Deny</button>`;
         } else if (request.status === 'Approved') {
-            buttons += `<button class="btn btn-warning btn-sm cancel-btn" data-request-id="${request.id}">Cancel</button>`;
+            // Update this line to trigger the modal
+            buttons += `<button type="button" class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#cancelRequestModal" data-request-id="${request.id}">Cancel</button>`;
         }
         return buttons;
     }
+
 
 
     function attachButtonEvents() {
@@ -151,18 +173,25 @@
     function attachCancelEvent(button) {
         button.addEventListener('click', function() {
             const requestId = this.getAttribute('data-request-id');
-            // Call a function to handle the cancellation
-            handleCancellation(requestId);
+            // Trigger the modal for cancellation confirmation
+            var cancelModal = document.getElementById('cancelRequestModal');
+            var confirmButton = cancelModal.querySelector('#confirmCancel');
+            confirmButton.setAttribute('data-request-id', requestId);
+            // Bootstrap's way to programmatically show a modal
+            var modal = new bootstrap.Modal(cancelModal);
+            modal.show();
         });
     }
 
+
     function handleCancellation(requestId) {
-        fetch(`/manager-cancel-leave-request/${requestId}/`, { 
+        fetch(`/cancel-leave-request/`, { 
             method: 'POST',
             headers: {
                 'X-CSRFToken': getCsrfToken(),
                 'Content-Type': 'application/json'
-            }
+            },
+            body: JSON.stringify({ request_id: requestId })
         })
         .then(response => response.json())
         .then(data => {
