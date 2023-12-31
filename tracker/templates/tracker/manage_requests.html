@@ -179,7 +179,8 @@
         })
         .then(data => {
             if (data.status === 'success') {
-                // Update the UI to reflect the cancellation
+                // Refresh the page
+                window.location.reload();
             } else {
                 console.error('Error cancelling request:', data.message);
             }
@@ -188,6 +189,7 @@
             console.error('Error:', error);
         });
     }
+
 
     
 
