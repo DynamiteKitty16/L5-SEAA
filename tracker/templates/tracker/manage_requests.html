@@ -157,35 +157,33 @@
     }
 
     function handleCancellation(requestId) {
-        const cancelRequestUrl = '/cancel-leave-request/';
-        const csrfToken = getCsrfToken();
+            const cancelRequestUrl = `/manager-cancel-leave-request/${requestId}/`;
+            const csrfToken = getCsrfToken();
 
-        fetch(cancelRequestUrl, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
-                'X-CSRFToken': csrfToken
-            },
-            body: 'request_id=' + requestId
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.status === 'success') {
-                // Find the row with the request and update its status
-                const requestRow = document.querySelector(`button[data-request-id="${requestId}"]`).parentNode.parentNode;
-                requestRow.cells[3].textContent = 'Cancelled'; // Update status cell
-                // Remove the Cancel button
-                requestRow.cells[4].innerHTML = '';
-            } else {
-                // Handle error
-                console.error('Error cancelling request:', data.message);
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            alert('Error: ' + error.message);
-        });
-    }
+            fetch(cancelRequestUrl, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': csrfToken,
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    // Find the row with the request and update its status
+                    const requestRow = document.querySelector(`button[data-request-id="${requestId}"]`).parentNode.parentNode;
+                    requestRow.cells[3].textContent = 'Cancelled'; // Update status cell
+                    // Remove the Cancel button
+                    requestRow.cells[4].innerHTML = '';
+                } else {
+                    // Handle error
+                    console.error('Error cancelling request:', data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        }
     
 
     // Function to handle denial

@@ -47,4 +47,5 @@ urlpatterns = [
     path('approve-leave-request/<int:request_id>/', views.approve_leave_request, name='approve_leave_request'),
     path('deny-leave-request/<int:request_id>/', views.deny_leave_request, name='deny_leave_request'),
     path('cancel-leave-request/<int:request_id>/', cancel_leave_request, name='cancel_leave_request'),
+    path('manager-cancel-leave-request/<int:request_id>/', views.manager_cancel_leave_request, name='manager_cancel_leave_request'),
 ]

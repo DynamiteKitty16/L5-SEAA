@@ -490,3 +490,24 @@ def cancel_leave_request(request):
             return JsonResponse({'status': 'error', 'message': 'Unauthorized to cancel this request.'}, status=403)
 
     return JsonResponse({'status': 'error', 'message': 'Invalid request method.'}, status=400)
+
+# Added in a manager section as keep having issues with response types between user and manager
+@login_required
+@csrf_exempt
+def manager_cancel_leave_request(request, request_id):
+    if not request.user.userprofile.is_manager:
+        return JsonResponse({'status': 'error', 'message': 'Unauthorized'}, status=403)
+
+    leave_request = get_object_or_404(LeaveRequest, id=request_id)
+
+    if leave_request.status in ['Pending', 'Approved'] and timezone.now().date() < leave_request.start_date:
+        leave_request.status = 'Cancelled'
+        leave_request.save()
+
+        # Remove corresponding AttendanceRecord entries
+        AttendanceRecord.objects.filter(user=leave_request.user, date__range=[leave_request.start_date, leave_request.end_date]).delete()
+
+        return JsonResponse({'status': 'success', 'message': 'Leave request cancelled successfully.'})
+    else:
+        return JsonResponse({'status': 'error', 'message': 'This request cannot be cancelled or it is too late to cancel.'}, status=400)
+
