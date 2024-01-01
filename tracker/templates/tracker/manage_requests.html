@@ -40,28 +40,49 @@
     </div>
 </div>
 
+<!-- Delete Confirmation Modal -->
+<div class="modal fade" id="deleteConfirmationModal" tabindex="-1" aria-labelledby="deleteConfirmationModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="deleteConfirmationModalLabel">Confirm Delete</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          Are you sure you want to delete? Deleted requests cannot be restored.
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button type="button" class="btn btn-danger" id="confirmDelete">Confirm Delete</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
+let currentRequestId = null; // Global variable to store the current request ID
+    
+document.addEventListener('DOMContentLoaded', function() {
     const employeeItems = document.querySelectorAll('.employee-item');
     const requestsTableBody = document.getElementById('requests-table-body');
-
+    
     employeeItems.forEach(item => {
         item.addEventListener('click', function() {
-
             // Remove active class from all items
             employeeItems.forEach(i => i.classList.remove('active'));
-
+    
             // Add active class to clicked item
             this.classList.add('active');
-
+    
             const employeeId = this.getAttribute('data-employee-id');
-
+    
             fetch(`/get-employee-requests/${employeeId}/`)
                 .then(response => response.json())
                 .then(data => {
                     // Clear existing content in the table
                     requestsTableBody.innerHTML = '';
-
+    
                     // Sort requests with 'Cancelled' status to the end
                     data.sort((a, b) => {
                         if (a.status === 'Cancelled' && b.status !== 'Cancelled') {
@@ -72,7 +93,7 @@
                         }
                         return 0;
                     });
-
+    
                     data.forEach(request => {
                         const row = document.createElement('tr');
                         row.innerHTML = `
@@ -83,24 +104,18 @@
                             <td id="action-buttons-${request.id}"></td>
                         `;
                         requestsTableBody.appendChild(row);
-
+    
                         // Generate and append action buttons
                         const actionButtonsHtml = generateActionButtons(request);
                         const actionButtonsContainer = document.getElementById(`action-buttons-${request.id}`);
                         actionButtonsContainer.innerHTML = actionButtonsHtml;
-
-                        // Attach event listeners to the buttons
-                        if (request.status === 'Approved') {
-                            const cancelButton = actionButtonsContainer.querySelector('.cancel-btn');
-                            attachCancelEvent(cancelButton);
-                        }
                     });
                     attachButtonEvents();
                 })
                 .catch(error => console.error('Error:', error));
-            });
+        });
     });
-
+    
     function generateActionButtons(request) {
         let buttons = '';
         if (request.status === 'Pending') {
@@ -108,34 +123,41 @@
             buttons += `<button class="btn btn-danger btn-sm deny-btn" data-request-id="${request.id}">Deny</button>`;
         } else if (request.status === 'Approved') {
             buttons += `<button class="btn btn-warning btn-sm cancel-btn" data-request-id="${request.id}">Cancel</button>`;
+        } else if (request.status === 'Denied') {
+            // Add a delete button for denied requests
+            buttons += `<button class="btn btn-danger btn-sm delete-btn" data-request-id="${request.id}">Delete</button>`;
         }
         return buttons;
     }
-
-
+    
     function attachButtonEvents() {
-        // Attach event listner to Approve buttons
+        // Attach event listener to Approve buttons
         document.querySelectorAll('.approve-btn').forEach(button => {
             button.addEventListener('click', function() {
                 const requestId = this.getAttribute('data-request-id');
-                // Call a function to handle the approval
                 handleApproval(requestId);
             });
         });
-        
+    
         // Attach event listener to Deny buttons
         document.querySelectorAll('.deny-btn').forEach(button => {
             button.addEventListener('click', function() {
                 const requestId = this.getAttribute('data-request-id');
-                // Call a function to handle the denial
                 handleDenial(requestId);
             });
         });
+    
+        // Attach event listener to Delete buttons
+        document.querySelectorAll('.delete-btn').forEach(button => {
+            button.addEventListener('click', function() {
+                currentRequestId = this.getAttribute('data-request-id');
+                $('#deleteConfirmationModal').modal('show');
+            });
+        });
     }
-
-    // Function for handle approval
+    
+    // Function to handle approval
     function handleApproval(requestId) {
-    // AJAX call to approve the request
         fetch(`/approve-leave-request/${requestId}/`, { 
             method: 'POST',
             headers: {
@@ -155,52 +177,9 @@
             }
         });
     }
-
-    // Cancel button is added when a request is approved by a manager, so that there is a way for the manager
-    // to cancel the request should it be needed
-    function attachCancelEvent(button) {
-        button.addEventListener('click', function() {
-            const requestId = this.getAttribute('data-request-id');
-            // Call a function to handle the cancellation
-            handleCancellation(requestId);
-        });
-    }
-
-    function handleCancellation(requestId) {
-        fetch(`/cancel-leave-request-manage/${requestId}/`, { 
-            method: 'POST',
-            headers: {
-                'X-CSRFToken': getCsrfToken(),
-                'Content-Type': 'application/json'
-            }
-        })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-            return response.json();
-        })
-        .then(data => {
-            if (data.status === 'success') {
-                // Find the row with the request and update its status
-                const requestRow = document.querySelector(`button[data-request-id="${requestId}"]`).parentNode.parentNode;
-                requestRow.cells[3].textContent = 'Cancelled'; // Update status cell
-
-                // Remove the action buttons
-                requestRow.cells[4].innerHTML = '';
-            } else {
-                console.error('Error cancelling request:', data.message);
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-        });
-    }
     
-
     // Function to handle denial
     function handleDenial(requestId) {
-        // AJAX call to deny the request
         fetch(`/deny-leave-request/${requestId}/`, { 
             method: 'POST',
             headers: {
@@ -223,11 +202,83 @@
             }
         });
     }
-
+    
+    // Cancel button is added when a request is approved by a manager, so that there is a way for the manager
+    // to cancel the request should it be needed
+    function attachCancelEvent(button) {
+        button.addEventListener('click', function() {
+            const requestId = this.getAttribute('data-request-id');
+            // Call a function to handle the cancellation
+            handleCancellation(requestId);
+        });
+    }
+    
+    function handleCancellation(requestId) {
+        fetch(`/cancel-leave-request-manage/${requestId}/`, { 
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': getCsrfToken(),
+                'Content-Type': 'application/json'
+            }
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data.status === 'success') {
+                // Find the row with the request and update its status
+                const requestRow = document.querySelector(`button[data-request-id="${requestId}"]`).parentNode.parentNode;
+                requestRow.cells[3].textContent = 'Cancelled'; // Update status cell
+    
+                // Remove the action buttons
+                requestRow.cells[4].innerHTML = '';
+            } else {
+                console.error('Error cancelling request:', data.message);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+    }
+    
+    function handleDelete(requestId) {
+        fetch(`/delete-leave-request/${requestId}/`, { 
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': getCsrfToken(),
+                'Content-Type': 'application/json'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'success') {
+                // Remove the request row from the table
+                const requestRow = document.querySelector(`button[data-request-id="${requestId}"]`).parentNode.parentNode;
+                requestRow.remove();
+            } else {
+                console.error('Error deleting request:', data.message);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+    }
+    
     function getCsrfToken() {
         // Function to get CSRF token from cookie
         return document.cookie.split('; ').find(row => row.startsWith('csrftoken=')).split('=')[1];
     }
 });
-</script>
+    
+// Event listener for the 'Confirm Delete' button
+document.getElementById('confirmDelete').addEventListener('click', function() {
+    if (currentRequestId) {
+        handleDelete(currentRequestId);
+        $('#deleteConfirmationModal').modal('hide'); // Hide the modal after confirming
+    }
+});
+</script>    
 {% endblock %}
