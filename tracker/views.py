@@ -509,16 +509,3 @@ def cancel_leave_request_from_manage(request, request_id):
             return JsonResponse({'status': 'error', 'message': 'Request cannot be cancelled'}, status=400)
     else:
         return JsonResponse({'status': 'error', 'message': 'Unauthorized to cancel this request.'}, status=403)
-
-
-# Managers can delete requests, will be particularly useful if the front-end and server-logic
-# fails to stop the submission of duplicate requests.
-@login_required
-def delete_leave_request(request, request_id):
-    if not request.user.userprofile.is_manager:
-        return JsonResponse({'status': 'error', 'message': 'Unauthorized'}, status=403)
-
-    leave_request = get_object_or_404(LeaveRequest, id=request_id)
-    leave_request.delete()
-
-    return JsonResponse({'status': 'success', 'message': 'Request deleted successfully'})
