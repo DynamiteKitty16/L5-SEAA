@@ -491,6 +491,14 @@ def cancel_leave_request(request):
             if leave_request.status == 'Pending' or request.user.userprofile.is_manager:
                 leave_request.status = 'Cancelled'
                 leave_request.save()
+
+                # If the user is a manager and the request was approved, delete related attendance records
+                if request.user.userprofile.is_manager and leave_request.status == 'Approved':
+                    AttendanceRecord.objects.filter(
+                        user=leave_request.user, 
+                        date__range=[leave_request.start_date, leave_request.end_date]
+                    ).delete()
+
                 return JsonResponse({'status': 'success', 'message': 'Leave request cancelled successfully.'})
             else:
                 return JsonResponse({'status': 'error', 'message': 'Request status does not allow cancellation.'}, status=403)
@@ -498,6 +506,7 @@ def cancel_leave_request(request):
             return JsonResponse({'status': 'error', 'message': 'Unauthorized to cancel this request.'}, status=403)
 
     return JsonResponse({'status': 'error', 'message': 'Invalid request method.'}, status=400)
+
 
 
 # This is used by the manager view due to the issues with having different POST data on the pages
