@@ -1,0 +1,89 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-2">
+    <!-- Dropdown for selecting employees -->
+    <div class="row mb-3">
+        <div class="col-md-6">
+            <select id="employeeSelector" class="form-select">
+                <option value="me">Me</option>
+                {% for employee in managed_employees %}
+                <option value="{{ employee.username }}">{{ employee.get_full_name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+    </div>
+
+    <!-- Graphs -->
+    <div class="row">
+        <div class="col-md-6">
+            <h3>Monthly Attendance Summary</h3>
+            <canvas id="monthlyAttendanceChart" width="300" height="150"></canvas>
+        </div>
+        <div class="col-md-6">
+            <h3>Yearly Attendance Summary</h3>
+            <canvas id="yearlyAttendanceChart" width="300" height="150"></canvas>
+        </div>
+    </div>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+      // Initialize empty charts
+      var monthlyCtx = document.getElementById('monthlyAttendanceChart').getContext('2d');
+      var yearlyCtx = document.getElementById('yearlyAttendanceChart').getContext('2d');
+      var monthlyChart = initializeChart(monthlyCtx, {}, 'bar', 'Monthly Attendance Summary');
+      var yearlyChart = initializeChart(yearlyCtx, {}, 'line', 'Yearly Attendance Summary');
+
+      // Dropdown change event listener
+      document.getElementById('employeeSelector').addEventListener('change', function() {
+          var selectedUser = this.value;
+          updateManagerCharts(selectedUser, monthlyChart, yearlyChart);
+      });
+
+      // Initial load for manager's own data
+      updateManagerCharts('me', monthlyChart, yearlyChart);
+  });
+
+  function initializeChart(ctx, data, type, label) {
+      return new Chart(ctx, {
+          type: type,
+          data: {
+              labels: [],
+              datasets: [{
+                  label: label,
+                  data: [],
+                  backgroundColor: 'rgba(0, 123, 255, 0.5)',
+                  borderColor: 'rgba(0, 123, 255, 1)',
+                  borderWidth: 1
+              }]
+          },
+          options: {
+              scales: {
+                  y: {
+                      beginAtZero: true
+                  }
+              }
+          }
+      });
+  }
+
+  function updateManagerCharts(username, monthlyChart, yearlyChart) {
+      // Fetch data for the selected user
+      fetch('/staff-attendance-data?user=' + username)
+          .then(response => response.json())
+          .then(data => {
+              // Update monthly chart
+              monthlyChart.data.labels = data.monthly.labels;
+              monthlyChart.data.datasets[0].data = data.monthly.data;
+              monthlyChart.update();
+
+              // Update yearly chart
+              yearlyChart.data.labels = data.yearly.labels;
+              yearlyChart.data.datasets[0].data = data.yearly.data;
+              yearlyChart.update();
+          })
+          .catch(error => console.error('Error:', error));
+  }
+</script>
+{% endblock %}
