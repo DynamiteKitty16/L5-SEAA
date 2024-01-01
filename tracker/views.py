@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from .models import UserProfile, LeaveRequest
 from django.contrib.auth.models import User
@@ -85,6 +85,13 @@ def login_view(request):
                 messages.error(request, "Account not found with the provided username/email.")
 
     return render(request, 'tracker/login.html')
+
+# Custom logout
+@login_required
+def custom_logout(request):
+    logout(request)
+    return render(request, 'tracker/logout_success.html')
+
 
 # Handle session time out warnings
 
