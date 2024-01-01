@@ -606,6 +606,12 @@ def get_graph_data_for_user(user):
 @login_required
 def staff_attendance_data(request):
     username = request.GET.get('user')
-    user = User.objects.get(username=username)
+
+    # Handle the 'me' option by using the current user's data
+    if username == 'me':
+        user = request.user
+    else:
+        user = User.objects.get(username=username)
+
     graph_data = get_graph_data_for_user(user)
     return JsonResponse(graph_data)
