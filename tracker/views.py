@@ -16,7 +16,7 @@ from datetime import datetime, timedelta
 from django.views.decorators.csrf import csrf_exempt
 from django.core.exceptions import ValidationError
 from collections import Counter
-from django.db.models import Case, When, Value, IntegerField
+from django.db.models import Case, When, Value, IntegerField, Count
 from .leave_utils import get_overlapping_request, update_calendar_event, cancel_overlapping_requests
 from django.core import serializers
 
@@ -36,14 +36,72 @@ def get_attendance_counts_for_month(user):
     return dict(counts)
 
 # Login and Register
-
 @login_required
 def home_view(request):
     attendance_counts = get_attendance_counts_for_month(request.user)
+    is_manager = request.user.userprofile.is_manager
+    managed_employees = []
+    graph_data = {}
+
+    if is_manager:
+        managed_employees = User.objects.filter(userprofile__manager=request.user.userprofile)
+        for employee in managed_employees:
+            graph_data[employee.username] = get_graph_data_for_user(employee)
+
+        # Also include the manager's own data
+        graph_data['me'] = get_graph_data_for_user(request.user)
+
     context = {
         'attendance_counts': json.dumps(attendance_counts),
+        'is_manager': is_manager,
+        'managed_employees': managed_employees,
+        'graph_data': graph_data,
     }
     return render(request, 'tracker/home.html', context)
+
+def get_graph_data_for_user(user):
+    # Define the current month and year
+    current_month = timezone.now().month
+    current_year = timezone.now().year
+
+    # Fetch attendance records for the current month
+    monthly_records = AttendanceRecord.objects.filter(
+        user=user, 
+        date__year=current_year, 
+        date__month=current_month
+    ).values('type').annotate(count=Count('type'))
+
+    # Fetch attendance records for the current year
+    yearly_records = AttendanceRecord.objects.filter(
+        user=user, 
+        date__year=current_year
+    ).values('type').annotate(count=Count('type'))
+
+    # Convert querysets to dictionaries for easier manipulation
+    monthly_data = {record['type']: record['count'] for record in monthly_records}
+    yearly_data = {record['type']: record['count'] for record in yearly_records}
+
+    # Calculate total counts
+    total_monthly = sum(monthly_data.values())
+    total_yearly = sum(yearly_data.values())
+
+    # Convert counts to percentages
+    monthly_percentages = {k: (v / total_monthly * 100) for k, v in monthly_data.items()}
+    yearly_percentages = {k: (v / total_yearly * 100) for k, v in yearly_data.items()}
+
+    # Prepare the data for Chart.js
+    graph_data = {
+        'monthly': {
+            'labels': list(monthly_percentages.keys()),
+            'data': list(monthly_percentages.values())
+        },
+        'yearly': {
+            'labels': list(yearly_percentages.keys()),
+            'data': list(yearly_percentages.values())
+        }
+    }
+
+    return graph_data
 
 def register(request):
     if request.method == 'POST':
