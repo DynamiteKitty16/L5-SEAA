@@ -477,15 +477,26 @@ def cancel_leave_request(request):
 
         leave_request = get_object_or_404(LeaveRequest, id=request_id)
 
-        # Standard user can cancel if the request is pending
-        if leave_request.status == 'Pending' and request.user == leave_request.user:
-            leave_request.status = 'Cancelled'
-            leave_request.save()
-            return JsonResponse({'status': 'success', 'message': 'Pending leave request cancelled successfully.'})
-        else:
-            return JsonResponse({'status': 'error', 'message': 'Unauthorized to cancel this request or request status does not allow cancellation.'}, status=403)
+        # Check if the user is either the owner of the request
+        if request.user == leave_request.user:
+            # Check if the request can be cancelled (Pending or Approved) and it's before the start date
+            if leave_request.status in ['Pending', 'Approved'] and timezone.now().date() < leave_request.start_date:
+                leave_request.status = 'Cancelled'
+                leave_request.save()
 
-    return JsonResponse({'status': 'error', 'message': 'Invalid request method.'}, status=400)
+                # Remove corresponding AttendanceRecord entries
+                AttendanceRecord.objects.filter(user=leave_request.user, date__range=[leave_request.start_date, leave_request.end_date]).delete()
+
+                return JsonResponse({'status': 'success', 'message': 'Leave request cancelled successfully.'})
+            else:
+                # Enhanced error message for clarity
+                if timezone.now().date() >= leave_request.start_date:
+                    error_message = 'The leave request cannot be cancelled as it has already started or is past the start date.'
+                else:
+                    error_message = 'This request cannot be cancelled due to its current status.'
+                return JsonResponse({'status': 'error', 'message': error_message}, status=400)
+        else:
+            return JsonResponse({'status': 'error', 'message': 'Unauthorized to cancel this request.'}, status=403)
 
 
 # This is used by the manager view due to the issues with having different POST data on the pages
