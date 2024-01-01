@@ -318,13 +318,10 @@ def manager_self_requests_view(request):
     user_requests = LeaveRequest.objects.filter(user=request.user).annotate(
         custom_order=Case(
             When(status='Pending', then=Value(1)),
-            When(status='Approved', then=Value(2)),
-            When(status='Cancelled', then=Value(3)),
-            When(status='Denied', then=Value(4)),
-            default=Value(5),
+            default=Value(2),
             output_field=IntegerField(),
         )
-    ).order_by('custom_order')
+    ).order_by('custom_order', '-created_at')
 
     # Add 'show_buttons' attribute based on the condition
     for req in user_requests:
@@ -350,7 +347,13 @@ def manager_dashboard_view(request):
     # Fetch pending leave requests for each managed user
     managed_requests = {}
     for user in managed_users:
-        managed_requests[user] = LeaveRequest.objects.filter(user=user, status='Pending')
+        managed_requests[user] = LeaveRequest.objects.filter(user=user).annotate(
+            custom_order=Case(
+                When(status='Pending', then=Value(1)),
+                default=Value(2),
+                output_field=IntegerField(),
+            )
+        ).order_by('custom_order', '-created_at')
 
     context = {
         'managed_users': managed_users,
