@@ -485,13 +485,17 @@ def cancel_leave_request(request):
 
         leave_request = get_object_or_404(LeaveRequest, id=request_id)
 
-        # Standard user can cancel if the request is pending
-        if leave_request.status == 'Pending' and request.user == leave_request.user:
-            leave_request.status = 'Cancelled'
-            leave_request.save()
-            return JsonResponse({'status': 'success', 'message': 'Pending leave request cancelled successfully.'})
+        # Check if the user is either the owner of the request or a manager
+        if request.user == leave_request.user or request.user.userprofile.is_manager:
+            # Allow cancellation for pending requests by the owner or any request by a manager
+            if leave_request.status == 'Pending' or request.user.userprofile.is_manager:
+                leave_request.status = 'Cancelled'
+                leave_request.save()
+                return JsonResponse({'status': 'success', 'message': 'Leave request cancelled successfully.'})
+            else:
+                return JsonResponse({'status': 'error', 'message': 'Request status does not allow cancellation.'}, status=403)
         else:
-            return JsonResponse({'status': 'error', 'message': 'Unauthorized to cancel this request or request status does not allow cancellation.'}, status=403)
+            return JsonResponse({'status': 'error', 'message': 'Unauthorized to cancel this request.'}, status=403)
 
     return JsonResponse({'status': 'error', 'message': 'Invalid request method.'}, status=400)
 
