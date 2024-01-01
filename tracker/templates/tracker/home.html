@@ -6,41 +6,14 @@
     <div class="col-md-8 text-center">
       <h1 class="mb-4">Welcome to Availability Tracker</h1>
       <p class="lead">This is your go-to app for managing work attendance and leave requests.</p>
-
       <h3>Attendance Summary for This Month:</h3>
-      <!-- Canvas for Chart.js (for all users) -->
+      <!-- Canvas for Chart.js -->
       <canvas id="attendanceChart" width="300" height="150"></canvas>
-
-      {% if is_manager %}
-        <!-- Additional Manager-specific content -->
-        <div class="row mt-4">
-            <div class="col-md-6">
-                <h3>Monthly Attendance Summary</h3>
-                <!-- Dropdown for selecting employee -->
-                <select class="form-select" id="employeeSelector">
-                    <option value="me">Me</option>
-                    {% for employee in managed_employees %}
-                        <option value="{{ employee.username }}">{{ employee.get_full_name }}</option>
-                    {% endfor %}
-                </select>
-                <!-- Canvas for Monthly Chart.js -->
-                <canvas id="monthlyAttendanceChart" width="200" height="75"></canvas>
-            </div>
-            <div class="col-md-6">
-                <h3>Yearly Attendance Summary</h3>
-                <!-- Canvas for Yearly Chart.js -->
-                <canvas id="yearlyAttendanceChart" width="200" height="75"></canvas>
-            </div>
-        </div>
-      {% endif %}
     </div>
   </div>
 </div>
 
 <script>
-  var isManager = "{{ is_manager|yesno:'true,false' }}";
-  var graphData = "{{ graph_data|safe }}";
-  
   document.addEventListener('DOMContentLoaded', function() {
       // Ensure Chart.js is loaded
       if (typeof Chart === 'undefined') {
@@ -48,41 +21,47 @@
           return;
       }
 
-      // Initialize the standard user's monthly attendance chart
       var ctx = document.getElementById('attendanceChart').getContext('2d');
       var attendanceData = JSON.parse('{{ attendance_counts | safe }}');
-      var myChart = initializeChart(ctx, attendanceData, 'bar', 'Attendance Summary');
+      console.log(attendanceData);
+      var labels = Object.keys(attendanceData);
+      var data = Object.values(attendanceData);
 
-      if (isManager === "true") {
-          // Initialize empty charts for manager's view
-          var monthlyCtx = document.getElementById('monthlyAttendanceChart').getContext('2d');
-          var yearlyCtx = document.getElementById('yearlyAttendanceChart').getContext('2d');
-          var monthlyChart = initializeChart(monthlyCtx, {}, 'bar', 'Monthly Attendance Summary');
-          var yearlyChart = initializeChart(yearlyCtx, {}, 'line', 'Yearly Attendance Summary');
+      // Color mapping for attendance types
+      const attendanceTypeColors = {
+          'WFH': '#28a745', // Green
+          'IO': '#007bff', // Blue
+          'AL': '#17a2b8', // Cyan
+          'S': '#ffc107', // Yellow
+          'FL': '#fd7e14', // Orange
+          'NWD': '#6c757d', // Grey
+          'BT': '#dc3545', // Red
+          'T': '#6610f2' // Purple
+      };
 
-          // Dropdown change event listener
-          document.getElementById('employeeSelector').addEventListener('change', function() {
-              var selectedUser = this.value;
-              updateManagerCharts(selectedUser, monthlyChart, yearlyChart);
-          });
+      // Full name mapping
+      const attendanceTypeFullNames = {
+        'WFH': 'Working From Home',
+        'IO': 'In Office',
+        'AL': 'Annual Leave',
+        'S': 'Sick',
+        'FL': 'Flexi Leave',
+        'NWD': 'Non Working Day',
+        'BT': 'Business Travel',
+        'T': 'Training'
+      };
 
-          // Initial load for manager's own data
-          updateManagerCharts('me', monthlyChart, yearlyChart);
-      }
-  });
-
-  function initializeChart(ctx, data, type, label) {
-      var labels = Object.keys(data);
-      var backgroundColors = labels.map(label => attendanceTypeColors[label] || '#378006'); // might need to style this in css
+      // Assign colors based on attendance type
+      var backgroundColors = labels.map(label => attendanceTypeColors[label] || '#378006'); // Default color
       var borderColors = backgroundColors;
 
-      return new Chart(ctx, {
-          type: type,
+      var myChart = new Chart(ctx, {
+          type: 'bar',
           data: {
-              labels: labels,
+              labels: labels, // Dynamic labels from attendanceData
               datasets: [{
-                  label: label,
-                  data: Object.values(data),
+                  label: 'Attendance Summary',
+                  data: data, // Dynamic data from attendanceData
                   backgroundColor: backgroundColors,
                   borderColor: borderColors,
                   borderWidth: 1
@@ -93,46 +72,27 @@
                   y: {
                       beginAtZero: true,
                       ticks: {
-                          stepSize: 1
+                        stepSize: 1
                       }
                   }
               },
               plugins: {
-                  legend: {
-                      display: false
-                  },
-                  tooltip: {
-                      callbacks: {
-                          label: function(context) {
-                              var label = context.label;
-                              var value = context.raw;
-                              var fullName = attendanceTypeFullNames[label] || label;
-                              return fullName + ': ' + value;
-                          }
-                      }
-                  }
+                legend: {
+                    display: false
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            var label = context.label;
+                            var value = context.raw;
+                            var fullName = attendanceTypeFullNames[label] || label;
+                            return fullName + ': ' + value;
+                        }
+                    }
+                }
               }
           }
       });
-  }
-
-  function updateManagerCharts(username, monthlyChart, yearlyChart) {
-      // Update charts using graphData
-      var userData = graphData[username];
-      if (userData) {
-          // Update monthly chart
-          monthlyChart.data.labels = userData.monthly.labels;
-          monthlyChart.data.datasets[0].data = userData.monthly.data;
-          monthlyChart.update();
-
-          // Update yearly chart
-          yearlyChart.data.labels = userData.yearly.labels;
-          yearlyChart.data.datasets[0].data = userData.yearly.data;
-          yearlyChart.update();
-      } else {
-          console.error('User data not found for:', username);
-      }
-  }
+  });
 </script>
 {% endblock %}
-
