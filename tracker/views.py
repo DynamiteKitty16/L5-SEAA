@@ -489,11 +489,14 @@ def cancel_leave_request(request):
         if request.user == leave_request.user or request.user.userprofile.is_manager:
             # Allow cancellation for pending requests by the owner or any request by a manager
             if leave_request.status == 'Pending' or request.user.userprofile.is_manager:
+                # Store the current status before updating it
+                current_status = leave_request.status
+
                 leave_request.status = 'Cancelled'
                 leave_request.save()
 
                 # If the user is a manager and the request was approved, delete related attendance records
-                if request.user.userprofile.is_manager and leave_request.status == 'Approved':
+                if request.user.userprofile.is_manager and current_status == 'Approved':
                     AttendanceRecord.objects.filter(
                         user=leave_request.user, 
                         date__range=[leave_request.start_date, leave_request.end_date]
