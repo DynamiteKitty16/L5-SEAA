@@ -494,21 +494,23 @@ def cancel_leave_request_from_manage(request, request_id):
     # Fetch the leave request object
     leave_request = get_object_or_404(LeaveRequest, id=request_id)
 
-    # Check if the user is a manager and authorized to cancel the request
-    if request.user.userprofile.is_manager:
-        # Check if the request can be cancelled
-        if leave_request.status in ['Pending', 'Approved']:
-            leave_request.status = 'Cancelled'
-            leave_request.save()
+    # Check if the user is authorized to cancel the request
+    if request.user != leave_request.user and not request.user.userprofile.is_manager:
+        return JsonResponse({'status': 'error', 'message': 'Unauthorized'}, status=403)
 
-            # Remove corresponding AttendanceRecord entries
-            AttendanceRecord.objects.filter(user=leave_request.user, date__range=[leave_request.start_date, leave_request.end_date]).delete()
+    # Check if the request can be cancelled
+    if leave_request.status not in ['Pending', 'Approved'] or timezone.now().date() >= leave_request.start_date:
+        return JsonResponse({'status': 'error', 'message': 'Request cannot be cancelled'}, status=400)
 
-            return JsonResponse({'status': 'success', 'message': 'Leave request cancelled successfully and attendance records deleted.'})
-        else:
-            return JsonResponse({'status': 'error', 'message': 'Request cannot be cancelled'}, status=400)
-    else:
-        return JsonResponse({'status': 'error', 'message': 'Unauthorized to cancel this request.'}, status=403)
+    # Perform the cancellation
+    leave_request.status = 'Cancelled'
+    leave_request.save()
+
+    # Remove corresponding AttendanceRecord entries
+    AttendanceRecord.objects.filter(user=leave_request.user, date__range=[leave_request.start_date, leave_request.end_date]).delete()
+
+    return JsonResponse({'status': 'success', 'message': 'Leave request cancelled successfully'})
+
 
 # Managers can delete requests, will be particularly useful if the front-end and server-logic
 # fails to stop the submission of duplicate requests.
