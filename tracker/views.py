@@ -247,16 +247,14 @@ def requests_view(request):
 
             return redirect('requests')
 
+    # Updated queryset with custom ordering where pending is at the top and then sorted by created date
     user_requests = LeaveRequest.objects.filter(user=request.user).annotate(
         custom_order=Case(
             When(status='Pending', then=Value(1)),
-            When(status='Approved', then=Value(2)),
-            When(status='Cancelled', then=Value(3)),
-            When(status='Denied', then=Value(4)),
-            default=Value(5),
+            default=Value(2),
             output_field=IntegerField(),
         )
-    ).order_by('custom_order')
+    ).order_by('custom_order', '-created_at')
 
     context = {
         'form': form,
