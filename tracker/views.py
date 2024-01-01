@@ -477,8 +477,8 @@ def cancel_leave_request(request):
 
         leave_request = get_object_or_404(LeaveRequest, id=request_id)
 
-        # Check if the user is either the owner of the request or a manager
-        if request.user == leave_request.user or request.user.userprofile.is_manager:
+        # Check if the user is either the owner of the request
+        if request.user == leave_request.user:
             # Check if the request can be cancelled (Pending or Approved) and it's before the start date
             if leave_request.status in ['Pending', 'Approved'] and timezone.now().date() < leave_request.start_date:
                 leave_request.status = 'Cancelled'
@@ -489,11 +489,14 @@ def cancel_leave_request(request):
 
                 return JsonResponse({'status': 'success', 'message': 'Leave request cancelled successfully.'})
             else:
-                return JsonResponse({'status': 'error', 'message': 'This request cannot be cancelled or it is too late to cancel.'}, status=400)
+                # Enhanced error message for clarity
+                if timezone.now().date() >= leave_request.start_date:
+                    error_message = 'The leave request cannot be cancelled as it has already started or is past the start date.'
+                else:
+                    error_message = 'This request cannot be cancelled due to its current status.'
+                return JsonResponse({'status': 'error', 'message': error_message}, status=400)
         else:
             return JsonResponse({'status': 'error', 'message': 'Unauthorized to cancel this request.'}, status=403)
-
-    return JsonResponse({'status': 'error', 'message': 'Invalid request method.'}, status=400)
 
 
 # This is used by the manager view due to the issues with having different POST data on the pages
