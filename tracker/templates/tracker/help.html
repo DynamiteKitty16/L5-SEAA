@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-2">
+    <h2 class="text-center">Help & Support</h2>
+    <p>For issues with the application or if you need to register as a manager, contact <a href="mailto:admin@example.com">admin@example.com</a>.</p>
+
+    <h3>General Overview</h3>
+    <p>This application is designed to manage work attendance and leave requests efficiently. It allows users to submit leave requests, view attendance records, and access a calendar for better planning.</p>
+
+    <h3>Navigating the Application</h3>
+    <p>Use the navigation bar at the top to access different features like submitting leave requests, viewing your attendance records, and managing your calendar.</p>
+
+    <h3>Submitting Leave Requests</h3>
+    <p>To submit a leave request, navigate to the 'Requests' section, select the type of leave, and choose the start and end dates. Your request will be sent for approval to your manager.</p>
+
+    <h3>Managing Leave Requests (for Managers)</h3>
+    <p>If you're a manager, you can approve, deny, or cancel leave requests from your team in the 'Manage Requests' section. You can also submit requests on behalf of your team members.</p>
+
+    <h3>Viewing Attendance Records</h3>
+    <p>Your attendance records are available under the 'Attendance' section. Here you can view your daily attendance status for the current month.</p>
+
+    <h3>Using the Calendar</h3>
+    <p>The calendar feature allows you to view your attendance and leave requests in a calendar format, helping you plan your schedule better.</p>
+
+    <h3>Staff Attendance (for Managers)</h3>
+    <p>Managers can view attendance summaries for their team members in the 'Staff Attendance' section. This includes monthly and yearly attendance data in graphical format.</p>
+
+    <h3>Troubleshooting Common Issues</h3>
+    <p>If you encounter any issues, first try refreshing the page or logging out and back in. For persistent issues, please contact the admin.</p>
+
+    <h3>FAQs</h3>
+    <p>Here are some answers to frequently asked questions:</p>
+    <ul>
+        <li><strong>How do I cancel a leave request?</strong> - Navigate to the 'Requests' section and click on the 'Cancel' button next to your request.</li>
+        <li><strong>Can I edit a submitted leave request?</strong> - Once submitted, a leave request cannot be edited. You need to cancel it and submit a new one.</li>
+        <li><strong>How long does it take for a leave request to be approved?</strong> - Approval times vary, but you should receive a notification once your request has been processed.</li>
+    </ul>
+</div>
+{% endblock %}

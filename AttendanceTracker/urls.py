@@ -52,4 +52,5 @@ urlpatterns = [
     path('cancel-leave-request-manage/<int:request_id>/', views.cancel_leave_request_from_manage, name='cancel_leave_request_manage'),
     path('staff-attendance/', views.staff_attendance_view, name='staff_attendance'),
     path('staff-attendance-data', views.staff_attendance_data, name='staff_attendance_data'),
+    path('help/', views.help_view, name='help'),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

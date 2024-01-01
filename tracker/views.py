@@ -615,3 +615,8 @@ def staff_attendance_data(request):
 
     graph_data = get_graph_data_for_user(user)
     return JsonResponse(graph_data)
+
+
+# Help page for user experience
+def help_view(request):
+    return render(request, 'tracker/help.html')
