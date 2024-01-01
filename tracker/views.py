@@ -470,7 +470,11 @@ def deny_leave_request(request, request_id):
 @csrf_exempt
 def cancel_leave_request(request):
     if request.method == 'POST':
-        request_id = request.POST.get('request_id')
+        try:
+            request_id = int(request.POST.get('request_id'))
+        except (TypeError, ValueError):
+            return JsonResponse({'status': 'error', 'message': 'Invalid request ID.'}, status=400)
+
         leave_request = get_object_or_404(LeaveRequest, id=request_id)
 
         # Check if the user is either the owner of the request or a manager
