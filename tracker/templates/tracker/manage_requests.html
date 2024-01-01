@@ -108,7 +108,7 @@
                 buttons += `<button class="btn btn-danger btn-sm deny-btn" data-request-id="${request.id}">Deny</button>`;
             } else if (request.status === 'Approved') {
                 buttons += `<button class="btn btn-warning btn-sm cancel-btn" data-request-id="${request.id}">Cancel</button>`;
-            } else if (request.status === 'Denied') {
+            } else if (request.status === 'Denied' || request.status === 'Cancelled') {
                 // Add a delete button for denied requests
                 buttons += `<button class="btn btn-danger btn-sm delete-btn" data-request-id="${request.id}">Delete</button>`;
             }
