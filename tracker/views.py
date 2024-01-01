@@ -491,6 +491,8 @@ def cancel_leave_request(request):
 
     return JsonResponse({'status': 'error', 'message': 'Invalid request method.'}, status=400)
 
+
+# This is used by the manager view due to the issues with having different POST data on the pages
 @login_required
 def cancel_leave_request_from_manage(request, request_id):
     # Fetch the leave request object
