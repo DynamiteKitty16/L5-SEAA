@@ -103,16 +103,16 @@ WSGI_APPLICATION = 'AttendanceTracker.wsgi.application'
 
 # Database is set to connect to Azure
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'availabilitytracker-database',
-        'USER': 'pxxbaylyay',
-        'PASSWORD': '00RH7406N23TOB5T$',
-        'HOST': 'availabilitytracker-server.mysql.database.azure.com',
-        'PORT': '3306',
-    }
-}
+#DATABASES = {
+#    'default': {
+#        'ENGINE': 'django.db.backends.mysql',
+#        'NAME': 'availabilitytracker-database',
+#        'USER': 'pxxbaylyay',
+#        'PASSWORD': '00RH7406N23TOB5T$',
+#        'HOST': 'availabilitytracker-server.mysql.database.azure.com',
+#        'PORT': '3306',
+#    }
+#}
 
 
 import os
