@@ -53,8 +53,7 @@ class CustomUserCreationForm(UserCreationForm):
         if commit:
             user.save()
         return user
-    
-# Form to handle restricting dropdown list in django admin for manager selection
+
 class UserProfileAdminForm(forms.ModelForm):
     class Meta:
         model = UserProfile
@@ -63,7 +62,8 @@ class UserProfileAdminForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(UserProfileAdminForm, self).__init__(*args, **kwargs)
         # Restrict manager choices to users who are managers
-        self.fields['manager'].queryset = User.objects.filter(is_manager=True)
+        manager_user_ids = UserProfile.objects.filter(is_manager=True).values_list('user', flat=True)
+        self.fields['manager'].queryset = User.objects.filter(id__in=manager_user_ids)
     
 class AttendanceRecordForm(forms.ModelForm):
     class Meta:
