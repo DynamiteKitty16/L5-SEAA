@@ -41,7 +41,12 @@ INSTALLED_APPS = [
     'widget_tweaks',
     # Adding created apps below
     'tracker',
+    # Other apps
+    'crispy_forms',
 ]
+
+# Crispy Forms Settings
+CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
