@@ -1,6 +1,5 @@
 {% extends 'base.html' %}
 
-{% block content %}
 <!-- Bootstrap Modal for Session Timeout Warning -->
 <div class="modal fade" id="sessionTimeoutModal" tabindex="-1" aria-label="sessionTimeoutModalLabel" aria-hidden="true">
     <div class="modal-dialog">
@@ -18,12 +17,6 @@
         </div>
     </div>
 </div>
-
-<main class="mb-5">
-    {% block content %}
-    <!-- Placeholder for child content -->
-    {% endblock %}
-</main>
 
 <!-- Session Timeout Check -->
 <script>
@@ -80,4 +73,3 @@
         });
 });
 </script>
-{% endblock %}
