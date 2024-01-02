@@ -30,16 +30,16 @@ urlpatterns = [
     path('session_timeout_warning/', views.session_timeout_warning, name='session_timeout_warning'),
     path('extend_session/', views.extend_session, name='extend_session'),
     path('password_reset/', auth_views.PasswordResetView.as_view(
-        template_name='your_app/password_reset_form.html'
+        template_name='tracker/password_reset_form.html'
     ), name='password_reset'),
     path('password_reset/done/', auth_views.PasswordResetDoneView.as_view(
-        template_name='your_app/password_reset_done.html'
+        template_name='tracker/password_reset_done.html'
     ), name='password_reset_done'),
     path('reset/<uidb64>/<token>/', auth_views.PasswordResetConfirmView.as_view(
-        template_name='your_app/password_reset_confirm.html'
+        template_name='tracker/password_reset_confirm.html'
     ), name='password_reset_confirm'),
     path('reset/done/', auth_views.PasswordResetCompleteView.as_view(
-        template_name='your_app/password_reset_complete.html'
+        template_name='tracker/password_reset_complete.html'
     ), name='password_reset_complete'),
     path('', views.login_view, name='login'), # Set up as the first page
     path('home/', views.home_view, name='home'),
