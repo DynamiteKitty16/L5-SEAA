@@ -7,7 +7,7 @@ from django.utils.translation import gettext_lazy as _
 from django.core.exceptions import ValidationError
 
 # Define any regex validators for Django
-name_regex = RegexValidator(r'^[a-zA-Z\s]+$', 'Only letters and spaces are allowed.')
+name_regex = RegexValidator(r'^[A-Z][a-zA-Z\s]*$', 'First name and last name must start with a capital letter and can only contain letters and spaces.')
 
 class CustomUserCreationForm(UserCreationForm):
     first_name = forms.CharField(max_length=30, validators=[name_regex])
