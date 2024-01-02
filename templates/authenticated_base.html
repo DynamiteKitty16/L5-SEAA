@@ -38,8 +38,10 @@
         .then(response => response.json())
         .then(data => {
             console.log("Time left: ", data.time_left);
-            if(data.time_left <= 300) { // this is a 5 minute warning
-             // if(data.time_left <= 30) { // testing this is a 30 second warning
+            if (data.time_left <= 0) {
+                // Session has expired, redirect to login page
+                window.location.href = '/login/';
+            } else if (data.time_left <= 300) { // 5 minute warning
                 console.log("Showing modal");
                 var timeoutModal = new bootstrap.Modal(document.getElementById('sessionTimeoutModal'));
                 timeoutModal.show();
