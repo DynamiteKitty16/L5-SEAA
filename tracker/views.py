@@ -57,7 +57,7 @@ def register(request):
         else:
             # If the form is not valid, render the same page with the form
             # This will include the form errors
-            return render(request, 'tracker/register.html', {'form': form})
+            return render(request, 'tracker/register.html', {'form': form}, {'disable_session_timeout': True})
     else:
         form = CustomUserCreationForm()
 
@@ -84,7 +84,7 @@ def login_view(request):
             else:
                 messages.error(request, "Account not found with the provided username/email.")
 
-    return render(request, 'tracker/login.html')
+    return render(request, 'tracker/login.html', {'disable_session_timeout': True})
 
 # Custom logout
 @login_required
