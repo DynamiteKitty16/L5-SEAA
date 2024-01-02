@@ -42,7 +42,6 @@ INSTALLED_APPS = [
     # Adding created apps below
     'tracker',
     # Other apps
-    'crispy_forms',
 ]
 
 # Crispy Forms Settings
@@ -124,8 +123,8 @@ DATABASES = {
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
-EMAIL_HOST_USER = 'dynamitekitty16@googlemail.com'
-EMAIL_HOST_PASSWORD = 'ukkm tqxz nupf feol'
+EMAIL_HOST_USER = 'AvailabilityTrackerProject@gmail.com'
+EMAIL_HOST_PASSWORD = 'wddr msst hsyr akvx'
 EMAIL_USE_TLS = True
 
 
