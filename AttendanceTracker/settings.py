@@ -101,30 +101,17 @@ WSGI_APPLICATION = 'AttendanceTracker.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
-# Database is set to connect to Azure
-
-#DATABASES = {
-#    'default': {
-#        'ENGINE': 'django.db.backends.mysql',
-#        'NAME': 'availabilitytracker-database',
-#        'USER': 'pxxbaylyay',
-#        'PASSWORD': '00RH7406N23TOB5T$',
-#        'HOST': 'availabilitytracker-server.mysql.database.azure.com',
-#        'PORT': '3306',
-#    }
-#}
-
 
 import os
 
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'attendance_db',
-        'USER': 'django_user',
-        'PASSWORD': os.environ.get('DJANGO_DATABASE_PASSWORD'),  # Get password from environment variable
-        'HOST': 'localhost',  # Or an IP Address that your DB is hosted on
-        'PORT': '3306',
+        'NAME': 'DynamiteKitty16$default',  # PythonAnywhere database name
+        'USER': 'DynamiteKitty16',  # PythonAnywhere username
+        'PASSWORD': 'Allmight2112!',  # The password set for MySQL on PythonAnywhere
+        'HOST': 'DynamiteKitty16.mysql.pythonanywhere-services.com',  # Database host address
+        'PORT': '3306',  # Default MySQL port
     }
 }
 
