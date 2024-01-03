@@ -5,6 +5,9 @@ from django.contrib.auth.forms import UserCreationForm
 from django.core.validators import RegexValidator
 from django.utils.translation import gettext_lazy as _
 from django.core.exceptions import ValidationError
+from django.contrib.auth.forms import AuthenticationForm
+from axes.helpers import is_user_locked_out
+
 
 # Define any regex validators for Django
 name_regex = RegexValidator(r'^[A-Z][a-zA-Z\s]*$', 'First name and last name must start with a capital letter and can only contain letters and spaces.')
@@ -98,4 +101,16 @@ class LeaveRequestForm(forms.ModelForm):
             self.add_error('end_date', _("End date cannot be before the start date."))
 
         return cleaned_data
-        
+    
+# Custom form to clean up AXES and make the look more consistent
+class CustomAuthenticationForm(AuthenticationForm):
+    def clean(self):
+        username = self.cleaned_data.get('username')
+
+        if username and is_user_locked_out(self.request, username):
+            raise ValidationError(
+                "Your account is locked because of too many login attempts. "
+                "Try resetting your password or contact your administrator to unlock your account."
+            )
+
+        return super().clean()        

@@ -5,7 +5,7 @@ from .models import UserProfile, LeaveRequest
 from django.contrib.auth.models import User
 from django.contrib import messages
 from django.contrib.auth.forms import AuthenticationForm
-from tracker.forms import LeaveRequestForm, LeaveRequest
+from tracker.forms import LeaveRequestForm, LeaveRequest, CustomAuthenticationForm
 from django.conf import settings
 from .forms import CustomUserCreationForm
 from django.http import JsonResponse
@@ -21,6 +21,8 @@ from .leave_utils import get_overlapping_request, update_calendar_event, cancel_
 from django.core import serializers
 from django.contrib.auth.views import PasswordResetConfirmView
 from axes.models import AccessAttempt
+from django.contrib.auth.views import LoginView
+from axes.helpers import is_user_locked_out
 
 import json
 
@@ -75,6 +77,13 @@ def login_view(request):
     if request.method == 'POST':
         username = request.POST.get('username')
         password = request.POST.get('password')
+
+        # Check if the account is locked out
+        if is_user_locked_out(request, username):
+            messages.error(request, "Your account is locked because of too many login attempts. "
+                                    "Try resetting your password or contact your administrator to unlock your account.")
+            return render(request, 'tracker/login.html', {'disable_session_timeout': True})
+
         user = authenticate(request, username=username, password=password)
 
         if user is not None:
