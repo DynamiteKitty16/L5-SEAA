@@ -96,6 +96,10 @@ def custom_logout(request):
 # Handle session time out warnings
 
 def session_timeout_warning(request):
+    if not request.user.is_authenticated:
+        # User is not authenticated, return a JSON response indicating session expiration
+        return JsonResponse({'time_left': 0})
+    
     last_activity = request.session.get('last_activity', timezone.now().timestamp())
     current_time = timezone.now().timestamp()
     time_elapsed = current_time - last_activity

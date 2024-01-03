@@ -141,7 +141,8 @@
                 })
                 .catch(error => {
                     console.error('Error:', error);
-                    alert("An error occurred while checking the session status. Please log out and back in.");
+                    // Redirect to the login page in case of any error
+                    window.location.href = '/login/';
                 });
             }
 
