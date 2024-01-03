@@ -62,10 +62,10 @@ MIDDLEWARE = [
 # Adding in session to handle timeout and sign in
 
 # Set time out to 30 mins
-# SESSION_COOKIE_AGE = 1800
+SESSION_COOKIE_AGE = 1800
 
 # TESTING - set time out to 2 mins
-SESSION_COOKIE_AGE = 120
+# SESSION_COOKIE_AGE = 120
 
 # Update session expiration with every request
 SESSION_SAVE_EVERY_REQUEST = True

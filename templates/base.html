@@ -132,8 +132,8 @@
                     if (data.time_left <= 0) {
                         // Session has expired, redirect to login page
                         window.location.href = '/';
-                    // } else if (data.time_left <= 300) { // this is a 5 minute warning
-                    } else if (data.time_left <= 30) { // testing this is a 30 second warning
+                    } else if (data.time_left <= 300) { // this is a 5 minute warning
+                    // } else if (data.time_left <= 30) { // testing this is a 30 second warning
                         console.log("Showing modal");
                         var timeoutModal = new bootstrap.Modal(document.getElementById('sessionTimeoutModal'));
                         timeoutModal.show();
@@ -146,8 +146,8 @@
                 });
             }
 
-            // setInterval(checkSessionTimeout, 60000); // check every minute
-            setInterval(checkSessionTimeout, 10000); // testing check every 10 seconds
+            setInterval(checkSessionTimeout, 60000); // check every minute
+            // setInterval(checkSessionTimeout, 10000); // testing check every 10 seconds
 
             // Event listener for the "Stay Logged In" button
             document.addEventListener('DOMContentLoaded', function() {
