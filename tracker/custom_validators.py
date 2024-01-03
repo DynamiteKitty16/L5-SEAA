@@ -39,3 +39,14 @@ class NumberValidator:
         return _(
             "Your password must contain at least one number."
         )
+    
+class NoReusePasswordValidator:
+    def validate(self, password, user=None):
+        if user.check_password(password):
+            raise ValidationError(
+                _("Your new password cannot be the same as your old password."),
+                code='password_no_reuse',
+            )
+
+    def get_help_text(self):
+        return _("Your new password cannot be the same as your old password.")

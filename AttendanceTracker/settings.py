@@ -157,6 +157,9 @@ AUTH_PASSWORD_VALIDATORS = [
     {
         'NAME': 'tracker.custom_validators.NumberValidator',
     },
+    {
+        'NAME': 'tracker.custom_validators.NoReusePasswordValidator',
+    },
 ]
 
 
