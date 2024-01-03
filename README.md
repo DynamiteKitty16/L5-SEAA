@@ -15,14 +15,11 @@ This project is a Django-based web application designed for tracking attendance 
 The application is hosted and can be accessed at:
 
 - **Main Application**: [https://dynamitekitty16.pythonanywhere.com/](https://dynamitekitty16.pythonanywhere.com/)
-- **Admin Dashboard**: [https://dynamitekitty16.pythonanywhere.com/admin/logout/](https://dynamitekitty16.pythonanywhere.com/admin/logout/)
+- **Admin Dashboard**: [https://dynamitekitty16.pythonanywhere.com/admin/logout/](https://dynamitekitty16.pythonanywhere.com/admin/)
 
 ### Admin Access
 
-To access the admin dashboard:
-
-- **Username**: admin
-- **Password**: @Pa$$w0rd!
+To access the admin dashboard has been provided in the assingment and a seperate README in appendix A.
 
 - **Please note:** The admin account should be used responsibly to set user roles and manage the application. Mainly, you need this information so that you can set a user to "is_manager" = true so that they will be able to access manager view, and be available for the drop down manager list under "User profiles".
 
