@@ -23,6 +23,7 @@ from django.urls import path
 from tracker import views
 from django.conf import settings
 from django.conf.urls.static import static
+from .views import CustomPasswordResetConfirmView
 
 
 urlpatterns = [
@@ -41,6 +42,9 @@ urlpatterns = [
     path('reset/done/', auth_views.PasswordResetCompleteView.as_view(
         template_name='tracker/password_reset_complete.html'
     ), name='password_reset_complete'),
+     path('reset/<uidb64>/<token>/', CustomPasswordResetConfirmView.as_view(
+        template_name='tracker/password_reset_confirm.html'
+    ), name='password_reset_confirm'),
     path('', views.login_view, name='login'), # Set up as the first page
     path('home/', views.home_view, name='home'),
     path('logout/', views.custom_logout, name='logout'),

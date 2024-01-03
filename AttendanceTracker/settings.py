@@ -41,7 +41,8 @@ INSTALLED_APPS = [
     'widget_tweaks',
     # Adding created apps below
     'tracker',
-    # Other apps
+    # App for lockout out of the box
+    'axes',
 ]
 
 # Crispy Forms Settings
@@ -57,6 +58,8 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     # Custom middleware below
     'AttendanceTracker.middleware.InactivityTimeoutMiddleware',
+    # Adding Axes to middleware
+    'axes.middleware.AxesMiddleware',
 ]
 
 # Adding in session to handle timeout and sign in
@@ -77,7 +80,15 @@ LOGIN_URL = 'login'
 AUTHENTICATION_BACKENDS = [
     'AttendanceTracker.authentication.EmailOrUsernameModelBackend',
     'django.contrib.auth.backends.ModelBackend',
+    'axes.backends.AxesBackend',
 ]
+
+# django-axes configurations
+AXES_FAILURE_LIMIT = 3
+AXES_LOCK_OUT_AT_FAILURE = True
+AXES_LOCK_OUT_BY_COMBINATION_USER_AND_IP = True
+AXES_COOLOFF_TIME = 1  # time in hours
+
 
 ROOT_URLCONF = 'AttendanceTracker.urls'
 

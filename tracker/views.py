@@ -19,6 +19,8 @@ from collections import Counter
 from django.db.models import Case, When, Value, IntegerField, Count
 from .leave_utils import get_overlapping_request, update_calendar_event, cancel_overlapping_requests
 from django.core import serializers
+from django.contrib.auth.views import PasswordResetConfirmView
+from axes.models import AccessAttempt
 
 import json
 
@@ -624,3 +626,12 @@ def staff_attendance_data(request):
 # Help page for user experience
 def help_view(request):
     return render(request, 'tracker/help.html')
+
+# While using Axes, the password reset will clear the Axes count, but failing that there is a 1 hour cool off in the settings
+
+class CustomPasswordResetConfirmView(PasswordResetConfirmView):
+    def form_valid(self, form):
+        # Clear any lockout records for this user
+        user = form.save()
+        AccessAttempt.objects.filter(username=user.username).delete()
+        return super().form_valid(form)
