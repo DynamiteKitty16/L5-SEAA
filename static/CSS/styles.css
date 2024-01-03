@@ -180,19 +180,3 @@ a:hover, a:focus, a:active {
     background-color: #007bff;
     color: white;
 }
-
-/* Styles for show password configuration */
-.password-container {
-    display: flex;
-    flex-direction: column;
-}
-
-.form-check {
-    margin-top: 10px;
-}
-
-#passwordError {
-    margin-top: 10px; 
-    display: none; /* Initially hidden */
-    color: rgba(255, 0, 0, 0.567);
-}
