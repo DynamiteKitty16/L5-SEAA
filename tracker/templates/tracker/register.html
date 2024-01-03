@@ -31,13 +31,18 @@
                                 </div>
                             {% endif %}
                             {% if field.name == 'password1' %}
-                                <div id="passwordError" class="invalid-feedback"></div>
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" id="showPasswordCheckbox">
-                                    <label class="form-check-label" for="showPasswordCheckbox">
-                                        Show Password
-                                    </label>
+                                <div class="password-container">
+                                    {{ field|add_class:'form-control' }}
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="showPasswordCheckbox">
+                                        <label class="form-check-label" for="showPasswordCheckbox">
+                                            Show Password
+                                        </label>
+                                    </div>
+                                    <div id="passwordError" class="invalid-feedback"></div>
                                 </div>
+                            {% else %}
+                                {{ field|add_class:'form-control' }}
                             {% endif %}
                         </div>
                     {% endfor %}
@@ -57,6 +62,7 @@
     document.addEventListener('DOMContentLoaded', function () {
         const form = document.querySelector('#register-form');
         const passwordInput = document.querySelector('#id_password1');
+        const passwordErrorDiv = document.querySelector('#passwordError');
         const showPasswordCheckbox = document.querySelector('#showPasswordCheckbox');
 
         // Toggle Password Visibility
@@ -68,33 +74,11 @@
             }
         });
 
-        passwordInput.addEventListener('input', function() {
-            const password = passwordInput.value;
-            let errorMessage = '';
-
-            if (password.length < 8) {
-                errorMessage = 'Password must be at least 8 characters long.';
-            } else if (!/[A-Z]/.test(password)) {
-                errorMessage = 'Password must contain at least one uppercase letter.';
-            } else if (!/[0-9]/.test(password)) {
-                errorMessage = 'Password must contain at least one number.';
-            } else if (!/[!@#$%^&*]/.test(password)) {
-                errorMessage = 'Password must contain at least one special character.';
-            }
-
-            if (errorMessage) {
-                document.querySelector('#passwordError').innerText = errorMessage;
-            } else {
-                // Clear any error message
-                document.querySelector('#passwordError').innerText = '';
-            }
-        });
-        
         function validatePassword() {
             const password = passwordInput.value;
             let errorMessage = '';
 
-            // Check for minimum length
+            // Consolidated password validation logic
             if (password.length < 8) {
                 errorMessage = 'Password must be at least 8 characters long.';
             } else if (!/[A-Z]/.test(password)) {
@@ -104,19 +88,20 @@
             } else if (!/[!@#$%^&*]/.test(password)) {
                 errorMessage = 'Password must contain at least one special character.';
             }
-            
+
             // Update UI
-            const feedbackElement = passwordInput.nextElementSibling;
             if (errorMessage) {
-                feedbackElement.textContent = errorMessage;
-                feedbackElement.classList.add('visible');
+                passwordErrorDiv.textContent = errorMessage;
+                passwordErrorDiv.style.display = 'block'; // Show the error message
                 passwordInput.classList.add('is-invalid');
             } else {
-                feedbackElement.classList.remove('visible');
+                passwordErrorDiv.style.display = 'none'; // Hide the error message
                 passwordInput.classList.remove('is-invalid');
             }
         }
 
+        // Use validatePassword in both input and blur/keyUp events
+        passwordInput.addEventListener('input', validatePassword);
         passwordInput.addEventListener('keyup', validatePassword);
         passwordInput.addEventListener('blur', validatePassword);
 
