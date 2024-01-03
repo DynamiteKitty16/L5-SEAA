@@ -29,7 +29,7 @@ To access the admin dashboard:
 Axes is also available in the admin section in order to unlock user accounts after 3 attempts.
 
 ## Installation and Local Setup
-If setup is required in a local enviroment, please follow this section and the steps below.
+If setup is required in a local environment, please follow this section and the steps below.
 
 1. Clone the repository:
    ```bash
@@ -42,14 +42,14 @@ If setup is required in a local enviroment, please follow this section and the s
 
 4. Set up your database in AttendanceTracker/settings.py. By default, it's configured to use MySQL.
 
-5. Create the database in the virtual enviroment.
+5. Create the database in the virtual environment.
     a. python manage.py makemigrations
     b. python manage.py migrate
 
 6. Run the Django server:
     python manage.py runserver
 
-7. Create a Super User for the Django application.
+7. Create a Super User for the Django application:
     python manage.py createsuperuser
 
 8. Access the application through your web browser at 'http://localhost:8000'. 
