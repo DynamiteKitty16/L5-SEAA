@@ -23,7 +23,7 @@ from django.urls import path
 from tracker import views
 from django.conf import settings
 from django.conf.urls.static import static
-from tracker.views import CustomPasswordResetConfirmView
+from .views import CustomPasswordResetConfirmView
 
 
 urlpatterns = [
