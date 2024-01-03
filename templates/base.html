@@ -131,7 +131,7 @@
                     console.log("Time left: ", data.time_left);
                     if (data.time_left <= 0) {
                         // Session has expired, redirect to login page
-                        window.location.href = '/login/';
+                        window.location.href = '/';
                     // } else if (data.time_left <= 300) { // this is a 5 minute warning
                     } else if (data.time_left <= 30) { // testing this is a 30 second warning
                         console.log("Showing modal");
@@ -142,7 +142,7 @@
                 .catch(error => {
                     console.error('Error:', error);
                     // Redirect to the login page in case of any error
-                    window.location.href = '/login/';
+                    window.location.href = '/';
                 });
             }
 
