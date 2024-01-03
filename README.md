@@ -8,7 +8,7 @@ This project is a Django-based web application designed for tracking attendance 
 - **Attendance Tracking**: Employees can record their attendance, specifying the type of attendance (e.g., Working From Home, In Office, Annual Leave).
 - **Leave Management**: Employees can submit leave requests, which managers can approve or deny.
 - **Manager Dashboard**: Specialized dashboard for managers to view and manage leave requests.
-- **Session Timeout Warning**: Custom middleware for handling session timeouts and inactivity.
+- **Session Timeout Warning**: Custom middleware for handling session timeouts and inactivity. At 25 minutes the user will be presented with a 'stay logged in button'. After 30 minutes the user will be logged out and redirected to the login page.
 
 ## Live Application
 

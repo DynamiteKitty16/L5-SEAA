@@ -1,29 +1,22 @@
-from django.shortcuts import render, redirect
+from django.conf import settings
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
-from .models import UserProfile, LeaveRequest
-from django.contrib.auth.models import User
 from django.contrib import messages
-from django.contrib.auth.forms import AuthenticationForm
-from tracker.forms import LeaveRequestForm, LeaveRequest
-from django.conf import settings
-from .forms import CustomUserCreationForm
 from django.http import JsonResponse
-from django.shortcuts import get_object_or_404, redirect
 from django.utils import timezone
-from .models import AttendanceRecord
 from datetime import datetime, timedelta
 from django.views.decorators.csrf import csrf_exempt
-from django.core.exceptions import ValidationError
-from collections import Counter
 from django.db.models import Case, When, Value, IntegerField, Count
-from .leave_utils import get_overlapping_request, update_calendar_event, cancel_overlapping_requests
-from django.core import serializers
+from collections import Counter
+
+from .models import UserProfile, LeaveRequest, AttendanceRecord, User
+from .forms import CustomUserCreationForm, LeaveRequestForm
+from .leave_utils import cancel_overlapping_requests, update_calendar_event
 
 import json
 
 # Home page and required home functions
-
 def get_attendance_counts_for_month(user):
     current_month = timezone.now().month
     current_year = timezone.now().year
@@ -35,8 +28,7 @@ def get_attendance_counts_for_month(user):
     counts = Counter(record.type for record in records)
     return dict(counts)
 
-# Login and Register
-
+# Login
 @login_required
 def home_view(request):
     attendance_counts = get_attendance_counts_for_month(request.user)
@@ -45,6 +37,7 @@ def home_view(request):
     }
     return render(request, 'tracker/home.html', context)
 
+# Register
 def register(request):
     if request.method == 'POST':
         form = CustomUserCreationForm(request.POST)
@@ -63,12 +56,12 @@ def register(request):
 
     return render(request, 'tracker/register.html', {'form': form, 'disable_session_timeout': True})
 
+# Registration Success
 def registration_success(request):
     return render(request, 'tracker/registration_success.html')
 
 # Set this up as a custom one instead of using Django's inbuilt form function for this as
 # Want users to land on the login page but have the option to register.
-
 def login_view(request):
     if request.method == 'POST':
         username = request.POST.get('username')
@@ -94,7 +87,6 @@ def custom_logout(request):
 
 
 # Handle session time out warnings
-
 def session_timeout_warning(request):
     if not request.user.is_authenticated:
         # User is not authenticated, return a JSON response indicating session expiration
@@ -106,16 +98,14 @@ def session_timeout_warning(request):
     time_left = max(settings.SESSION_COOKIE_AGE - time_elapsed, 0)
     return JsonResponse({'time_left': time_left})
 
-# Add a login button on the timeout response 
-
+# Add a login button on the timeout response for the pop up modual in the base template to stay logged in at 25 mins inactivity
 @login_required
 def extend_session(request):
     request.session.modified = True
     return JsonResponse({'status': 'success'})
 
 
-# Views for FullCalendar
-
+# Views for FullCalendar used in the Calendar page
 @login_required
 def calendar(request): 
     # Have not included in my model / forms but user.date_joined is taken from Django default 'User' model   
@@ -124,6 +114,7 @@ def calendar(request):
     one_year_ago = current_date - timedelta(days=365)
 
     # Set the start date for the calendar as the later of the two dates
+    # A registration date is set as the max date it can load back to
     start_date = max(registration_date, one_year_ago)
 
     # Format start_date as a string in format 'YYYY-MM-DD'
@@ -202,7 +193,7 @@ def handle_attendance(request):
         ).exists()
 
         if is_approved_leave and attendance_type in ['AL', 'NWD', 'FL']:
-            # Prevent changing attendance type for approved leaves
+            # Prevent changing attendance type for approved leaves so that the leave record has to be changed and this data isn't left invalid
             return JsonResponse({'status': 'error', 'message': 'Cannot change attendance for approved leave.'}, status=403)
 
         # Create or update the attendance record
@@ -218,8 +209,7 @@ def handle_attendance(request):
         return JsonResponse({'status': 'success'})
     return JsonResponse({'status': 'error'}, status=400)
 
-# Create count of items in the AttendanceRecord to be used elsewhere
-
+# Create count of items in the AttendanceRecord
 def get_attendance_counts_for_month(user):
     current_month = timezone.now().month
     current_year = timezone.now().year
@@ -228,6 +218,7 @@ def get_attendance_counts_for_month(user):
         date__year=current_year, 
         date__month=current_month
     ).exclude(type='Sick')  # Exclude 'Sick' type
+    # Sick type was included in the model but was never implemented due to scale of project
 
     # Count occurrences of each type
     counts = Counter(record.type for record in records)
@@ -235,7 +226,6 @@ def get_attendance_counts_for_month(user):
 
 
 # Views to handle requests
-
 @login_required
 def requests_view(request):
     form = LeaveRequestForm()  # Define form for GET requests
@@ -275,7 +265,6 @@ def requests_view(request):
 
 
 # Similiar view to above but for the Manager self-approval
-
 @login_required
 def manager_self_requests_view(request):
     # Ensure the user is a manager
@@ -401,9 +390,6 @@ def approve_request(request, request_id):
 
 
 # View for returning the pending leave requests for a selected employee using JSON
-
-from django.http import JsonResponse
-
 @login_required
 def get_employee_requests(request, employee_id):
     if not request.user.userprofile.is_manager:
@@ -422,7 +408,6 @@ def get_employee_requests(request, employee_id):
             req.status = 'Cancelled'
             req.save()
 
-        # Continue with existing logic
         requests = all_requests.annotate(
             custom_order=Case(
                 When(status='Pending', then=Value(1)),

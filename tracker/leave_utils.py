@@ -38,7 +38,7 @@ def should_update_existing_attendance(user, start_date, end_date, new_leave_type
 
     # Logic to determine if existing records should be updated
     for record in existing_records:
-        if record.type not in ['AL', 'FL', 'NWD']:  # Assuming 'AL' and 'FL' should not be overwritten
+        if record.type not in ['AL', 'FL', 'NWD']:  # Should not be overwritten
             return True
     return False
 
