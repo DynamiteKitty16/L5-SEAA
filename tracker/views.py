@@ -22,7 +22,8 @@ from django.core import serializers
 from django.contrib.auth.views import PasswordResetConfirmView
 from axes.models import AccessAttempt
 from django.contrib.auth.views import LoginView
-from axes.helpers import is_user_locked_out
+
+from axes.signals import user_locked_out
 
 import json
 
@@ -79,7 +80,7 @@ def login_view(request):
         password = request.POST.get('password')
 
         # Check if the account is locked out
-        if is_user_locked_out(request, username):
+        if user_locked_out(request, username):
             messages.error(request, "Your account is locked because of too many login attempts. "
                                     "Try resetting your password or contact your administrator to unlock your account.")
             return render(request, 'tracker/login.html', {'disable_session_timeout': True})
