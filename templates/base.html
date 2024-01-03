@@ -145,8 +145,8 @@
                 });
             }
 
-            setInterval(checkSessionTimeout, 60000); // check every minute
-            // setInterval(checkSessionTimeout, 10000); // testing check every 10 seconds
+            // setInterval(checkSessionTimeout, 60000); // check every minute
+            setInterval(checkSessionTimeout, 10000); // testing check every 10 seconds
 
             // Event listener for the "Stay Logged In" button
             document.addEventListener('DOMContentLoaded', function() {
@@ -158,17 +158,28 @@
                             'X-CSRFToken': getCSRFToken()
                         }
                     })
-                    .then(response => response.json())
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Session expired');
+                        }
+                        return response.json();
+                    })
                     .then(data => {
-                    if (data.status === 'success') {
-                            // Hide the modal
+                        if (data.status === 'success') {
                             var timeoutModal = bootstrap.Modal.getInstance(document.getElementById('sessionTimeoutModal'));
                             timeoutModal.hide();
+                        } else {
+                            throw new Error('Session expired');
                         }
                     })
-                    .catch(error => console.error('Error:', error));
+                    .catch(error => {
+                        console.error('Error:', error);
+                        if (error.message === 'Session expired') {
+                            window.location.href = '/login/';
+                        }
+                    });
                 });
-        });
+            });
         </script>
     {% endif %}
 </body>
