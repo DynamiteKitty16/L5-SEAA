@@ -57,7 +57,7 @@ def register(request):
         else:
             # If the form is not valid, render the same page with the form
             # This will include the form errors
-            return render(request, 'tracker/register.html', {'form': form}, {'disable_session_timeout': True})
+            return render(request, 'tracker/register.html', {'form': form})
     else:
         form = CustomUserCreationForm()
 
