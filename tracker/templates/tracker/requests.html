@@ -147,9 +147,18 @@
             daysOfWeekDisabled: [0, 6]
         });
 
+        // Added this as in testing found that if the Start Date then End Date is set, the user can go back and change the Start Date to be after
+        // the End Date, breaking the page and validation when it is submitted.
         // Event listener for start date change
         startDatePicker.on('changeDate', function(e) {
-            endDatePicker.datepicker('setStartDate', e.date);
+            var newStartDate = e.date;
+            var currentEndDate = endDatePicker.datepicker('getDate');
+
+            endDatePicker.datepicker('setStartDate', newStartDate);
+
+            if (currentEndDate && newStartDate > currentEndDate) {
+                endDatePicker.datepicker('update', ''); // Clear the end date
+            }
         });
 
         // Event listener for end date change
