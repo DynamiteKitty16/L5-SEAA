@@ -18,11 +18,13 @@
                         {% csrf_token %}
                         <div class="mb-3">
                             <label for="username" class="form-label">Username/Email:</label>
-                            <input type="text" class="form-control" name="username" autocomplete="username" required="">
+                            <!-- Corrected id to meet standards of screen reader accessibility -->
+                            <input type="text" class="form-control" name="username" id="username" autocomplete="username" required="">
                         </div>
                         <div class="mb-3">
                             <label for="password" class="form-label">Password:</label>
-                            <input type="password" class="form-control" name="password" required>
+                            <!-- Corrected id to meet standards of screen reader accessibility -->
+                            <input type="password" class="form-control" name="password" id="password" autocomplete="current-password" required="">
                             <!-- Password Reset Link -->
                             <div class="mt-2 text-end">
                                 <a href="{% url 'password_reset' %}">Forgot Password?</a>
