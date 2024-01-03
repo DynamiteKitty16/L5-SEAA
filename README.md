@@ -63,7 +63,7 @@ If setup is required in a local environment, please follow this section and the 
 
 - **User Notifications** User notifications were not set up in this version of the app however it is a planned area of improvement; when a manager approves, denies or cancels a request, the user will be notified.
 
-- **Managers to Edit and Delete a Standard Users Whole Calendar** In the event that a user has incorrect information in their yearly calendar that requires ccorrection, a manager will be able to edit the information provided by the user.
+- **Managers to Edit and Delete a Standard Users Whole Calendar** In the event that a user has incorrect information in their yearly calendar that requires correction, a manager will be able to edit the information provided by the user.
 
 ## Contact
 GitHub: https://github.com/DynamiteKitty16
