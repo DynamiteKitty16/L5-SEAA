@@ -32,6 +32,12 @@
                             {% endif %}
                             {% if field.name == 'password1' %}
                                 <div id="passwordError" class="invalid-feedback"></div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="showPasswordCheckbox">
+                                    <label class="form-check-label" for="showPasswordCheckbox">
+                                        Show Password
+                                    </label>
+                                </div>
                             {% endif %}
                         </div>
                     {% endfor %}
@@ -51,6 +57,16 @@
     document.addEventListener('DOMContentLoaded', function () {
         const form = document.querySelector('#register-form');
         const passwordInput = document.querySelector('#id_password1');
+        const showPasswordCheckbox = document.querySelector('#showPasswordCheckbox');
+
+        // Toggle Password Visibility
+        showPasswordCheckbox.addEventListener('change', function() {
+            if (this.checked) {
+                passwordInput.type = 'text';
+            } else {
+                passwordInput.type = 'password';
+            }
+        });
 
         passwordInput.addEventListener('input', function() {
             const password = passwordInput.value;
