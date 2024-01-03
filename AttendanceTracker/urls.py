@@ -16,12 +16,13 @@ Including another URLconf
 """
 from django.contrib.auth import views as auth_views
 from django.contrib.auth.views import LogoutView
-from tracker import views
+from tracker.views import cancel_leave_request
+from tracker.views import requests_view
 from django.contrib import admin
 from django.urls import path
+from tracker import views
 from django.conf import settings
 from django.conf.urls.static import static
-from tracker.views import cancel_leave_request, CustomPasswordResetConfirmView, requests_view
 
 
 urlpatterns = [
@@ -34,12 +35,12 @@ urlpatterns = [
     path('password_reset/done/', auth_views.PasswordResetDoneView.as_view(
         template_name='tracker/password_reset_done.html'
     ), name='password_reset_done'),
+    path('reset/<uidb64>/<token>/', auth_views.PasswordResetConfirmView.as_view(
+        template_name='tracker/password_reset_confirm.html'
+    ), name='password_reset_confirm'),
     path('reset/done/', auth_views.PasswordResetCompleteView.as_view(
         template_name='tracker/password_reset_complete.html'
     ), name='password_reset_complete'),
-     path('reset/<uidb64>/<token>/', CustomPasswordResetConfirmView.as_view(
-        template_name='tracker/password_reset_confirm.html'
-    ), name='password_reset_confirm'),
     path('', views.login_view, name='login'), # Set up as the first page
     path('home/', views.home_view, name='home'),
     path('logout/', views.custom_logout, name='logout'),

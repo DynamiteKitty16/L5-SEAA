@@ -5,7 +5,7 @@ from .models import UserProfile, LeaveRequest
 from django.contrib.auth.models import User
 from django.contrib import messages
 from django.contrib.auth.forms import AuthenticationForm
-from tracker.forms import LeaveRequestForm, LeaveRequest, CustomAuthenticationForm
+from tracker.forms import LeaveRequestForm, LeaveRequest
 from django.conf import settings
 from .forms import CustomUserCreationForm
 from django.http import JsonResponse
@@ -19,11 +19,6 @@ from collections import Counter
 from django.db.models import Case, When, Value, IntegerField, Count
 from .leave_utils import get_overlapping_request, update_calendar_event, cancel_overlapping_requests
 from django.core import serializers
-from django.contrib.auth.views import PasswordResetConfirmView
-from axes.models import AccessAttempt
-from django.contrib.auth.views import LoginView
-
-from axes.signals import user_locked_out
 
 import json
 
@@ -78,13 +73,6 @@ def login_view(request):
     if request.method == 'POST':
         username = request.POST.get('username')
         password = request.POST.get('password')
-
-        # Check if the account is locked out
-        if user_locked_out(request, username):
-            messages.error(request, "Your account is locked because of too many login attempts. "
-                                    "Try resetting your password or contact your administrator to unlock your account.")
-            return render(request, 'tracker/login.html', {'disable_session_timeout': True})
-
         user = authenticate(request, username=username, password=password)
 
         if user is not None:
@@ -636,12 +624,3 @@ def staff_attendance_data(request):
 # Help page for user experience
 def help_view(request):
     return render(request, 'tracker/help.html')
-
-# While using Axes, the password reset will clear the Axes count, but failing that there is a 1 hour cool off in the settings
-
-class CustomPasswordResetConfirmView(PasswordResetConfirmView):
-    def form_valid(self, form):
-        # Clear any lockout records for this user
-        user = form.save()
-        AccessAttempt.objects.filter(username=user.username).delete()
-        return super().form_valid(form)
